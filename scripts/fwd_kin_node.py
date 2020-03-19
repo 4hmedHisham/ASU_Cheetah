@@ -6,6 +6,7 @@ from std_msgs.msg import String
 import rospy
 import time
 from itertools import chain 
+#Trying SOmething Pls Work
 intial_name = ['ab3', 'bc3', 'cd3', 'ab4', 'bc4', 'cd4', 'ab1', 'bc1', 'cd1', 'ab2', 'bc2', 'cd2']
 legspos2cg=[]
 legspos2joint=[]
