@@ -17,7 +17,7 @@ print(platform.python_version())
 
 #Commit2From the deletedpart of a line
 #COmmit1
-#ma3 ba3dena
+#7atet satr gded
 
 def get_angles_firsttime():
     for i in range(12):
