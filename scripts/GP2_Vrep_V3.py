@@ -15,7 +15,7 @@ print(platform.python_version())
 
 #FROM WINDOWS TO GET BA2A
 
-#Commit2From the clone
+#Commit2From the deletedpart of a line
 #COmmit1
 #ma3 ba3dena
 
