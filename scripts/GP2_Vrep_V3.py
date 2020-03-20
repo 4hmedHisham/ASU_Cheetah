@@ -14,8 +14,11 @@ print(platform.python_version())
 
 
 #FROM WINDOWS TO GET BA2A
+
+#Commit2From the clone
 #COmmit1
 #7atet satr gded
+
 def get_angles_firsttime():
     for i in range(12):
         print('handler is')
