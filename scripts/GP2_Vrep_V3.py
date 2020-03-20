@@ -33,6 +33,20 @@ def get_torques_firsttime():
             res,torque1=sim.simxGetJointForce(clientID,int(angles_handler[i]),sim.simx_opmode_buffer)
         print("TORQUE x IS")
         print(torque1)
+def get_velocity_firsttime():
+    counter=0
+    for i in range(12):
+        print('handler is')
+        print(int(angles_handler[i]))
+        trash,vel,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[i]), sim.simx_opmode_streaming)
+        res=sim.simx_return_novalue_flag
+        while res!=sim.simx_return_ok:
+            res,vel,vel2=sim.simxGetObjectVelocity(clientID,int(angles_handler[i]),sim.simx_opmode_buffer)
+        print('counter is '+str(counter)+"Velocity x IS")
+        counter=counter+1
+        print(vel) 
+        print(vel2)
+        print(vel) 
         
 
 
@@ -204,7 +218,107 @@ def vrepInterface(port):
         angles_error[i], angles_handler[i] = sim.simxGetObjectHandle(clientID, intial_name[i],
                                                                       sim.simx_opmode_blocking)
     return ID
-#vrepInterface(19999)
+def get_velocity(getangles):
+    angle = getangles
+    angles = []
+    error = []
+    
+    if angle == 'ab3' or angle == 0:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[0]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'bc3' or angle == 1:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[1]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'cd3' or angle == 2:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[2]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'ab4' or angle == 3:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[3]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'bc4' or angle == 4:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[4]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'cd4' or angle == 5:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[5]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'ab1' or angle == 6:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[6]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'bc1' or angle == 7:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[7]), sim.simx_opmode_buffer)#from simx_opmode_buffer
+
+        # angels.append(ang)
+    elif angle == 'cd1' or angle == 8:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[8]), sim.simx_opmode_buffer)
+        if trash != 0:
+            
+            print('trash error is '+str(trash))
+        # angels.append(ang)
+    elif angle == 'ab2' or angle == 9:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[9]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'bc2' or angle == 10:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[10]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'cd2' or angle == 11:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[11]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    
+    return vel1,vel2
+def get_vel(getangles):
+    angle = getangles
+    angles = []
+    error = []
+    
+    if angle == 'ab3' or angle == 0:
+        #trash, vel1,vel2 = sim.simxobjectfloat(clientID, int(angles_handler[0]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'bc3' or angle == 1:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[1]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'cd3' or angle == 2:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[2]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'ab4' or angle == 3:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[3]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'bc4' or angle == 4:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[4]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'cd4' or angle == 5:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[5]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'ab1' or angle == 6:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[6]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'bc1' or angle == 7:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[7]), sim.simx_opmode_buffer)#from simx_opmode_buffer
+
+        # angels.append(ang)
+    elif angle == 'cd1' or angle == 8:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[8]), sim.simx_opmode_buffer)
+        if trash != 0:
+            
+            print('trash error is '+str(trash))
+        # angels.append(ang)
+    elif angle == 'ab2' or angle == 9:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[9]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'bc2' or angle == 10:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[10]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    elif angle == 'cd2' or angle == 11:
+        trash, vel1,vel2 = sim.simxGetObjectVelocity(clientID, int(angles_handler[11]), sim.simx_opmode_buffer)
+        # angels.append(ang)
+    
+    return vel1,vel2
+vrepInterface(19999)
+get_velocity_firsttime()
+for i in range (10):
+    lin,ang=get_velocity('cd1')
+    
+    print(lin)
+    print(ang)
 #get_angles_firsttime()
 # # print(angles_handler)
 # # print(angles_error)
