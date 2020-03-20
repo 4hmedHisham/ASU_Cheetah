@@ -5,16 +5,11 @@ import numpy as np
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
 import GP2_Vrep_V3 as v
-#ADD THIS COMMENT HERE FOR TESTING PURPOSES
+#ADDED VREP Iinit in one function
 counter=0
 testing=False
 if not testing :
-	v.vrepInterface(19999)
-	time.sleep(0.5)
-	v.get_angles_firsttime()
-	v.get_torques_firsttime()
-	time.sleep(3)
-	print('Vrep Up and Running')
+	v.vrep_init(19999)
 def set_vrep_angels(data):
 	joint_and_ang=data.data
 	print('data is '+joint_and_ang)
@@ -42,6 +37,8 @@ def start_vrep_node():
 				vrep_param.append(v.get_angles(i))
 			for i in range(12):
 				vrep_param.append(v.get_torque(i))
+			for i in range(12):
+				vrep_param.append(v.get_vel(i))
 
 
 				
