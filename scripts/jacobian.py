@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 import numpy as np
-from numpy import sin , cos
+from numpy import sin , cos , arctan2
 from timeit import default_timer as timer
 import rospy 
 from std_msgs.msg import Float32MultiArray
@@ -9,9 +9,7 @@ from std_msgs.msg import Float32MultiArray
 rospy.init_node('jacobian',anonymous=True)
 pub = rospy.Publisher('jac',Float32MultiArray,queue_size=10)
 #sub = rospy.Subscriber('getter',Float32MultiArray,Jacobian_3D)
-import numpy as np
-from numpy import sin, cos , arctan2
-from timeit import default_timer as timer
+rate = rospy.Rate(10)
 
 l1 = 244.59
 l2 = 208.4
@@ -20,6 +18,7 @@ start = timer()
 
 
 def Jacobian_3D(theta1, theta2, theta3):
+    msg = Float32MultiArray()
     '''
     Jv2 = [[0,0,0],[0,0,0],[0,0,0]]
     Jw2 = [[0,0,1],[0,0,0],[0,0,0]]
@@ -36,7 +35,12 @@ def Jacobian_3D(theta1, theta2, theta3):
     Jw4 = [[0, 0, 1], [0, -cos(theta1), -sin(theta1)], [0, -cos(theta1), -sin(theta1)]]
 
     J = np.concatenate((Jv4, Jw4), axis=0)
-    return J
+    
+    msg.data = J.reshape([18])
+    while not rospy.is_shutdown():
+        pub.publish(msg)
+        rate.sleep()
+    
 
 
 def polar_jacoian(theta3):
@@ -52,10 +56,14 @@ def cart2polar(x, y):
     return r, theta
 
 
-print(Jacobian_3D(10,20,30))
+#print(Jacobian_3D(10,20,30))
+if __name__ == '__main__':
+	Jacobian_3D(10,20,30)
+
+
 end = timer()
-print('Exec time:')
-print((end - start)*1000,'ms')
+#print('Exec time:')
+#print((end - start)*1000,'ms')
 
 
 
