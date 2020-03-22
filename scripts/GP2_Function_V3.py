@@ -3,7 +3,7 @@
 
 #found pause simulation:
 #sim.simxPauseCommunication(clientID,True)
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import math 
 import numpy as np
 import GP2_Vrep_V3 as v
@@ -26,6 +26,7 @@ plus2pi=False
 stability=True
 movement=True
 stp = 100
+
 #Functions removed ros functions from here (moduled)
 # all_angles=0
 # rate=0

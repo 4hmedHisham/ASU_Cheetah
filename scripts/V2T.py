@@ -10,12 +10,45 @@ counter=0
 testing=False
 if not testing :
 	v.vrep_init(19999)
+def is_number(n):
+    try:
+        float(n)   # Type-casting the string to `float`.
+                   # If string is not a valid `float`, 
+                   # it'll raise `ValueError` exception
+    except ValueError:
+        return False
+    return True
 def set_vrep_angels(data):
+	switch=False
+	joint=[]
+	ang=[]
 	joint_and_ang=data.data
 	print('data is '+joint_and_ang)
-	joint=joint_and_ang[0:3]
-	ang=float(joint_and_ang[3:])
-	v.set_angle(joint,ang)
+	for letter in joint_and_ang:
+		if switch ==True:
+			ang.append(letter)
+		if (letter != ' ') and (switch == False) :
+			joint.append(letter)
+		else:
+			switch=True
+	ang=''.join(ang)
+	print("ANGLE IS ")
+	print(ang)
+	print("Joint Is ")
+	print("joint in strings should be ")
+	print(''.join(joint))
+	value=is_number(''.join(joint))
+	print(value)
+	if value:
+		joint=int(''.join(joint))
+		print(joint)
+	else:
+		joint=''.join(joint)
+		print(joint)
+	angle=float(ang)
+	
+	print(angle)
+	v.set_angle(joint,angle)
 	print('Recieved ')
 	# print(ang)
 def start_vrep_node():

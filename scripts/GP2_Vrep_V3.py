@@ -193,6 +193,7 @@ def set_angle(setangle, angle):
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[11]), angle, sim.simx_opmode_streaming)
     end = timer()
+    print("TIMER IS ")
     print(end-start)
 
 
@@ -278,8 +279,8 @@ def vrep_init(port):
     get_vel_firsttime()
     time.sleep(2)
     print('Vrep Up and Running')
-vrepInterface(19999)
-set_angle('bc2',0)
+# vrepInterface(19999)
+# set_angle('bc2',0)
 # get_vel_firsttime()
 # for i in range(10):
 #     print(get_vel('bc2'))

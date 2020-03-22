@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 # Description : Creeping and trotting motion  2d inv kinematics only
 #changed client id to zero review this
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import sys
 import math
 import numpy as np
@@ -17,9 +18,9 @@ clientID = 0
 # TopLeft 1   Top Right 2 Rear Right 3 RearLeft 4
 
 # Starting Vrep Interface
-v.vrepInterface(19998)
-v.get_angles_firsttime()
-
+#v.vrepInterface(19999)
+#v.get_angles_firsttime()
+gait.ros.ros_init()
 # Geting the joint handlers
 angles_handler = np.zeros(12)
 angles_error = np.zeros(12)
