@@ -53,7 +53,7 @@ def cart2polar(data):
     msg = np.reshape(msg,2)
     x = msg[0]
     y = msg[1]
-    r = np.sqrt(x * x + y * y)
+    r = np.sqrt(x**2 + y**2)
     theta = arctan2(y, x)
     print(r,theta)
     #return r, theta
