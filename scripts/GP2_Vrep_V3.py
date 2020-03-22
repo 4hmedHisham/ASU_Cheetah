@@ -7,12 +7,18 @@ Created on Sun Feb  9 13:02:41 2020
 """
 import sim
 import numpy as np
+import time
 import platform
 print(platform.python_version())
 #from timeit import   as timer
 
 
-#HELLO GIT @
+#FROM WINDOWS TO GET BA2A
+
+#Commit2From the deletedpart of a line
+#COmmit1
+#7atet satr gded
+
 def get_angles_firsttime():
     for i in range(12):
         print('handler is')
@@ -33,6 +39,21 @@ def get_torques_firsttime():
             res,torque1=sim.simxGetJointForce(clientID,int(angles_handler[i]),sim.simx_opmode_buffer)
         print("TORQUE x IS")
         print(torque1)
+
+def get_vel_firsttime():
+    counter=0
+    for i in range(12):
+        print('handler is')
+        print(int(angles_handler[i]))
+        trash,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[i]),2012,sim.simx_opmode_buffer)
+        res=sim.simx_return_novalue_flag
+        while res!=sim.simx_return_ok:
+            res,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[i]),2012,sim.simx_opmode_streaming)
+        print('counter is '+str(counter)+"Velocity x IS")
+        counter=counter+1
+        print(vel) 
+   
+
         
 
 
@@ -204,7 +225,65 @@ def vrepInterface(port):
         angles_error[i], angles_handler[i] = sim.simxGetObjectHandle(clientID, intial_name[i],
                                                                       sim.simx_opmode_blocking)
     return ID
-#vrepInterface(19999)
+
+def get_vel(getangles):
+    angle = getangles
+    angles = []
+    error = []
+    
+    if angle == 'ab3' or angle == 0:
+        res,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[0]),2012,sim.simx_opmode_streaming)
+        # angels.append(ang)
+    elif angle == 'bc3' or angle == 1:
+        res,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[1]),2012,sim.simx_opmode_streaming)
+        # angels.append(ang)
+    elif angle == 'cd3' or angle == 2:
+        res,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[2]),2012,sim.simx_opmode_streaming)
+        # angels.append(ang)
+    elif angle == 'ab4' or angle == 3:
+        res,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[3]),2012,sim.simx_opmode_streaming)
+        # angels.append(ang)
+    elif angle == 'bc4' or angle == 4:
+        res,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[4]),2012,sim.simx_opmode_streaming)
+        # angels.append(ang)
+    elif angle == 'cd4' or angle == 5:
+       res,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[5]),2012,sim.simx_opmode_streaming)
+        # angels.append(ang)
+    elif angle == 'ab1' or angle == 6:
+       res,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[6]),2012,sim.simx_opmode_streaming)
+        # angels.append(ang)
+    elif angle == 'bc1' or angle == 7:
+       res,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[7]),2012,sim.simx_opmode_streaming)
+
+        # angels.append(ang)
+    elif angle == 'cd1' or angle == 8:
+        res,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[8]),2012,sim.simx_opmode_streaming)
+        # angels.append(ang)
+    elif angle == 'ab2' or angle == 9:
+        res,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[9]),2012,sim.simx_opmode_streaming)
+        # angels.append(ang)
+    elif angle == 'bc2' or angle == 10:
+        res,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[10]),2012,sim.simx_opmode_streaming)
+        # angels.append(ang)
+    elif angle == 'cd2' or angle == 11:
+        res,vel = sim.simxGetObjectFloatParameter(clientID, int(angles_handler[11]),2012,sim.simx_opmode_streaming)
+        # angels.append(ang)
+    
+    return vel
+def vrep_init(port):
+    vrepInterface(port)
+    time.sleep(0.5)
+    get_angles_firsttime()
+    get_torques_firsttime()
+    get_vel_firsttime()
+    time.sleep(2)
+    print('Vrep Up and Running')
+# vrepInterface(19999)
+# get_vel_firsttime()
+# for i in range(10):
+#     print(get_vel('bc2'))
+
+
 #get_angles_firsttime()
 # # print(angles_handler)
 # # print(angles_error)
