@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Created on Sun Feb  9 13:02:41 2020
 
@@ -10,7 +10,7 @@ import numpy as np
 import time
 import platform
 print(platform.python_version())
-#from timeit import   as timer
+from timeit import default_timer  as timer
 
 
 #FROM WINDOWS TO GET BA2A
@@ -152,7 +152,7 @@ def get_angles(getangles):
 def set_angle(setangle, angle):
     #print(' the angler is '+ setangle)
     error=9
-    #start= timer()
+    start= timer()
   
     if setangle == 'ab3' or setangle == 0:
         while(error!=0):     
@@ -192,8 +192,8 @@ def set_angle(setangle, angle):
     elif setangle == 'cd2' or setangle == 11:
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[11]), angle, sim.simx_opmode_streaming)
-    #end = timer()
-    #print(end-start)
+    end = timer()
+    print(end-start)
 
 
 def vrepInterface(port):
@@ -278,7 +278,8 @@ def vrep_init(port):
     get_vel_firsttime()
     time.sleep(2)
     print('Vrep Up and Running')
-# vrepInterface(19999)
+vrepInterface(19999)
+set_angle('bc2',0)
 # get_vel_firsttime()
 # for i in range(10):
 #     print(get_vel('bc2'))
