@@ -16,12 +16,13 @@ kp = 1.0
 kd = 0.1
 sizeof_fwdk_array = 2 # x1 y1 z1 x2 y2 z2....
 sizeof_desired_array = 2
+sizeof_getter_array = 36
 leg_no = 1
 current_time = 0
-x_current = 10
-y_current = 10
-x_desired = 15
-y_desired = 15
+x_current = 9
+y_current = 9
+x_desired = 10
+y_desired = 10
 prev_r = 0
 prev_theta = 0
 theta_knee = 0
@@ -44,8 +45,8 @@ def cart2polar(x,y):
 def current_pos(data):
     msg = data.data
     msg = np.reshape(msg,sizeof_fwdk_array)
-    x = msg[0] #[0 1 2 3 4 5 6 7 8 9 10 11]
-    y = msg[1]
+    x = msg[(3*leg_no)-3] #[0 1 2 3 4 5 6 7 8 9 10 11]
+    y = msg[(3*leg_no)-2]
     global x_current
     global y_current
     x_current = x
@@ -59,11 +60,11 @@ def desired_pos(data):
     x_desired = msg[0]
     y_desired = msg[1]
 
-def curret_theta(data):
+def current_theta(data):
     msg = data.data
-    #shwayet bla bla
+    msg = np.reshape(msg,sizeof_getter_array)
     global theta_knee
-    #theta_knee = 
+    theta_knee = msg[(leg_no*3)-1]
 
 
 def pd():
@@ -81,20 +82,19 @@ def pd():
     prev_r = r
     prev_theta = theta
     output = [[p_error,d_error]]
-   
     return output 
     
 
 while not rospy.is_shutdown():
-    for i in range(100):
-        print(polar_jacoian(50+i))
+    if x_current<11:
+        print(np.matmul(pd(),polar_jacoian(50)))
+        x_current = 10
+        y_current = 10
         rate.sleep()
-    if x_desired-x_current>0.01 and y_desired-y_current>0.01:
-        x_current= x_current +1.5
-        y_current= y_current+1
-        x_desired = x_desired +0.15
-        y_desired = y_desired + 0.2
-    rate.sleep()
+
+
+    
+    
     
 
 
