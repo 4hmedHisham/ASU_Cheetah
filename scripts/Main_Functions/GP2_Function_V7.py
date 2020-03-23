@@ -4,15 +4,19 @@
 #import matplotlib.pyplot as plt
 import math 
 import numpy as np
-from scripts import R2A as v
+
 from numpy import sin , cos
 #from sympy import symbols, Eq, solve
 #import vrep 
 #import matplotlib.pyplot as plt
 import time
 #import sympy as sp
-
 import math
+import sys
+sys.path.insert(0, '/home/ahmed/catkin_ws/src/isolation/scripts')
+import R2A as ros
+
+print(sys.path)
 #Parameters:
 clientID=0
 l1 =245

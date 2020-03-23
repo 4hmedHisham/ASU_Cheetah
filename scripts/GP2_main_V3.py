@@ -8,7 +8,7 @@ import numpy as np
 import time
 import vrep
 #import GP2_Function_V3 as  
-#
+#changed V3 with omar updated V7
 from Main_Functions import GP2_Function_V7 as gait
 import GP2_Vrep_V3 as v
 
@@ -18,11 +18,12 @@ import GP2_Vrep_V3 as v
 gait.ros.ros_init()
 time.sleep(2)
 for i in range(10):
-    time.sleep(0.5)
-    gait.trot2(1)
-    time.sleep(0.5)
-    gait.trot2(2)
-    time.sleep(0.5)
+    gait.Move_side('l')
+    time.sleep(0.3)
+gait.move_2_legs(0,3,'l',90)
+
+for i in range(25):
+    gait.onestepcreeping('f',120)
 
 
 

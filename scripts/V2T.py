@@ -8,6 +8,7 @@ import GP2_Vrep_V3 as v
 #ADDED VREP Iinit in one function
 counter=0
 testing=False
+printing=Falseq
 if not testing :
 	v.vrep_init(19999)
 def is_number(n):
@@ -23,7 +24,8 @@ def set_vrep_angels(data):
 	joint=[]
 	ang=[]
 	joint_and_ang=data.data
-	print('data is '+joint_and_ang)
+	if printing == True:
+		print('data is '+joint_and_ang)
 	for letter in joint_and_ang:
 		if switch ==True:
 			ang.append(letter)
@@ -32,13 +34,15 @@ def set_vrep_angels(data):
 		else:
 			switch=True
 	ang=''.join(ang)
-	print("ANGLE IS ")
-	print(ang)
-	print("Joint Is ")
-	print("joint in strings should be ")
-	print(''.join(joint))
+	if printing == True:
+		print("ANGLE IS ")
+		print(ang)
+		print("Joint Is ")
+		print("joint in strings should be ")
+		print(''.join(joint))
 	value=is_number(''.join(joint))
-	print(value)
+	if printing == True:
+		print(value)
 	if value:
 		joint=int(''.join(joint))
 		print(joint)
@@ -49,7 +53,8 @@ def set_vrep_angels(data):
 	
 	print(angle)
 	v.set_angle(joint,angle)
-	print('Recieved ')
+	if printing == True:
+		print('Recieved ')
 	# print(ang)
 def start_vrep_node():
 	
