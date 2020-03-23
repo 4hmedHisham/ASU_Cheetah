@@ -7,7 +7,9 @@ import math
 import numpy as np
 import time
 import vrep
-import GP2_Function_V3 as gait
+#import GP2_Function_V3 as  
+#
+from Main_Functions import GP2_Function_V7 as gait
 import GP2_Vrep_V3 as v
 
 

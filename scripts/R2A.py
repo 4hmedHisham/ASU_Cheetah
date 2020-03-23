@@ -96,7 +96,9 @@ def get_torques(pos):
 	return trq
 
 def set_angle(joint,angle):
-	msg=str(joint)+' '+str(angle)
+	#msg=str(joint)+' '+str(angle)
+	sendangle=float(angle)#cause sometimes it came in shape of a single list 
+	msg=str(joint)+' '+str(sendangle)
 	pub.publish(msg)
 
 
