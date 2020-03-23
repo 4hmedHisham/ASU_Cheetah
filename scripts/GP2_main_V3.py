@@ -17,13 +17,15 @@ import GP2_Vrep_V3 as v
 # TopLeft 1   Top Right 2 Rear Right 3 RearLeft 4
 gait.ros.ros_init()
 time.sleep(2)
+
+for i in range(25):
+    gait.onestepcreeping('f',120)
+
+
 for i in range(10):
     gait.Move_side('l')
     time.sleep(0.3)
 gait.move_2_legs(0,3,'l',90)
-
-for i in range(25):
-    gait.onestepcreeping('f',120)
 
 
 

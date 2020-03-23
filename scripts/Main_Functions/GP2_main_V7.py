@@ -32,14 +32,15 @@ for i in range(angles_handler.shape[0]):
 
 
 
+for i in range(25):
+    gait.onestepcreeping('f',120)
 
 for i in range(10):
     gait.Move_side('l')
     time.sleep(0.3)
 gait.move_2_legs(0,3,'l',90)
 
-for i in range(25):
-    gait.onestepcreeping('f',120)
+
 
 # for i in range(10):
 #     gait.One_Trot('f',120)

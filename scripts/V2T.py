@@ -8,7 +8,7 @@ import GP2_Vrep_V3 as v
 #ADDED VREP Iinit in one function
 counter=0
 testing=False
-printing=Falseq
+printing=False
 if not testing :
 	v.vrep_init(19999)
 def is_number(n):

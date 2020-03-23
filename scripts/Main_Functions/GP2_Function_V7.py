@@ -441,6 +441,8 @@ def trot2(leg,direction,distance):
         time.sleep(delay*8)
 
 
+
+
 def generalbasemover_modifed(leg,direction,distance):  # moves base with same length as stride
     if direction == 'r':
         sign = -1
