@@ -10,6 +10,7 @@ from itertools import chain
 intial_name = ['ab3', 'bc3', 'cd3', 'ab4', 'bc4', 'cd4', 'ab1', 'bc1', 'cd1', 'ab2', 'bc2', 'cd2']
 legspos2cg=[]
 legspos2joint=[]
+alldata=[]
 flag=True
 Fwd_node=None
 flatten_list=None
@@ -21,6 +22,7 @@ def fwd_kin(data):
     global flag
     global legspos2cg
     global legspos2joint
+    global all_data
     global Fwd_node
     global flatten_list
     global onetime
@@ -40,6 +42,9 @@ def fwd_kin(data):
     #print('pos2joint is'+str(pos2joint))
     #legspos2cg.append(pos2cg)
     legspos2joint=list(chain.from_iterable(pos2joint))
+    legspos2cg=list(chain.from_iterable(pos2cg))
+    all_data=legspos2joint+legspos2cg
+    #print(all_data)
     #print('pos2joint flat is'+str(legspos2joint))
     # if onetime:
     #     print('begin')
@@ -49,6 +54,6 @@ def fwd_kin(data):
        
 fwd_kin=make.ros('b','fwd_kin',['fwd','getter'],fwd_kin)
 while not rospy.is_shutdown():
-    fwd_kin.ros_publish(legspos2joint)
+    fwd_kin.ros_publish(all_data)
     
     

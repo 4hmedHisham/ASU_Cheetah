@@ -13,6 +13,7 @@ print(platform.python_version())
 from timeit import default_timer  as timer
 
 
+
 #FROM WINDOWS TO GET BA2A
 
 #Commit2From the deletedpart of a line
@@ -271,12 +272,70 @@ def get_vel(getangles):
         # angels.append(ang)
     
     return vel
+def imu_read_firsttime():
+    error,x=sim.simxGetFloatSignal(0,'accelerometerX',sim.simx_opmode_buffer)
+    while(error!=sim.simx_return_ok):
+        error,x=sim.simxGetFloatSignal(0,'accelerometerX',sim.simx_opmode_streaming)
+    print("LINEAR X IS ")
+    print(x)
+    error2,y=sim.simxGetFloatSignal(0,'accelerometerY',sim.simx_opmode_buffer)
+    while(error2!=sim.simx_return_ok):
+        error2,y=sim.simxGetFloatSignal(0,'accelerometerY',sim.simx_opmode_streaming)
+    print("LINEAR Y IS ")
+    print(y)
+    error3,z=sim.simxGetFloatSignal(0,'accelerometerZ',sim.simx_opmode_buffer)
+    while(error3!=sim.simx_return_ok):
+        error3,z=sim.simxGetFloatSignal(0,'accelerometerZ',sim.simx_opmode_streaming)
+    print("LINEAR Z IS ")
+    print(z)
+
+def imu_read():
+    error=1
+    error2=1
+    error3=1
+    while(error!=0):
+        error,x=sim.simxGetFloatSignal(0,'accelerometerX',sim.simx_opmode_streaming)
+    while(error2!=0):
+        error2,y=sim.simxGetFloatSignal(0,'accelerometerY',sim.simx_opmode_streaming)
+    while(error3!=0):
+        error3,z=sim.simxGetFloatSignal(0,'accelerometerZ',sim.simx_opmode_streaming)
+    return [x,y,z]
+def gyro_read_firsttime():
+    error,x=sim.simxGetFloatSignal(0,'gyroX',sim.simx_opmode_buffer)
+    while(error!=sim.simx_return_ok):
+        error,x=sim.simxGetFloatSignal(0,'gyroX',sim.simx_opmode_streaming)
+    print("Angular X IS ") 
+    print(x)
+    error2,y=sim.simxGetFloatSignal(0,'gyroY',sim.simx_opmode_buffer)
+    while(error2!=sim.simx_return_ok):
+        error2,y=sim.simxGetFloatSignal(0,'gyroY',sim.simx_opmode_streaming)
+    print("Angular Y IS ")
+    print(y)
+    error3,z=sim.simxGetFloatSignal(0,'gyroZ',sim.simx_opmode_buffer)
+    while(error3!=sim.simx_return_ok):
+        error3,z=sim.simxGetFloatSignal(0,'gyroZ',sim.simx_opmode_streaming)
+    print("Angular Z IS ")
+    print(z)
+
+def gyro_read():
+    error=1
+    error2=1
+    error3=1
+    while(error!=0):
+        error,x=sim.simxGetFloatSignal(0,'gyroX',sim.simx_opmode_streaming)
+    while(error2!=0):
+        error2,y=sim.simxGetFloatSignal(0,'gyroY',sim.simx_opmode_streaming)
+    while(error3!=0):
+        error3,z=sim.simxGetFloatSignal(0,'gyroZ',sim.simx_opmode_streaming)
+    return [x,y,z]
 def vrep_init(port):
     vrepInterface(port)
     time.sleep(0.5)
     get_angles_firsttime()
     get_torques_firsttime()
     get_vel_firsttime()
+    gyro_read_firsttime()
+    imu_read_firsttime()
     time.sleep(2)
     print('Vrep Up and Running')
 # vrepInterface(19999)

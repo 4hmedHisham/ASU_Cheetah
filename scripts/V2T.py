@@ -8,7 +8,7 @@ import GP2_Vrep_V3 as v
 #ADDED VREP Iinit in one function
 counter=0
 testing=False
-printing=Falseq
+printing=False
 if not testing :
 	v.vrep_init(19999)
 def is_number(n):
@@ -77,6 +77,13 @@ def start_vrep_node():
 				vrep_param.append(v.get_torque(i))
 			for i in range(12):
 				vrep_param.append(v.get_vel(i))
+			linear_accs=v.imu_read()
+			anglular_accs=v.gyro_read()
+			for linear_acc in linear_accs:
+				vrep_param.append(linear_acc)
+			for angular_acc in anglular_accs :
+				vrep_param.append(angular_acc)
+			
 
 
 				
