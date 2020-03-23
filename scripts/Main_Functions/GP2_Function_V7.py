@@ -15,8 +15,10 @@ import math
 import sys
 sys.path.insert(0, '/home/ahmed/catkin_ws/src/isolation/scripts')
 import R2A as ros
+#import GP2_Vrep_V3 as ros for direct vrep mode
 
 print(sys.path)
+print("SUCcESSS")
 #Parameters:
 clientID=0
 l1 =245
