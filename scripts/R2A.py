@@ -31,8 +31,7 @@ def callback(data):
 def ros_init():
 	global pub
 	global sub
-	rospy.Subscriber('getter',Float32MultiArray,callback)	
-	
+	rospy.Subscriber('getter',Float32MultiArray,callback)
 	pub = rospy.Publisher('setter', String, queue_size=10)
 	time.sleep(2)
 	rospy.init_node('algorithm', anonymous=True)
@@ -40,7 +39,6 @@ def ros_init():
 	print('Started')
 
 def get_angles(pos):
-
 	global params
 	if pos=='ab3' or pos==0 :
 		ang=params[0]
@@ -67,6 +65,8 @@ def get_angles(pos):
 	if pos=='cd2' or pos==11 :
 		ang=params[11]
 	return ang
+
+
 def get_torques(pos):
 	global params
 	if pos=='ab3' or pos==0 :
