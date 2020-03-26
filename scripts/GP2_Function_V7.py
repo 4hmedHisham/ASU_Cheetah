@@ -19,7 +19,7 @@ l1 =245
 l2 =208.4
 a = 112.75
 initalheight=390
-stride=150
+stride=120
 plus2pi=False
 stability=True
 movement=True
@@ -41,8 +41,8 @@ def getjointanglesfromvrep():#transverse,hips,knees
     return transverseangles, hipangles, kneeangles
 
 def GetEndEffectorPos(transverseangles, hipangles, kneeangles):  # Gets End effectors Positions
-    leg_pos_x = [254, 254, -258, -258]  # the endeffector position relative to the cg in the x-axis
-    leg_pos_y = [116, -116, -116, +116]  # the endeffector position relative to the cg in the y-axis
+    leg_pos_x = [300.78, 300.78, -300.78, -300.78]  # the endeffector position relative to the cg in the x-axis
+    leg_pos_y = [123.5, -123.5, -123.5, 123.5]  # the endeffector position relative to the cg in the y-axis
     # This array will have the pos. of the 4 endeffector
     pos2cg = np.zeros((4, 3))
     pos2joint = np.zeros((4, 3))
@@ -58,25 +58,28 @@ def GetEndEffectorPos(transverseangles, hipangles, kneeangles):  # Gets End effe
         pos2joint[i, 2] = z  # Height  (z-axis)
 
     return pos2cg, pos2joint
+
 def Move_side(direction):
     if direction == 'r':
         x = [2,3,1,4]
     if direction == 'l':
         x = [1,4,2,3]
 
+    time.sleep(0.5)
     delay = Move_Leg(x[0],direction,stride)
+    time.sleep(0.5)
     delay = Move_Leg(x[1],direction,stride)
-    time.sleep(0.2)
-    Body_mover(direction, delay,stride)
-    time.sleep(0.2)
+    time.sleep(0.5)
+    Body_mover(direction, 250*delay,stride)
+    time.sleep(0.5)
     delay = Move_Leg(x[2],direction,stride)
+    time.sleep(0.5)
     delay = Move_Leg(x[3],direction,stride)
 
     #print("finish")
 
 def Rotate(leg):
     Move_Leg_V2(1,50,-50,initalheight)
-
 
 
 def Move_Leg(leg,direction,distance):
@@ -108,8 +111,7 @@ def Move_Leg_V2(leg,x_target,y_target,z_target):
     return delay
 
 
-def Leg_Ellipse_Trajectory_V2(x_target,y_target,z_target, Transverse_Angle, hipangle, kneeangle, xt,
-                           yt):
+def Leg_Ellipse_Trajectory_V2(x_target,y_target,z_target, Transverse_Angle, hipangle, kneeangle, xt,yt):
 
     # H = 100 #height
     T = 0.001  # total time for each cycle
@@ -177,6 +179,7 @@ def Leg_Ellipse_Trajectory_V2(x_target,y_target,z_target, Transverse_Angle, hipa
     return theta1, theta2, theta3, St
 
 
+
 def Leg_Ellipse_Trajectory(intial_leg_height,s,direction,Transverse_Angle,hipangle,kneeangle,xt,yt):#Gets angles for leg trajectory  xc stands for current x
 
     #H = 100 #height
@@ -186,8 +189,8 @@ def Leg_Ellipse_Trajectory(intial_leg_height,s,direction,Transverse_Angle,hipang
     stp=100#100 #number of steps even number for some reason
     St=T/stp #sample time
     xnew = np.zeros([stp,1], dtype=float)
-    t=0;
-    i=0;
+    t=0
+    i=0
 
     if direction == 'r':
         initial_distance = yt
@@ -241,7 +244,7 @@ def Leg_Ellipse_Trajectory(intial_leg_height,s,direction,Transverse_Angle,hipang
     theta2=np.zeros([stp,1], dtype=float)
     theta3 = np.zeros([stp, 1], dtype=float)
  
-    i=0;
+    i=0
     Current_Transverse = Transverse_Angle
     Current_Hip = hipangle
     Current_Knee = kneeangle
@@ -290,8 +293,7 @@ def generalbasemover(direction,stride): #moves base with same length as stride
     numofsteps=60
     initial_hip = hips
     initial_knee= knees
-#    torquehip=np.zeros(numofsteps)
-#    torqueknee=np.zeros(numofsteps)
+
     for i in range(numofsteps):  #moves the base
         iteration.append(i)
         for ii in range(4):#gets required angles for this step-size    
@@ -383,7 +385,21 @@ def Body_mover(direction,delay,distance):  # moves base with same length as stri
 
         time.sleep(delay)
 
-
+def move_2_legs(leg1,leg2,direction,distance):
+    transverses , hips, knees = getjointanglesfromvrep()
+    legspos2cg,legspos2joint=GetEndEffectorPos(transverses,hips,knees)#effector pos with respect to cg got correct angles
+    trans1, hip1, knee1, delay = Leg_Ellipse_Trajectory(initalheight, distance,direction, transverses[leg1], hips[leg1], knees[leg1]
+                                         ,legspos2joint[leg1,0],legspos2joint[leg1,1])
+    trans2, hip2, knee2, delay = Leg_Ellipse_Trajectory(initalheight, distance,direction, transverses[leg2], hips[leg2], knees[leg2]
+                                         ,legspos2joint[leg2,0],legspos2joint[leg2,1])
+    for i in range(stp):
+        v.set_angle((0 + 3 * (leg1)), trans1[i])
+        v.set_angle((1 + 3 * (leg1)), hip1[i])
+        v.set_angle((2 + 3 * (leg1)), knee1[i])
+        v.set_angle((0 + 3 * (leg2)), trans2[i])
+        v.set_angle((1 + 3 * (leg2)), hip2[i])
+        v.set_angle((2 + 3 * (leg2)), knee2[i])
+        time.sleep(delay*2)
 def trot2(leg,direction,distance):
     transverses, hips, knees = getjointanglesfromvrep()
     legspos2cg, legspos2joint = GetEndEffectorPos(transverses, hips,knees)
@@ -460,21 +476,21 @@ def generalbasemover_modifed(leg,direction,distance):  # moves base with same le
     return trans,hip,knee
 
 def onestepcreeping(direction,distance):
-    time.sleep(0.8)
-    delay = Move_Leg(3,direction,distance)
+    time.sleep(0.4)
+    delay = Move_Leg(1,direction,distance)
     #torquehip, torqueknee, iteration = move_leg(1, 'f')
-    time.sleep(0.8)
-    delay = Move_Leg(4, direction, distance)
+    time.sleep(0.4)
+    delay = Move_Leg(2, direction, distance)
     #torquehip, torqueknee, iteration = move_leg(2, 'f')
     #  gait.plot_torque(torquehip, torqueknee, iteration)
-    time.sleep(0.8)
-    Body_mover(direction,delay,distance)
-    time.sleep(0.8)
-    delay = Move_Leg(1, direction, distance)
+    time.sleep(0.4)
+    Body_mover(direction,delay*500,distance)
+    time.sleep(0.4)
+    delay = Move_Leg(3 ,direction, distance)
     #torquehip, torqueknee, iteration = move_leg(3, 'f')
     #   gait.plot_torque(torquehip, torqueknee, iteration)
-    time.sleep(0.8)
-    delay = Move_Leg(2, direction, distance)
+    time.sleep(0.4)
+    delay = Move_Leg(4, direction, distance)
     #torquehip, torqueknee, iteration = move_leg(4, 'f')
 
 def One_Trot(direction,distance):
@@ -516,7 +532,7 @@ def trueangle(two_angles,current_angle):
         return two_angles[0]
     else:
         return two_angles[1]
-    
+        
 def plot_torque(hip , knee , iteration):
     
     plt.figure()    
@@ -544,8 +560,8 @@ def plot_torque(hip , knee , iteration):
 def inverse_kinematics_3d_v6(px,py,pz,ptran,phip,pknee):
     two_angles = np.array((2, 1))
     u = np.sqrt((- a**2 + py**2 + pz**2))
-    x = -2*np.arctan((pz - u)/(a - py))
-    y = -2*np.arctan((pz + u)/(a - py))
+    x = 2*np.arctan((pz - u)/(a + py))
+    y = 2*np.arctan((pz + u)/(a + py))
 
     if np.abs(x-ptran) < np.abs(y-ptran):
         theta1 = x
@@ -566,6 +582,7 @@ def inverse_kinematics_3d_v6(px,py,pz,ptran,phip,pknee):
     return theta1,theta2,theta3
 
 
+
 def forward_kinematics_V2( theta1 , theta2 , theta3):
     t = theta2 + theta3
     px = np.cos(theta1)*(l2*np.cos(t) + l1*np.cos(theta2)) + a*np.sin(theta1)
@@ -576,10 +593,11 @@ def forward_kinematics_V2( theta1 , theta2 , theta3):
 
 def forward_kinematics_V3( theta1 , theta2 , theta3):
     t = theta2 + theta3
-    pz = cos(theta1)*(l2*sin(t) + l1*sin(theta2)) - a*sin(theta1)
-    py = -sin(theta1)*(l2*sin(t) + l1*sin(theta2)) - a*cos(theta1)
+    pz = cos(theta1)*(l2*sin(t) + l1*sin(theta2)) + a*sin(theta1)
+    py = -sin(theta1)*(l2*sin(t) + l1*sin(theta2)) + a*cos(theta1)
     px = l2*np.cos(t) + l1*np.cos(theta2)
     return px,py,pz
+
 
 
 l1 =244.59

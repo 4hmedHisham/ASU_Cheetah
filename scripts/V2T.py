@@ -95,7 +95,9 @@ def start_vrep_node():
 				i=i+1
 
 		total.data=vrep_param
+		print(total.data)
 		pub.publish(total)
+
 		rate.sleep()
 if __name__ == '__main__':
 	try:

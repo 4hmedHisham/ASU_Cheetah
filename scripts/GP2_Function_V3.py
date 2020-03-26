@@ -338,6 +338,17 @@ def trot2(seq):
         ros.set_angle((2 + 3 * (leg_for_base[1])), knee4[i])
         time.sleep(delay2)
 
+def trot_V3(seq , distance , height):
+    height = initalheight
+    transverses , hips, knees = getjointanglesfromvrep()
+    legspos2cg,legspos2joint=GetEndEffectorPos(transverses,hips,knees)
+    if seq == 1:
+        legs = [1,3]
+    else:
+        legs = [2,4]
+
+    return legspos2joint , legs , distance , height
+    
 
 def generalbasemover_modifed(leg):  # moves base with same length as stride
 
