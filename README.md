@@ -11,3 +11,7 @@ TO Start the project
 4-Open fwd_kin_node.py
 
 5-Open Main_v3.py or any file we want to test
+
+Notes:
+
+Angle Arrange :['ab3', 'bc3', 'cd3', 'ab4', 'bc4', 'cd4', 'ab1', 'bc1', 'cd1', 'ab2', 'bc2', 'cd2']
