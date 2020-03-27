@@ -25,7 +25,7 @@ l1 =245
 l2 =208.4
 a = 112.75
 initalheight=390
-stride=80
+stride=120
 plus2pi=False
 stability=True
 movement=True
@@ -371,12 +371,15 @@ def Body_mover(direction,delay,distance):  # moves base with same length as stri
     initial_transverse = transverses
     initial_hip = hips
     initial_knee = knees
-
+    k = []
+    ratio = float(distance)/numofsteps
     for i in range(numofsteps):  # moves the base
+        
         for ii in range(4):  # gets required angles for this step-size
             transverse[ii], hip[ii], knee[ii] = inverse_kinematics_3d_v6(
-                (legspos2joint[ii,0] - sign*x*(i + 1)*(distance/ numofsteps)), (legspos2joint[ii, 1] - sign*y*(i + 1)*(distance/ numofsteps)), legspos2joint[ii, 2],
+                (legspos2joint[ii,0] - sign*x*(i + 1)*(ratio)), (legspos2joint[ii, 1] - sign*y*(i + 1)*(distance/ numofsteps)), legspos2joint[ii, 2],
                 initial_transverse[ii], initial_hip[ii], initial_knee[ii])
+        #k.append(legspos2joint[0,0] - sign*x*(i + 1)*(1.2))
         initial_transverse = transverse
         initial_hip = hip
         initial_knee = knee
