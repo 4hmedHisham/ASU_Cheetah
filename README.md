@@ -15,3 +15,13 @@ TO Start the project
 Notes:
 
 Angles order :['ab3', 'bc3', 'cd3', 'ab4', 'bc4', 'cd4', 'ab1', 'bc1', 'cd1', 'ab2', 'bc2', 'cd2']
+
+ToDo:
+H :Adding approxomation to 5 decimail places
+  : Check For loops to add the +1
+  : Check the delay at CoppeliaSim Forums
+Senary: Check Weights
+
+Khaled: Add His Script
+
+
