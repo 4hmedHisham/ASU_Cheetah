@@ -18,6 +18,8 @@ import GP2_Vrep_V3 as v
 gait.ros.ros_init()
 time.sleep(2)
 
+a,b,c = gait.inverse_kinematics_3d_v6(0,gait.a,-gait.initalheight,0,-0.99,1.29)
+
 for i in range(25):
     gait.onestepcreeping('f',120)
 

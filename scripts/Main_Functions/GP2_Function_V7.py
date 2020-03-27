@@ -389,6 +389,7 @@ def Body_mover(direction,delay,distance):  # moves base with same length as stri
 
         time.sleep(delay)
 
+    print("finish")
 def move_2_legs(leg1,leg2,direction,distance):
     transverses , hips, knees = getjointanglesfromvrep()
     legspos2cg,legspos2joint=GetEndEffectorPos(transverses,hips,knees)#effector pos with respect to cg got correct angles
@@ -629,7 +630,7 @@ iteration = 0
 #
 
 # x,y,z = forward_kinematics_V2(0,1,1.3)
-q,w,r= inverse_kinematics_3d_v6(0,a,-initalheight,0,-0.99,1.29)
+q,w,r= inverse_kinematics_3d_v6(0,a,initalheight,0,-0.99,1.29)
 # x = 120
 # y = 50
 # z = 100
