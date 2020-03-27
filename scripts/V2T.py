@@ -95,10 +95,49 @@ def start_vrep_node():
 				i=i+1
 
 		total.data=vrep_param
-		print(total.data)
+		#print(total.data)
 		pub.publish(total)
 
 		rate.sleep()
+
+def set_vrep_torques(data):
+	switch=False
+	joint=[]
+	ang=[]
+	joint_and_ang=data.data
+	if printing == True:
+		print('data is '+joint_and_ang)
+	for letter in joint_and_ang:
+		if switch ==True:
+			ang.append(letter)
+		if (letter != ' ') and (switch == False) :
+			joint.append(letter)
+		else:
+			switch=True
+	ang=''.join(ang)
+	if printing == True:
+		print("Torque IS ")
+		print(ang)
+		print("Joint Is ")
+		print("joint in strings should be ")
+		print(''.join(joint))
+	value=is_number(''.join(joint))
+	if printing == True:
+		print(value)
+	if value:
+		joint=int(''.join(joint))
+		print(joint)
+	else:
+		joint=''.join(joint)
+		print(joint)
+	angle=float(ang)
+	
+	print(angle)
+	v.set_torque(joint,angle)
+	if printing == True:
+		print('Recieved ')
+	# print(ang)
+
 if __name__ == '__main__':
 	try:
 		

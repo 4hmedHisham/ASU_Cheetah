@@ -15,6 +15,8 @@ from timeit import default_timer  as timer
 
 
 #FROM WINDOWS TO GET BA2A
+sim.sim_boolparam_realtime_simulation
+sim.wait
 
 #Commit2From the deletedpart of a line
 #COmmit1
@@ -197,6 +199,51 @@ def set_angle(setangle, angle):
     print("TIMER IS ")
     print(end-start)
 
+def set_torque(set_torque, torque):
+    error=9
+    start= timer()
+  
+    if set_torque == 'ab3' or set_torque == 0:
+        while(error!=0):     
+            error=sim.simxSetJointForce(clientID, int(angles_handler[0]), torque, sim.simx_opmode_streaming)
+    elif set_torque == 'bc3' or set_torque == 1:
+        while(error!=0):
+            error=sim.simxSetJointForce(clientID, int(angles_handler[1]), torque, sim.simx_opmode_streaming)
+        
+    elif set_torque == 'cd3' or set_torque == 2:
+        while(error!=0):
+            error=sim.simxSetJointForce(clientID, int(angles_handler[2]), torque, sim.simx_opmode_streaming)
+    elif set_torque == 'ab4' or set_torque == 3:
+        while(error!=0):
+            error=sim.simxSetJointForce(clientID, int(angles_handler[3]), torque, sim.simx_opmode_streaming)
+    elif set_torque == 'bc4' or set_torque == 4:
+        while(error!=0):
+            error=sim.simxSetJointForce(clientID, int(angles_handler[4]), torque, sim.simx_opmode_streaming)
+    elif set_torque == 'cd4' or set_torque == 5:
+        while(error!=0):
+            error=sim.simxSetJointForce(clientID, int(angles_handler[5]), torque, sim.simx_opmode_streaming)
+    elif set_torque == 'ab1' or set_torque == 6:
+        while(error!=0):
+            error=sim.simxSetJointForce(clientID, int(angles_handler[6]), torque, sim.simx_opmode_streaming)
+    elif set_torque == 'bc1' or set_torque == 7:
+        while(error!=0):
+            error=sim.simxSetJointForce(clientID, int(angles_handler[7]), torque, sim.simx_opmode_streaming)
+    elif set_torque == 'cd1' or set_torque == 8:
+        while(error!=0):
+            error=sim.simxSetJointForce(clientID, int(angles_handler[8]), torque, sim.simx_opmode_streaming)
+            #print('another error is '+str(error))
+    elif set_torque == 'ab2' or set_torque == 9:
+        while(error!=0):
+            error=sim.simxSetJointForce(clientID, int(angles_handler[9]), torque, sim.simx_opmode_streaming)
+    elif set_torque == 'bc2' or set_torque == 10:
+        while(error!=0):
+            error=sim.simxSetJointForce(clientID, int(angles_handler[10]), torque, sim.simx_opmode_streaming)
+    elif set_torque == 'cd2' or set_torque == 11:
+        while(error!=0):
+            error=sim.simxSetJointForce(clientID, int(angles_handler[11]), torque, sim.simx_opmode_streaming)
+    end = timer()
+    print("TIMER IS ")
+    print(end-start)
 
 def vrepInterface(port):
     global angles_handler
