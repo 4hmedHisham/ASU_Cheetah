@@ -2,6 +2,8 @@
 
 TO Start the project 
 
+0-Open CoppeliaSim by typing ./coppeliaSim.sh in coppeliasim's directory
+
 1-Open Vrep Scene (V8.ttt)
 
 2-Open roscore
