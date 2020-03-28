@@ -79,6 +79,7 @@ def Move_side(direction):
     time.sleep(0.5)
     delay = Move_Leg(x[2],direction,stride)
     time.sleep(0.5)
+
     delay = Move_Leg(x[3],direction,stride)
 
     #print("finish")
@@ -541,7 +542,37 @@ def trot2(leg,direction,distance):
         ros.set_angle((2 + 3 * (leg_for_base[1])), knee4[i])
         time.sleep(delay*8)
 
-
+def Dancing():
+    Body_mover('f',0.005,110)
+    time.sleep(0.5)
+    Body_mover('b',0.005,220)
+    time.sleep(0.5)
+    Body_mover('f',0.005,110)
+    time.sleep(0.5)
+    Body_mover_To_point(-80, gait.a - 80 , -390 , 0.01)
+    time.sleep(0.8)
+    Body_mover_To_point(80, gait.a +80  , -390 , 0.01)
+    time.sleep(0.8)
+    gBody_mover_To_point(-80, gait.a + 80 , -390 , 0.01)
+    time.sleep(0.8)
+    Body_mover_To_point( 40, gait.a - 80 , -390 , 0.01)
+    time.sleep(0.8)
+    Body_mover_To_point( 0, gait.a  , -390 , 0.01)
+    time.sleep(0.8)
+    Body_mover('l',0.005,90)
+    time.sleep(0.5)
+    Body_mover('r',0.005,180)
+    time.sleep(0.5)
+    gBody_mover('l',0.005,90)
+    time.sleep(0.5)
+    Body_mover('d',0.02,200)
+    time.sleep(0.5)
+    Body_mover('u',0.02,200)
+    time.sleep(0.5)
+    Body_mover('d',0.02,200)
+    time.sleep(0.5)
+    Body_mover('u',0.02,200)
+    time.sleep(0.5)
 
 
 def generalbasemover_modifed(leg,direction,distance):  # moves base with same length as stride
@@ -585,19 +616,22 @@ def generalbasemover_modifed(leg,direction,distance):  # moves base with same le
 
 def onestepcreeping(direction,distance):
     if direction == 'f':
-        x = [1,2,3,4]
+        x = [1,2,4,3]
     if direction == 'b':
         x = [4,3,2,1]
-    time.sleep(0.4)
+    time.sleep(0.3)
     delay = Move_Leg(x[0],direction,distance)
-    time.sleep(0.4)
+    time.sleep(0.3)
     delay = Move_Leg(x[1], direction, distance)
-    time.sleep(0.4)
-    Body_mover(direction,delay*250,distance)
-    time.sleep(0.4)
+    time.sleep(0.3)
+    #Body_mover(direction,delay*250,distance)
+    Body_mover_To_point(-40, a - 40 , -initalheight , 0.0005)
+    time.sleep(0.3)
     delay = Move_Leg(x[2] ,direction, distance)
-    time.sleep(0.4)
+    time.sleep(0.3)
     delay = Move_Leg(x[3], direction, distance)
+    time.sleep(0.3)
+    Body_mover_To_point(0,a , -initalheight , 0.0005)
 
 
 def One_Trot(direction,distance):
@@ -607,9 +641,9 @@ def One_Trot(direction,distance):
     trot2(2,direction,distance)
 
 
-hipinit=-2.01842
-kneeinit=0.980479
-trinit=0       
+# hipinit=-2.01842
+# kneeinit=0.980479
+# trinit=0       
    
 def asin2(x):
     angle = np.arcsin(x)
@@ -729,6 +763,7 @@ iteration = 0
 #
 
 # x,y,z = forward_kinematics_V2(0,1,1.3)
+
 
 
 # x = 120
