@@ -15,8 +15,6 @@ from timeit import default_timer  as timer
 
 
 #FROM WINDOWS TO GET BA2A
-sim.sim_boolparam_realtime_simulation
-sim.wait
 
 #Commit2From the deletedpart of a line
 #COmmit1

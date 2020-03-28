@@ -18,11 +18,37 @@ import GP2_Vrep_V3 as v
 gait.ros.ros_init()
 time.sleep(2)
 
-a,b,c = gait.inverse_kinematics_3d_v6(0,gait.a,-gait.initalheight,0,-0.99,1.29)
 
-for i in range(25):
-    gait.onestepcreeping('f',120)
 
+
+
+
+
+#gait.Body_mover_To_point(40,gait.a,-200,0.1 )
+for i in range(12):
+    gait.onestepcreeping('b',120)
+    time.sleep(0.5)
+
+# gait.Body_mover('f',0.01,90)
+# time.sleep(0.5)
+# gait.Body_mover('b',0.01,90)
+# time.sleep(0.5)
+# gait.Body_mover('l',0.005,90)
+# time.sleep(0.5)
+# gait.Body_mover('r',0.005,180)
+# time.sleep(0.5)
+# gait.Body_mover('l',0.005,90)
+# time.sleep(0.5)
+# gait.Body_mover('d',0.02,200)
+# time.sleep(0.5)
+# gait.Body_mover('u',0.02,200)
+# time.sleep(0.5)
+
+
+time.sleep(1)
+gait.Body_mover('d',0.02,200)
+time.sleep(2)
+gait.Body_mover('u',0.02,200)
 
 for i in range(10):
     gait.Move_side('l')
