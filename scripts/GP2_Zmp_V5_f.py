@@ -40,6 +40,7 @@ steps = 20 # number of steps 'even'
 initial_distance = 0 # along x
 
 
+
 x_fixed = np.zeros([steps, 1], dtype=float)
 y_fixed = np.zeros([steps, 1], dtype=float)
 
@@ -48,6 +49,7 @@ stride_f = 150
 h_f = 100
 cycle_time_f = 0.3
 initial_distance_f = 0
+sample_time_f = None
 
 #initial position relative to hip and cg
 leg1_initial_hip=[]
@@ -63,6 +65,10 @@ leg4_initial_cg=[]
 #Subscribed data
 lin_acc=[]
 Ang_acc=[]
+lin_acc_prev=[]
+Ang_acc_prev=[]
+linear_acc_threshold
+angular_acc_threshold
 leg_pos3_hip=[] 
 leg_pos4_hip=[]
 leg_pos1_hip=[]
@@ -80,8 +86,25 @@ def imudata(data):
     Array = numpy.array(data.data)
     global lin_acc
     global Ang_acc
-    lin_acc = Array[36:39]
+    global lin_acc_prev
+    global Ang_acc_prev
+    global linear_acc_threshold
+    global angular_acc_threshold
+    
+    linear_acc_threshold = 10
+    angular_acc_threshold = 10
+    
+    lin_acc_prev=lin_acc    ######save previous imu readings
+    Ang_acc_prev=Ang_acc
+    
+    lin_acc = Array[36:39]  ######get new readings
     Ang_acc = Array[39:42]
+    
+    for i in range (lin_acc)   ###### thresholding  between previous and new readings
+        if ((np.absolute(lin_acc[i]-lin_acc_prev[i]))>linear_acc_threshold) or ((np.absolute(Ang_acc[i]-Ang_acc_prev[i]))> angular_acc_threshold):
+            z = 1 
+        else:
+            z = 0
 
 
 #########################################################################################################
@@ -172,7 +195,8 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
     global steps
     global initial_distance
     global initial_distance_f
-    global z 
+    global z
+    global sample_time_f
 
     global leg_pos3_hip
     global leg_pos4_hip
@@ -186,17 +210,21 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
     y_current = 0
     x_current_f =0
     indx_fix = 0
+    t_left = 0
+    current = 0
+    last_fix = 0
     sample_time = cycle_time / steps  # sample time
+    sample_time_f = cycle_time_f / steps  # sample time
 
 
-    if leg_no==1 or leg_no==3:    
+    if leg_no == 1 or leg_no == 3:    
 
         xnew = np.zeros([steps, 1], dtype=float)
         t = 0;
         i = 0;
         initial_distance_f = legfix_initial_hip[0]
 
-        for t in np.arange(0, cycle_time_f, sample_time):
+        for t in np.arange(0, cycle_time_f, sample_time_f):
             xnew[i] = (stride_f * ((t / cycle_time_f) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time_f)))) - (stride_f / 2) + stride_f / 2) + initial_distance_f
             i = i + 1;
         xnew = xnew
@@ -207,12 +235,12 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
         ynew = np.zeros([steps, 1], dtype=float)
 
         # First part of Ynew in piecewise
-        for t in np.arange(0, cycle_time_f / 2, sample_time):
+        for t in np.arange(0, cycle_time_f / 2, sample_time_f):
             ynew[i] = (-(h_f / (2 * np.pi)) * np.sin(((4 * np.pi) / cycle_time_f) * t) + ((2 * h_f * t) / cycle_time_f) - (h_f / 2)) + (h_f / 2) - initial_leg_height_f
             i = i + 1;
 
         n = (cycle_time_f / 2)
-        for t in np.arange(n, cycle_time_f, sample_time):
+        for t in np.arange(n, cycle_time_f, sample_time_f):
             ynew[i] = (-(h_f / (2 * np.pi)) * np.sin(4 * np.pi - (((4 * np.pi) / cycle_time_f) * t)) - ((2 * h_f * t) / cycle_time_f) + ((3 * h_f) / 2)) + (h_f / 2) - initial_leg_height_f
             i = i + 1
         ynew = ynew
@@ -220,50 +248,60 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
         x_fixed = xnew
         y_fixed = ynew
 
-    elif leg_no==2 or leg_no==4:
-
-        
+    elif leg_no == 2 or leg_no == 4:
+     
         xnew = np.zeros([steps, 1], dtype=float)
         ynew = np.zeros([steps, 1], dtype=float)
         t = 0;
         i = 0;
         initial_distance=legvar_initial_hip[0]
 
-        for t in np.arange(0, cycle_time, sample_time):
+        while(1):
 
-            xnew[i] = (stride * ((t / cycle_time) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time)))) - (stride / 2) + stride / 2) + initial_distance
-            
-            if t < (cycle_time / 2):
+            current = millis()   #absolute
 
-                ynew[i] = (-(h / (2 * np.pi)) * np.sin(((4 * np.pi) / cycle_time) * t) + ((2 * h * t) / cycle_time) - (h / 2)) + (h / 2) - initial_leg_height
+            if ((current - last_fix) > sample_time_f ) and i < steps         
+                last_fix = current
+                xnew[i] = (stride * ((t / cycle_time) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time)))) - (stride / 2) + stride / 2) + initial_distance
+                
+                if t < (cycle_time / 2):
 
-            else:
-                ynew[i] = (-(h / (2 * np.pi)) * np.sin(4 * np.pi - (((4 * np.pi) / cycle_time) * t)) - ((2 * h * t) / cycle_time) + ((3 * h) / 2)) + (h / 2) - initial_leg_height
+                    ynew[i] = (-(h / (2 * np.pi)) * np.sin(((4 * np.pi) / cycle_time) * t) + ((2 * h * t) / cycle_time) - (h / 2)) + (h / 2) - initial_leg_height
 
-            rospy.loginfo(x_fixed[i])        #Publish Fixed leg point
-            pub.publish(x_fixed[i])
-            rospy.loginfo(y_fixed[i])
-            pub.publish(y_fixed[i])            
+                else:
+                    ynew[i] = (-(h / (2 * np.pi)) * np.sin(4 * np.pi - (((4 * np.pi) / cycle_time) * t)) - ((2 * h * t) / cycle_time) + ((3 * h) / 2)) + (h / 2) - initial_leg_height
 
-            rospy.loginfo(xnew[i])           #Publish Variable leg point  
-            pub.publish(xnew[i])
-            rospy.loginfo(ynew[i])
-            pub.publish(ynew[i])
+                
+                pub = []
+                pub.append(x_fixed[i])
+                pub.append(y_fixed[i])
 
-            if(z == 1):
-                x_current = xnew[i]
-                y_current = ynew[i]
-                x_current_f = x_fixed[i]
-                indx_fix = i
-                break
+                rospy.loginfo(pub)        #Publish Fixed leg point
+                pub.publish(pub)
 
-            i = i + 1 
+                rospy.loginfo(xnew[i])           #Publish Variable leg point  
+                pub.publish(xnew[i])
+                rospy.loginfo(ynew[i])
+                pub.publish(ynew[i])
 
+                if(z == 1):
+                    x_current = xnew[i]
+                    y_current = ynew[i]
+                    #x_current_f = x_fixed[i]
+                    t_left = cycle_time_f - t
+                    indx_fix = i+1
+                    break
+
+                i = i + 1
+                t = t + sample_time_f
+
+            if (i == steps):
+                break               
 
         if z == 1:
-            x_moved = legfix_initial_hip[0] - x_current_f
-            t_elabsed = (x_moved/stride_f) * cycle_time_f
-            cycletime_required = (cycle_time_f - t_elabsed)*2
+            #x_moved = legfix_initial_hip[0] - x_current_f
+            #t_elabsed = (x_moved/stride_f) * cycle_time_f
+            cycletime_required = t_left * 2
             legfix_final_cg = np.zeros([2, 1], dtype=float)
             legvar_final_cg = np.zeros([2, 1], dtype=float)           
             legfix_final_cg[0] = legfix_initial_cg[0] + stride_f     # this is coord of the pt at end of traj for fixed leg
@@ -282,10 +320,12 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
 
 
 def trajectory_modification(x_current, y_current, x_target, cycle_time):
+
     global l1
     global l2
     global steps
     global initial_leg_height
+
     stride = (x_target - x_current) * 2
     h = y_current  # maximum height of the trajectory
     x_initial = x_target - stride
@@ -296,23 +336,40 @@ def trajectory_modification(x_current, y_current, x_target, cycle_time):
     ynew = np.zeros([steps/2, 1], dtype=float)
     t = 0;
     i = 0;
+    #i_f= steps/2
     n = (cycle_time / 2)
-    for t in np.arange(n, cycle_time, sample_time):
-        xnew[i] = (stride * ((t / cycle_time) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time)))) - (stride / 2) + stride / 2) + initial_distance
-        ynew[i] = (-(h / (2 * np.pi)) * np.sin(4 * np.pi - (((4 * np.pi) / cycle_time) * t)) - ((2 * h * t) / cycle_time) + ((3 * h) / 2)) + (h / 2) - initial_leg_height
-        
-        rospy.loginfo(x_fixed[indx_fix])        #Publish Fixed leg point
-        pub.publish(x_fixed[indx_fix])          # indx wla indx+1 ?
-        rospy.loginfo(y_fixed[indx_fix])
-        pub.publish(y_fixed[indx_fix])            
+    current = 0
+    last_fix = 0
+    last_var = 0
 
-        rospy.loginfo(xnew[i])                  #Publish Variable leg point  
-        pub.publish(xnew[i])
-        rospy.loginfo(ynew[i])
-        pub.publish(ynew[i])
 
-        indx_fix = indx_fix+1
-        i = i + 1
+    while(1):
+
+        current = millis()   #absolute
+
+        if ((current - last_fix) > sample_time_f ) and indx_fix < steps         #Publish Fixed leg point
+            last_fix = current
+            rospy.loginfo(x_fixed[indx_fix])        
+            pub.publish(x_fixed[indx_fix])          
+            rospy.loginfo(y_fixed[indx_fix])
+            pub.publish(y_fixed[indx_fix])
+            indx_fix = indx_fix + 1
+
+        if ((current - last_var) > sample_time ) and i < steps/2                #Publish Variable leg point
+            last_var = current
+            xnew[i] = (stride * ((t / cycle_time) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time)))) - (stride / 2) + stride / 2) + initial_distance
+            ynew[i] = (-(h / (2 * np.pi)) * np.sin(4 * np.pi - (((4 * np.pi) / cycle_time) * t)) - ((2 * h * t) / cycle_time) + ((3 * h) / 2)) + (h / 2) - initial_leg_height            
+                   
+            rospy.loginfo(xnew[i])                 
+            pub.publish(xnew[i])          
+            rospy.loginfo(ynew[i])
+            pub.publish(ynew[i])
+            i = i + 1
+            t = t + sample_time
+
+        if (indx_fix == steps) and i == steps/2:
+
+            break
 
          
     #return xnew, ynew, stride, h, cycle_time, initial_distance
@@ -332,12 +389,7 @@ def talker():
 
     rate = rospy.Rate(10)  # 10hz
     while not rospy.is_shutdown():
-        # hello_str = "hello world %s" % rospy.get_time()
 
-        if (noBIGCHANGE)
-            z = 0
-        else
-            z = 1
 
         global leg_pos3_hip
         global leg_pos4_hip
