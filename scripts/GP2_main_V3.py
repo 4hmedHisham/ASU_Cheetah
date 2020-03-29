@@ -16,16 +16,20 @@ import GP2_Vrep_V3 as v
 # Naming Conevention For Legs
 # TopLeft 1   Top Right 2 Rear Right 3 RearLeft 4
 gait.ros.ros_init()
-time.sleep(2)
+time.sleep(3)
 
 #a,b,c = gait.inverse_kinematics_3d_v6(0,gait.a , -390 , 0,-2 ,1)
 
-
+gait.onestepcreeping('f',120)
+time.sleep(1)
 gait.Dancing()
 
 for i in range(20):
-    gait.onestepcreeping('f',180)
+    gait.onestepcreeping('f',120)
     time.sleep(0.5)
+
+
+
 
 
 
