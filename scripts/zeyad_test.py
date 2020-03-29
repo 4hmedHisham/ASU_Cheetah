@@ -41,7 +41,7 @@ a = 112.75
 initial_leg_height = 390 # from ground to joint
 stride = 150
 h = 100     # maximum height of trajectory
-cycle_time = 0.3 # total time for each cycle
+cycle_time = 0.3# total time for each cycle
 steps = 20 # number of steps 'even'
 initial_distance = 0 # along x
 
@@ -55,41 +55,45 @@ initial_leg_height_f = 390
 stride_f = 150
 h_f = 100
 cycle_time_f = 0.3
-initial_distance_f = 0
+initial_distance_f = None
 sample_time_f = None
 pub = 0
+indx_fix = 0
 
 
 #initial position relative to hip and cg
-leg1_initial_hip=[]
-leg2_initial_hip=[]
-leg3_initial_hip=[]
-leg4_initial_hip=[]
+leg1_initial_hip=np.zeros([3, 1], dtype=float)
+leg2_initial_hip=np.zeros([3, 1], dtype=float)
+leg3_initial_hip=np.zeros([3, 1], dtype=float)
+leg4_initial_hip=np.zeros([3, 1], dtype=float)
 
-leg1_initial_cg=[]
-leg2_initial_cg=[]
-leg3_initial_cg=[]
-leg4_initial_cg=[]
+leg1_initial_cg=np.zeros([3, 1], dtype=float)
+leg2_initial_cg=np.zeros([3, 1], dtype=float)
+leg3_initial_cg=np.zeros([3, 1], dtype=float)
+leg4_initial_cg=np.zeros([3, 1], dtype=float)
 
 #Subscribed data
-lin_acc=[]
-Ang_acc=[]
-lin_acc_prev=[]
-Ang_acc_prev=[]
+lin_acc=np.zeros([3, 1], dtype=float)
+Ang_acc=np.zeros([3, 1], dtype=float)
+lin_acc_prev=np.zeros([3, 1], dtype=float)
+Ang_acc_prev=np.zeros([3, 1], dtype=float)
 linear_acc_threshold = 20 
 angular_acc_threshold = 20
-leg_pos3_hip=[] 
-leg_pos4_hip=[]
-leg_pos1_hip=[]
-leg_pos2_hip=[] 
+leg_pos3_hip=np.zeros([3, 1], dtype=float) 
+leg_pos4_hip=np.zeros([3, 1], dtype=float)
+leg_pos1_hip=np.zeros([3, 1], dtype=float)
+leg_pos2_hip=np.zeros([3, 1], dtype=float) 
 
-leg_pos3_cg=[] 
-leg_pos4_cg=[]
-leg_pos1_cg=[]
-leg_pos2_cg=[]
-
-legfix_Prev_angs = []
-legvar_Prev_angs = []
+leg_pos3_cg=np.zeros([3, 1], dtype=float) 
+leg_pos4_cg=np.zeros([3, 1], dtype=float)
+leg_pos1_cg=np.zeros([3, 1], dtype=float)
+leg_pos2_cg=np.zeros([3, 1], dtype=float)
+leg3_ang=np.zeros([3, 1], dtype=float)                  #trans hip knee
+leg4_ang=np.zeros([3, 1], dtype=float)
+leg1_ang=np.zeros([3, 1], dtype=float)
+leg2_ang=np.zeros([3, 1], dtype=float)
+legfix_Prev_angs = np.zeros([3, 1], dtype=float)
+legvar_Prev_angs = np.zeros([3, 1], dtype=float)
 
 
 ########################################################################################################
@@ -117,12 +121,13 @@ def imudata(data):
     
     lin_acc = Array[36:39]  ######get new readings
     Ang_acc = Array[39:42]
-    leg3_ang = Array[0:3]
+    leg3_ang = Array[0:3] 
+    print(leg3_ang)
     leg4_ang = Array[3:6]
     leg1_ang = Array[6:9]
     leg2_ang = Array[9:12]    
   
-    for i in range (lin_acc):   ###### thresholding  between previous and new readings
+    for i in range (3):   ###### thresholding  between previous and new readings
         if ((np.absolute(lin_acc[i]-lin_acc_prev[i]))>linear_acc_threshold) or ((np.absolute(Ang_acc[i]-Ang_acc_prev[i]))> angular_acc_threshold):
             z = 1 
         else:
@@ -142,9 +147,9 @@ def leg_pos(data):
     global leg_pos4_cg
     global leg_pos1_cg
     global leg_pos2_cg
-    print(Array2)
     leg_pos3_hip =Array2[0:3] 
     leg_pos4_hip =Array2[3:6] 
+    print(leg_pos4_hip)
     leg_pos1_hip =Array2[6:9] 
     leg_pos2_hip =Array2[9:12] 
 
@@ -236,12 +241,12 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
     x_current = 0 
     y_current = 0
     x_current_f =0
-    indx_fix = 0
+    global indx_fix
     t_left = 0
     current = 0
     last_fix = 0
-    sample_time = cycle_time / steps  # sample time
-    sample_time_f = cycle_time_f / steps  # sample time
+    sample_time = np.float(cycle_time) / steps # sample time
+    sample_time_f =np.float(cycle_time_f) / steps   # sample time
 
 
     if leg_no == 4 or leg_no == 3:    
@@ -249,7 +254,7 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
         xnew = np.zeros([steps, 1], dtype=float)
         t = 0;
         i = 0;
-        initial_distance_f = legfix_initial_hip[0]
+        initial_distance_f = legfix_initial_hip
 
         for t in np.arange(0, cycle_time_f, sample_time_f):
             xnew[i] = (stride_f * ((t / cycle_time_f) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time_f)))) - (stride_f / 2) + stride_f / 2) + initial_distance_f
@@ -281,7 +286,7 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
         ynew = np.zeros([steps, 1], dtype=float)
         t = 0
         i = 0
-        initial_distance=legvar_initial_hip[0]
+        initial_distance=legvar_initial_hip
 
         if leg_no == 2:
             var = 1
@@ -353,6 +358,7 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
             legvar_final_cg[1] = legvar_initial_cg[1]
             x_target = Mod_contact(leg_no, legfix_final_cg ,legvar_final_cg)    
             trajectory_modification(x_current, y_current, x_target, cycletime_required)
+            indx_fix = 0
             #stride = stride_mod
             #h = h_mod
             #cycle_time = cycle_time_mod
@@ -371,7 +377,7 @@ def trajectory_modification(x_current, y_current, x_target, cycle_time):
     global initial_leg_height
     global var
     global var2 
-
+    global indx_fix
     stride = (x_target - x_current) * 2
     h = y_current  # maximum height of the trajectory
     x_initial = x_target - stride
@@ -380,8 +386,8 @@ def trajectory_modification(x_current, y_current, x_target, cycle_time):
 
     xnew = np.zeros([steps/2, 1], dtype=float)
     ynew = np.zeros([steps/2, 1], dtype=float)
-    t = 0;
-    i = 0;
+    t = 0
+    i = 0
     #i_f= steps/2
     n = (cycle_time / 2)
     current = 0
@@ -481,20 +487,23 @@ def trueangle(two_angles,current_angle):
     else:
         return two_angles[1]
    
-def set_angle(joint,angle):
+
+
+def set_angle(joint, angle):
     global pub
-	#msg=str(joint)+' '+str(angle)
-	#sendangle = float(angle)  #cause sometimes it came in shape of a single list 
-	#msg=str(joint)+' '+str(sendangle)
-	#pub.publish(msg)
-
-
+    msg=str(joint) + ' ' + str(angle)
+    sendangle = float(angle)
+    msg = str(joint)+ ' ' + str(sendangle)
+    pub.publish(msg)
 
 
 #####################################################################################################################3
 
 # Main
-def talker():
+
+
+
+if __name__ == '__main__':
 
     global pub
 
@@ -503,28 +512,28 @@ def talker():
     pub = rospy.Publisher('setter', String, queue_size=10)
 
     rospy.Subscriber('fwd', Float32MultiArray, leg_pos)
-    #rospy.Subscriber('getter', Float32MultiArray,imudata)
+    rospy.Subscriber('getter', Float32MultiArray , imudata)
 
     rate = rospy.Rate(10)  # 10hz
+    global leg_pos3_hip
+    global leg_pos4_hip
+    global leg_pos1_hip
+    global leg_pos2_hip
+
+    global leg_pos3_cg
+    global leg_pos4_cg
+    global leg_pos1_cg
+    global leg_pos2_cg
+
+    global leg3_ang
+    global leg4_ang        
+    global leg1_ang
+    global leg2_ang
+    time.sleep(0.01)   
     while not rospy.is_shutdown():
-
-
-        global leg_pos3_hip
-        global leg_pos4_hip
-        global leg_pos1_hip
-        global leg_pos2_hip
-
-        global leg_pos3_cg
-        global leg_pos4_cg
-        global leg_pos1_cg
-        global leg_pos2_cg
-
-        global leg3_ang
-        global leg4_ang        
-        global leg1_ang
-        global leg2_ang
-        print(leg_pos4_hip)
+        
         # First we move leg 1 and leg 2 
+    
 
         legfix_initial_hip = leg_pos4_hip[0]
         legvar_initial_hip = leg_pos2_hip[0]
@@ -555,11 +564,3 @@ def talker():
         #x3 , y3 = linear_traj()
         #x4 , y4 = linear_traj()
         rate.sleep()
-
-
-if __name__ == '__main__':
-    try:
-        talker()
-    except rospy.ROSInterruptException:
-        pass
-
