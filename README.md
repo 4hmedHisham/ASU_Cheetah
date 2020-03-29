@@ -2,9 +2,9 @@
 
 TO Start the project 
 
-0-Open CoppeliaSim by typing ./coppeliaSim.sh in coppeliasim's directory
+0-On Ubuntu Open CoppeliaSim by typing ./coppeliaSim.sh in coppeliasim's directory
 
-1-Open Vrep Scene (V8.ttt)
+1-Open Vrep Scene (FINAL_URDF_Position_Control is position control OR FINAL_URDF_Torque_Control if torque control)
 
 2-Open roscore
 
@@ -17,13 +17,6 @@ TO Start the project
 Notes:
 
 Angles order :['ab3', 'bc3', 'cd3', 'ab4', 'bc4', 'cd4', 'ab1', 'bc1', 'cd1', 'ab2', 'bc2', 'cd2']
-
-ToDo:
-H :Adding approxomation to 5 decimail places
-  : Check For loops to add the +1
-  : Check the delay at CoppeliaSim Forums
-Senary: Check Weights
-
-Khaled: Add His Script
+In any code related issue, hence legs order are 3->4->1->2
 
 
