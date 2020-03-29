@@ -25,7 +25,7 @@ l1 =245
 l2 =208.4
 a = 112.75
 initalheight=390
-stride=80
+stride=120
 plus2pi=False
 stability=True
 movement=True
@@ -79,9 +79,12 @@ def Move_side(direction):
     time.sleep(0.5)
     delay = Move_Leg(x[2],direction,stride)
     time.sleep(0.5)
+
     delay = Move_Leg(x[3],direction,stride)
 
     #print("finish")
+
+
 
 def Rotate(leg):
     Move_Leg_V2(1,50,-50,initalheight)
@@ -96,7 +99,7 @@ def Move_Leg(leg,direction,distance):
         ros.set_angle(0 + 3 * (leg - 1), trans[i])
         ros.set_angle(1 + 3 * (leg - 1), hippp[i])
         ros.set_angle(2 + 3 * (leg - 1), kneeee[i])
-        time.sleep(delay*500)
+        time.sleep(delay*100)
 
     return delay
 
@@ -343,24 +346,43 @@ def Straightline_Trajectory(leg,plane,num_of_steps,distance):  # moves base with
 
     return transverse,hip,knee
 
+
+
 def Body_mover(direction,delay,distance):  # moves base with same length as stride
 
     if direction == 'r':
         sign = -1
         y = 1
         x = 0
+        z = 0
     if direction == 'l':
         sign = 1
         y = 1
         x = 0
+        z = 0
     if direction == 'f':
         sign = 1
         y = 0
         x = 1
+        z = 0
     if direction == 'b':
         sign = -1
         y = 0
         x = 1
+        z = 0
+    if direction == 'u':
+        sign = 1
+        y = 0
+        x = 0
+        z = 1
+    if direction == 'd':
+        sign = -1
+        y = 0
+        x = 0
+        z = 1
+     
+
+
 
     transverses, hips, knees = getjointanglesfromvrep()
     legspos2cg, legspos2joint = GetEndEffectorPos(transverses, hips,knees)  # effector pos with respect to cg got correct angles
@@ -371,12 +393,15 @@ def Body_mover(direction,delay,distance):  # moves base with same length as stri
     initial_transverse = transverses
     initial_hip = hips
     initial_knee = knees
-
+    k = []
+    ratio = float(distance)/numofsteps
     for i in range(numofsteps):  # moves the base
+        
         for ii in range(4):  # gets required angles for this step-size
             transverse[ii], hip[ii], knee[ii] = inverse_kinematics_3d_v6(
-                (legspos2joint[ii,0] - sign*x*(i + 1)*(distance/ numofsteps)), (legspos2joint[ii, 1] - sign*y*(i + 1)*(distance/ numofsteps)), legspos2joint[ii, 2],
+                (legspos2joint[ii,0] - sign*x*(i + 1)*(ratio)), (legspos2joint[ii, 1] - sign*y*(i + 1)*(ratio)), legspos2joint[ii, 2] - sign*z*(i + 1)*(ratio) ,
                 initial_transverse[ii], initial_hip[ii], initial_knee[ii])
+        #k.append(legspos2joint[0,0] - sign*x*(i + 1)*(1.2))
         initial_transverse = transverse
         initial_hip = hip
         initial_knee = knee
@@ -389,6 +414,83 @@ def Body_mover(direction,delay,distance):  # moves base with same length as stri
 
         time.sleep(delay)
 
+    print("finish")
+
+
+
+def Body_mover_To_point(x_tar,y_tar,z_tar,delay):  # moves base with same length as stride
+
+
+    transverses, hips, knees = getjointanglesfromvrep()
+    legspos2cg, legspos2joint = GetEndEffectorPos(transverses, hips,knees)  # effector pos with respect to cg got correct angles
+    transverse = np.zeros((4, 1))
+    hip = np.zeros((4, 1))
+    knee = np.zeros((4, 1))
+    numofsteps = 100
+    initial_transverse = transverses
+    initial_hip = hips
+    initial_knee = knees
+    k = []
+    ratio_x = float(x_tar - legspos2joint[0,0] )/numofsteps
+    ratio_y = float(y_tar - legspos2joint[0,1] )/numofsteps
+    ratio_z = float(z_tar - legspos2joint[0,2] )/numofsteps
+    for i in range(numofsteps):  # moves the base
+        
+        for ii in range(4):  # gets required angles for this step-size
+            transverse[ii], hip[ii], knee[ii] = inverse_kinematics_3d_v6(
+                (legspos2joint[ii,0] + (i + 1)*(ratio_x)), (legspos2joint[ii, 1] + (i + 1)*ratio_y), legspos2joint[ii, 2] + (i + 1)*ratio_z ,
+                initial_transverse[ii], initial_hip[ii], initial_knee[ii])
+        #k.append(legspos2joint[0,0] - sign*x*(i + 1)*(1.2))
+        initial_transverse = transverse
+        initial_hip = hip
+        initial_knee = knee
+
+        for iii in range(4):  # moves the stepsize determined
+            ros.set_angle((0 + 3 * iii), transverse[iii])
+            ros.set_angle((1 + 3 * iii), hip[iii])
+            ros.set_angle((2 + 3 * iii), knee[iii])
+            #time.sleep(delay)
+
+        time.sleep(delay)
+
+    print("finish")    
+
+def Body_mover_angles(x_tar,y_tar,z_tar,delay):  # moves base with same length as stride
+
+
+    transverses, hips, knees = getjointanglesfromvrep()
+    legspos2cg, legspos2joint = GetEndEffectorPos(transverses, hips,knees)  # effector pos with respect to cg got correct angles
+    transverse = np.zeros((4, 1))
+    hip = np.zeros((4, 1))
+    knee = np.zeros((4, 1))
+    numofsteps = 100
+    initial_transverse = transverses
+    initial_hip = hips
+    initial_knee = knees
+    k = []
+    ratio_x = float(x_tar - legspos2joint[0,0] )/numofsteps
+    ratio_y = float(y_tar - legspos2joint[0,1] )/numofsteps
+    ratio_z = float(z_tar - legspos2joint[0,2] )/numofsteps
+    for i in range(numofsteps):  # moves the base
+        
+        for ii in range(4):  # gets required angles for this step-size
+            transverse[ii], hip[ii], knee[ii] = inverse_kinematics_3d_v6(
+                (legspos2joint[ii,0] + (i + 1)*(ratio_x)), (legspos2joint[ii, 1] + (i + 1)*ratio_y), legspos2joint[ii, 2] + (i + 1)*ratio_z ,
+                initial_transverse[ii], initial_hip[ii], initial_knee[ii])
+        #k.append(legspos2joint[0,0] - sign*x*(i + 1)*(1.2))
+        initial_transverse = transverse
+        initial_hip = hip
+        initial_knee = knee
+
+        for iii in range(4):  # moves the stepsize determined
+            ros.set_angle((0 + 3 * iii), transverse[iii])
+            ros.set_angle((1 + 3 * iii), hip[iii])
+            ros.set_angle((2 + 3 * iii), knee[iii])
+            #time.sleep(delay)
+
+        time.sleep(delay)
+
+    print("finish")       
 def move_2_legs(leg1,leg2,direction,distance):
     transverses , hips, knees = getjointanglesfromvrep()
     legspos2cg,legspos2joint=GetEndEffectorPos(transverses,hips,knees)#effector pos with respect to cg got correct angles
@@ -440,7 +542,37 @@ def trot2(leg,direction,distance):
         ros.set_angle((2 + 3 * (leg_for_base[1])), knee4[i])
         time.sleep(delay*8)
 
-
+def Dancing():
+    Body_mover('f',0.005,110)
+    time.sleep(0.5)
+    Body_mover('b',0.005,220)
+    time.sleep(0.5)
+    Body_mover('f',0.005,110)
+    time.sleep(0.5)
+    Body_mover_To_point(-80, gait.a - 80 , -390 , 0.01)
+    time.sleep(0.8)
+    Body_mover_To_point(80, gait.a +80  , -390 , 0.01)
+    time.sleep(0.8)
+    gBody_mover_To_point(-80, gait.a + 80 , -390 , 0.01)
+    time.sleep(0.8)
+    Body_mover_To_point( 40, gait.a - 80 , -390 , 0.01)
+    time.sleep(0.8)
+    Body_mover_To_point( 0, gait.a  , -390 , 0.01)
+    time.sleep(0.8)
+    Body_mover('l',0.005,90)
+    time.sleep(0.5)
+    Body_mover('r',0.005,180)
+    time.sleep(0.5)
+    gBody_mover('l',0.005,90)
+    time.sleep(0.5)
+    Body_mover('d',0.02,200)
+    time.sleep(0.5)
+    Body_mover('u',0.02,200)
+    time.sleep(0.5)
+    Body_mover('d',0.02,200)
+    time.sleep(0.5)
+    Body_mover('u',0.02,200)
+    time.sleep(0.5)
 
 
 def generalbasemover_modifed(leg,direction,distance):  # moves base with same length as stride
@@ -483,22 +615,24 @@ def generalbasemover_modifed(leg,direction,distance):  # moves base with same le
     return trans,hip,knee
 
 def onestepcreeping(direction,distance):
-    time.sleep(0.25)
-    delay = Move_Leg(1,direction,distance)
-    #torquehip, torqueknee, iteration = move_leg(1, 'f')
-    time.sleep(0.15)
-    delay = Move_Leg(2, direction, distance)
-    #torquehip, torqueknee, iteration = move_leg(2, 'f')
-    #  gait.plot_torque(torquehip, torqueknee, iteration)
-    time.sleep(0.15)
-    Body_mover(direction,delay*80,distance)
-    time.sleep(0.15)
-    delay = Move_Leg(3 ,direction, distance)
-    #torquehip, torqueknee, iteration = move_leg(3, 'f')
-    #   gait.plot_torque(torquehip, torqueknee, iteration)
-    time.sleep(0.15)
-    delay = Move_Leg(4, direction, distance)
-    #torquehip, torqueknee, iteration = move_leg(4, 'f')
+    if direction == 'f':
+        x = [1,2,4,3]
+    if direction == 'b':
+        x = [4,3,2,1]
+    time.sleep(0.3)
+    delay = Move_Leg(x[0],direction,distance)
+    time.sleep(0.3)
+    delay = Move_Leg(x[1], direction, distance)
+    time.sleep(0.3)
+    #Body_mover(direction,delay*250,distance)
+    Body_mover_To_point(-40, a - 40 , -initalheight , 0.0005)
+    time.sleep(0.3)
+    delay = Move_Leg(x[2] ,direction, distance)
+    time.sleep(0.3)
+    delay = Move_Leg(x[3], direction, distance)
+    time.sleep(0.3)
+    Body_mover_To_point(0,a , -initalheight , 0.0005)
+
 
 def One_Trot(direction,distance):
     time.sleep(0.5)
@@ -507,9 +641,9 @@ def One_Trot(direction,distance):
     trot2(2,direction,distance)
 
 
-hipinit=-2.01842
-kneeinit=0.980479
-trinit=0       
+# hipinit=-2.01842
+# kneeinit=0.980479
+# trinit=0       
    
 def asin2(x):
     angle = np.arcsin(x)
@@ -629,7 +763,9 @@ iteration = 0
 #
 
 # x,y,z = forward_kinematics_V2(0,1,1.3)
-q,w,r= inverse_kinematics_3d_v6(0,a,-initalheight,0,-0.99,1.29)
+
+
+
 # x = 120
 # y = 50
 # z = 100

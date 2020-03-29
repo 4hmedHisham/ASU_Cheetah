@@ -18,14 +18,16 @@ import GP2_Vrep_V3 as v
 gait.ros.ros_init()
 time.sleep(2)
 
-for i in range(25):
-    gait.onestepcreeping('f',120)
+#a,b,c = gait.inverse_kinematics_3d_v6(0,gait.a , -390 , 0,-2 ,1)
 
 
-for i in range(10):
-    gait.Move_side('l')
-    time.sleep(0.3)
-gait.move_2_legs(0,3,'l',90)
+gait.Dancing()
+
+for i in range(20):
+    gait.onestepcreeping('f',180)
+    time.sleep(0.5)
+
+
 
 
 
