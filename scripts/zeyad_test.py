@@ -14,6 +14,7 @@ from timeit import default_timer as time
 import time
 from std_msgs.msg import String
 from std_msgs.msg import Float32MultiArray
+from Main_Functions import GP2_Function_V7 as gait
 
 # Constants
 g = 9.81
@@ -29,6 +30,7 @@ z = 0
 var =0
 var2 = 0
 
+
 #inert = 
 
 
@@ -37,7 +39,7 @@ var2 = 0
 # Parameters:
 l1 =245
 l2 =208.4
-a = 112.75
+a=gait.a
 initial_leg_height = 390 # from ground to joint
 stride = 150
 h = 100     # maximum height of trajectory
@@ -122,7 +124,7 @@ def imudata(data):
     lin_acc = Array[36:39]  ######get new readings
     Ang_acc = Array[39:42]
     leg3_ang = Array[0:3] 
-    print(leg3_ang)
+    #print(leg3_ang)
     leg4_ang = Array[3:6]
     leg1_ang = Array[6:9]
     leg2_ang = Array[9:12]    
@@ -149,7 +151,7 @@ def leg_pos(data):
     global leg_pos2_cg
     leg_pos3_hip =Array2[0:3] 
     leg_pos4_hip =Array2[3:6] 
-    print(leg_pos4_hip)
+    #print(leg_pos4_hip)
     leg_pos1_hip =Array2[6:9] 
     leg_pos2_hip =Array2[9:12] 
 
@@ -312,7 +314,7 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
          
                 #py = 112.75
                 #Publish Fixed leg point
-                trans,hip,knee = inverse_kinematics_3d_v6(x_fixed[i], 112.75, y_fixed[i],0 ,legfix_Prev_angs[1], legfix_Prev_angs[2] )
+                trans,hip,knee = gait.inverse_kinematics_3d_v6(x_fixed[i], 112.75, y_fixed[i],0 ,legfix_Prev_angs[1], legfix_Prev_angs[2] )
                 set_angle((var*3),trans)
                 set_angle((var*3)+1 , hip)
                 set_angle(((var*3)+2), knee)
@@ -324,7 +326,7 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
 
                 #Publish Variable leg point
 
-                trans,hip,knee = inverse_kinematics_3d_v6(xnew[i], 112.75, ynew[i],0 ,legvar_Prev_angs[1], legvar_Prev_angs[2]) 
+                trans,hip,knee = gait.inverse_kinematics_3d_v6(xnew[i], 112.75, ynew[i],0 ,legvar_Prev_angs[1], legvar_Prev_angs[2]) 
                 set_angle((var2*3),trans)
                 set_angle((var2*3)+1 , hip)
                 set_angle((var2*3)+2, knee)
@@ -401,7 +403,7 @@ def trajectory_modification(x_current, y_current, x_target, cycle_time):
 
         if ((current - last_fix) > sample_time_f ) and indx_fix < steps :        #Publish Fixed leg point
             last_fix = current
-            trans,hip,knee = inverse_kinematics_3d_v6(x_fixed[indx_fix], 112.75, y_fixed[indx_fix],0 ,legfix_Prev_angs[1], legfix_Prev_angs[2] )
+            trans,hip,knee = gait.inverse_kinematics_3d_v6(x_fixed[indx_fix], 112.75, y_fixed[indx_fix],0 ,legfix_Prev_angs[1], legfix_Prev_angs[2] )
             set_angle((var*3),trans )
             set_angle((var*3)+1 , hip)
             set_angle(((var*3)+2), knee)
@@ -416,7 +418,7 @@ def trajectory_modification(x_current, y_current, x_target, cycle_time):
             last_var = current
             xnew[i] = (stride * ((t / cycle_time) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time)))) - (stride / 2) + stride / 2) + initial_distance
             ynew[i] = (-(h / (2 * np.pi)) * np.sin(4 * np.pi - (((4 * np.pi) / cycle_time) * t)) - ((2 * h * t) / cycle_time) + ((3 * h) / 2)) + (h / 2) - initial_leg_height            
-            trans,hip,knee = inverse_kinematics_3d_v6(xnew[i], 112.75, ynew[i],0 ,legvar_Prev_angs[1], legvar_Prev_angs[2])      
+            trans,hip,knee = gait.inverse_kinematics_3d_v6(xnew[i], 112.75, ynew[i],0 ,legvar_Prev_angs[1], legvar_Prev_angs[2])      
             set_angle((var2*3),trans )
             set_angle((var2*3)+1 , hip)
             set_angle(((var2*3)+2), knee)
@@ -513,6 +515,7 @@ if __name__ == '__main__':
 
     rospy.Subscriber('fwd', Float32MultiArray, leg_pos)
     rospy.Subscriber('getter', Float32MultiArray , imudata)
+    time.sleep(2)
 
     rate = rospy.Rate(10)  # 10hz
     global leg_pos3_hip

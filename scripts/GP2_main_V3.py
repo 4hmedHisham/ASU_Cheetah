@@ -18,15 +18,20 @@ import GP2_Vrep_V3 as v
 gait.ros.ros_init()
 time.sleep(3)
 
-#a,b,c = gait.inverse_kinematics_3d_v6(0,gait.a , -390 , 0,-2 ,1)
+# #a,b,c = gait.inverse_kinematics_3d_v6(0,gait.a , -390 , 0,-2 ,1)
 
-gait.onestepcreeping('f',120)
-time.sleep(1)
-gait.Dancing()
+# gait.onestepcreeping('f',120)
+# time.sleep(1)
+# gait.Dancing()
 
 for i in range(20):
     gait.onestepcreeping('f',120)
     time.sleep(0.5)
+# transverses , hips, knees = gait.getjointanglesfromvrep()
+# legspos2cg,legspos2joint=gait.GetEndEffectorPos(transverses,hips,knees)#
+# print(legspos2cg)
+# print(legspos2joint)
+
 
 
 
