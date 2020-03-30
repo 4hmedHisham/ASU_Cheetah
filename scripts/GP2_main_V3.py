@@ -17,6 +17,8 @@ import GP2_Vrep_V3 as v
 # TopLeft 1   Top Right 2 Rear Right 3 RearLeft 4
 gait.ros.ros_init()
 time.sleep(3)
+print("start")
+
 
 # #a,b,c = gait.inverse_kinematics_3d_v6(0,gait.a , -390 , 0,-2 ,1)
 
@@ -24,9 +26,9 @@ time.sleep(3)
 # time.sleep(1)
 # gait.Dancing()
 
-for i in range(20):
-    gait.onestepcreeping('f',120)
-    time.sleep(0.5)
+# for i in range(20):
+#     gait.onestepcreeping('f',120)
+#     time.sleep(0.5)
 # transverses , hips, knees = gait.getjointanglesfromvrep()
 # legspos2cg,legspos2joint=gait.GetEndEffectorPos(transverses,hips,knees)#
 # print(legspos2cg)

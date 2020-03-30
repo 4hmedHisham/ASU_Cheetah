@@ -532,7 +532,7 @@ if __name__ == '__main__':
     rospy.init_node('talker', anonymous=True)
     #pub = rospy.Publisher('legdata', Float32MultiArray, queue_size=10)
     pub = rospy.Publisher('setter', String, queue_size=10)
-
+    gait.ros.ros_init(1)
     rospy.Subscriber('fwd', Float32MultiArray, leg_pos)
     rospy.Subscriber('getter', Float32MultiArray , imudata)
     time.sleep(2)
@@ -564,11 +564,19 @@ if __name__ == '__main__':
         leg4_Prev_angs =  leg4_ang
         leg2_Prev_angs =  leg2_ang        
 
-
-
         Gate_Publisher(4 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg4_Prev_angs,leg2_Prev_angs)
         Gate_Publisher(2 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg4_Prev_angs,leg2_Prev_angs)
-        trans,hip,knee = gait.generalbasemover_modifed(1, 'f',150 ,20)
+        for ii in range(20):
+            trans,hip,knee = gait.generalbasemover_modifed(1, 'f',150 ,20)
+            set_angle((1*3),trans[ii])
+            set_angle((1*3)+1 , hip[ii])
+            set_angle(((1*3)+2), knee[ii])
+            
+            trans1,hip1,knee1 = gait.generalbasemover_modifed(3, 'f',150 ,20)
+            set_angle((3*3),trans1[ii])
+            set_angle((3*3)+1 , hip1[ii])
+            set_angle(((3*3)+2), knee1[ii]) 
+       
 
         # Second we move leg 3 and leg 4 
 
@@ -581,18 +589,9 @@ if __name__ == '__main__':
 
         Gate_Publisher(3 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg3_Prev_angs,leg1_Prev_angs)
         Gate_Publisher(1 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg3_Prev_angs,leg1_Prev_angs)
-        rate.sleep()
-'''
-        for ii in range(20):
-            trans,hip,knee = gait.generalbasemover_modifed(1, 'f',150 ,20)
-            set_angle((1*3),trans[ii])
-            set_angle((1*3)+1 , hip[ii])
-            set_angle(((1*3)+2), knee[ii])
-            
-            trans1,hip1,knee1 = gait.generalbasemover_modifed(3, 'f',150 ,20)
-            set_angle((3*3),trans1[ii])
-            set_angle((3*3)+1 , hip1[ii])
-            set_angle(((3*3)+2), knee1[ii]) 
+      
+
+
         
         for ii in range(20):
             trans,hip,knee = gait.generalbasemover_modifed(4, 'f',150 ,20)
@@ -604,9 +603,10 @@ if __name__ == '__main__':
             set_angle((2*3),trans1[ii])
             set_angle((2*3)+1 , hip1[ii])
             set_angle(((2*3)+2), knee1[ii])
-
+            
+        rate.sleep()
  
-'''
+
 
 
         
