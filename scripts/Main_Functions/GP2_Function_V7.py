@@ -575,7 +575,7 @@ def Dancing():
     time.sleep(0.5)
 
 
-def generalbasemover_modifed(leg,direction,distance):  # moves base with same length as stride
+def generalbasemover_modifed(leg,direction,distance,numofsteps):  # moves base with same length as stride
     if direction == 'r':
         sign = -1
         y = 1
@@ -595,7 +595,7 @@ def generalbasemover_modifed(leg,direction,distance):  # moves base with same le
     transverses, hips, knees = getjointanglesfromvrep()
     legspos2cg, legspos2joint = GetEndEffectorPos(transverses, hips,
                                                   knees)  # effector pos with respect to cg got correct angles 
-    numofsteps = stp
+
     trans = np.zeros((numofsteps, 1))
     hip = np.zeros((numofsteps, 1))
     knee = np.zeros((numofsteps, 1))
@@ -603,10 +603,11 @@ def generalbasemover_modifed(leg,direction,distance):  # moves base with same le
     initial_transverse= transverses[leg-1]
     initial_hip = hips[leg-1]
     initial_knee = knees[leg-1]
+    ratio = float(distance) / numofsteps
 
     for i in range(numofsteps):  # moves the base    
         trans[i], hip[i], knee[i] = inverse_kinematics_3d_v6(
-                (legspos2joint[leg-1,0] - sign*x*(i + 1)*(distance/ numofsteps)), (legspos2joint[leg-1, 1] - sign*y*(i + 1)*(distance/ numofsteps)), legspos2joint[leg-1, 2],
+                (legspos2joint[leg-1,0] - sign*x*(i + 1)*ratio), (legspos2joint[leg-1, 1] - sign*y*(i + 1)*ratio), legspos2joint[leg-1, 2],
                 initial_transverse, initial_hip, initial_knee)
         initial_transverse = trans[i]
         initial_hip = hip[i]
