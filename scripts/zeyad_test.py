@@ -46,7 +46,7 @@ a=gait.a
 initial_leg_height = 390 # from ground to joint
 stride = 150
 h = 100     # maximum height of trajectory
-cycle_time = 0.3# total time for each cycle
+cycle_time = 0.8# total time for each cycle
 steps = 20 # number of steps 'even'
 initial_distance = 0 # along x
 
@@ -58,7 +58,7 @@ y_fixed = np.zeros([steps, 1], dtype=float)
 initial_leg_height_f = 390
 stride_f = 150
 h_f = 100
-cycle_time_f = 0.3
+cycle_time_f = 0.8
 initial_distance_f = None
 sample_time_f = None
 pub = 0
@@ -552,11 +552,9 @@ if __name__ == '__main__':
     global leg4_ang        
     global leg1_ang
     global leg2_ang
-    time.sleep(0.01)   
+    time.sleep(0.04)   
     while not rospy.is_shutdown():
-        
-        # First we move leg 1 and leg 2 
-    
+
         legfix_initial_hip = leg_pos4_hip[0]
         legvar_initial_hip = leg_pos2_hip[0]
         legfix_initial_cg = leg_pos4_cg
@@ -566,21 +564,18 @@ if __name__ == '__main__':
 
         Gate_Publisher(4 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg4_Prev_angs,leg2_Prev_angs)
         Gate_Publisher(2 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg4_Prev_angs,leg2_Prev_angs)
-
-        for ii in range(20):
-            trans,hip,knee = gait.generalbasemover_modifed(1, 'f',150 ,20)
-            set_angle((1*3),trans[ii])
-            set_angle((1*3)+1 , hip[ii])
-            set_angle(((1*3)+2), knee[ii])
+        time.sleep(0.2)
+        # for ii in range(20):
+        #     trans3,hip3,knee3 = gait.generalbasemover_modifed(1, 'f',150 ,20)
+        #     set_angle((4*3),trans3[ii])
+        #     set_angle((4*3)+1 , hip3[ii])
+        #     set_angle(((4*3)+2), knee3[ii])
             
-            trans1,hip1,knee1 = gait.generalbasemover_modifed(3, 'f',150 ,20)
-            set_angle((3*3),trans1[ii])
-            set_angle((3*3)+1 , hip1[ii])
-            set_angle(((3*3)+2), knee1[ii]) 
-       
+        #     trans1,hip1,knee1 = gait.generalbasemover_modifed(3, 'f',150 ,20)
+        #     set_angle((2*3),trans1[ii])
+        #     set_angle((2*3)+1 , hip1[ii])
+        #     set_angle(((2*3)+2), knee1[ii]) 
 
-
-        # Second we move leg 3 and leg 4 
 
         legfix_initial_hip = leg_pos3_hip[0]
         legvar_initial_hip = leg_pos1_hip[0]
@@ -591,17 +586,26 @@ if __name__ == '__main__':
 
         Gate_Publisher(3 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg3_Prev_angs,leg1_Prev_angs)
         Gate_Publisher(1 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg3_Prev_angs,leg1_Prev_angs)
-        for ii in range(20):
-            trans,hip,knee = gait.generalbasemover_modifed(4, 'f',150 ,20)
-            set_angle((4*3),trans[ii])
-            set_angle((4*3)+1 , hip[ii])
-            set_angle(((4*3)+2), knee[ii])
+        # for ii in range(20):
+        #     trans,hip,knee = gait.generalbasemover_modifed(4, 'f',150 ,20)
+        #     set_angle((3*3),trans[ii])
+        #     set_angle((3*3)+1 , hip[ii])
+        #     set_angle(((3*3)+2), knee[ii])
             
-            trans1,hip1,knee1 = gait.generalbasemover_modifed(2, 'f',150 ,20)
-            set_angle((2*3),trans1[ii])
-            set_angle((2*3)+1 , hip1[ii])
-            set_angle(((2*3)+2), knee1[ii])
-            
+        #     trans1,hip1,knee1 = gait.generalbasemover_modifed(2, 'f',150 ,20)
+        #     set_angle((1*3),trans1[ii])
+        #     set_angle((1*3)+1 , hip1[ii])
+        #     set_angle(((1*3)+2), knee1[ii])
+        #     time.sleep(0.3)
+
+        
+        # First we move leg 1 and leg 2 
+    
+
+       
+
+
+        # Second we move leg 3 and leg 4             
         rate.sleep()        
         
         

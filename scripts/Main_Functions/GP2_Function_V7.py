@@ -595,7 +595,7 @@ def generalbasemover_modifed(leg,direction,distance,numofsteps):  # moves base w
     transverses, hips, knees = getjointanglesfromvrep()
     legspos2cg, legspos2joint = GetEndEffectorPos(transverses, hips,
                                                   knees)  # effector pos with respect to cg got correct angles 
-
+    ratio = float(distance)/numofsteps
     trans = np.zeros((numofsteps, 1))
     hip = np.zeros((numofsteps, 1))
     knee = np.zeros((numofsteps, 1))
@@ -603,9 +603,6 @@ def generalbasemover_modifed(leg,direction,distance,numofsteps):  # moves base w
     initial_transverse= transverses[leg-1]
     initial_hip = hips[leg-1]
     initial_knee = knees[leg-1]
-    ratio = float(distance) / numofsteps
-
-    ratio = float(distance) / numofsteps
 
     for i in range(numofsteps):  # moves the base    
         trans[i], hip[i], knee[i] = inverse_kinematics_3d_v6(
