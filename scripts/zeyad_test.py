@@ -555,6 +555,7 @@ if __name__ == '__main__':
         trans3,hip3,knee3 = gait.generalbasemover_modifed(1, 'f',150 ,20)
         trans1,hip1,knee1 = gait.generalbasemover_modifed(3, 'f',150 ,20)
         time.sleep(1)
+        
         for ii in range(20):
             set_angle((0*3),trans3[ii])
             set_angle((0*3)+1 , hip3[ii])
