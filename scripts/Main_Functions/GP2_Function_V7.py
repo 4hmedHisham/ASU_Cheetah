@@ -25,7 +25,7 @@ l1 =245
 l2 =208.4
 a = 112.75
 initalheight=390
-stride=120
+stride=60
 plus2pi=False
 stability=True
 movement=True
@@ -75,13 +75,14 @@ def Move_side(direction):
     time.sleep(0.5)
     delay = Move_Leg(x[1],direction,stride)
     time.sleep(0.5)
-    Body_mover(direction, 300*delay,stride)
+    Body_mover_To_point(0, 30 , -initalheight , 0.01)
+    #Body_mover(direction, 300*delay,stride)
     time.sleep(0.5)
     delay = Move_Leg(x[2],direction,stride)
     time.sleep(0.5)
 
     delay = Move_Leg(x[3],direction,stride)
-
+    Body_mover_To_point(0, a  , -initalheight , 0.01)
     #print("finish")
 
 

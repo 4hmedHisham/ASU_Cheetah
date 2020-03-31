@@ -19,15 +19,25 @@ gait.ros.ros_init()
 time.sleep(3)
 print("start")
 
+################### MAIN #####################
 
-# #a,b,c = gait.inverse_kinematics_3d_v6(0,gait.a , -390 , 0,-2 ,1)
+## el 2 lines dol 3alashan el sudden motion ale by3melha fel awel
+gait.onestepcreeping('f',120)
+time.sleep(0.5)
+gait.Body_mover_To_point(0,gait.a,-gait.initalheight,0.01) # el line dah byraga3 el joints lel initial position
+time.sleep(0.5)
 
-# gait.onestepcreeping('f',120)
-# time.sleep(1)
-# gait.Dancing()
+gait.Dancing()
+time.sleep(0.5)
 
-# for i in range(20):
-#     gait.onestepcreeping('f',120)
+for i in range(20):
+    gait.onestepcreeping('f',180)
+    time.sleep(0.5)
+
+
+
+# for i in range(5):
+#     gait.Move_side("l")
 #     time.sleep(0.5)
 # transverses , hips, knees = gait.getjointanglesfromvrep()
 # legspos2cg,legspos2joint=gait.GetEndEffectorPos(transverses,hips,knees)#
