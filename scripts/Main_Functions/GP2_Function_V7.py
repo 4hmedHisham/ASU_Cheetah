@@ -811,6 +811,12 @@ def inverse_kinematics_3d_v6(px,py,pz,ptran,phip,pknee):
 
     r = px**2 + py**2 + pz**2
     ratio = ((r - a**2 - l1**2 - l2**2) / (2*l1*l2))
+    if ratio > 1 or ratio <-1 :
+        print("error")
+        if ratio >1:
+            ratio = 1
+        else:
+            ratio =-1
     two_angles = acos2(ratio)
     theta3 = trueangle(two_angles, pknee)
 
