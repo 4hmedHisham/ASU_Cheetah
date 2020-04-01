@@ -1,0 +1,6 @@
+import numpy as np 
+
+u = np.zeros(50)
+print(u[49])
+
+print("finish")

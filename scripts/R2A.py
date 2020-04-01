@@ -28,13 +28,15 @@ def callback(data):
 	
 
 
-def ros_init():
+def ros_init(node=0):
+	
 	global pub
 	global sub
 	rospy.Subscriber('getter',Float32MultiArray,callback)
 	pub = rospy.Publisher('setter', String, queue_size=10)
 	time.sleep(2)
-	rospy.init_node('algorithm', anonymous=True)
+	if node==0:
+		rospy.init_node('algorithm', anonymous=True)
 	time.sleep(2)
 	print('Started')
 

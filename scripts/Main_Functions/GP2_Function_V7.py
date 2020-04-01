@@ -20,12 +20,13 @@ import R2A as ros
 print(sys.path)
 print("SUCcESSS")
 #Parameters:
+contact = np.ones((4,1))
 clientID=0
 l1 =245
 l2 =208.4
 a = 112.75
 initalheight=390
-stride=120
+stride=60
 plus2pi=False
 stability=True
 movement=True
@@ -75,13 +76,14 @@ def Move_side(direction):
     time.sleep(0.5)
     delay = Move_Leg(x[1],direction,stride)
     time.sleep(0.5)
-    Body_mover(direction, 300*delay,stride)
+    Body_mover_To_point(0, 30 , -initalheight , 0.01)
+    #Body_mover(direction, 300*delay,stride)
     time.sleep(0.5)
     delay = Move_Leg(x[2],direction,stride)
     time.sleep(0.5)
 
     delay = Move_Leg(x[3],direction,stride)
-
+    Body_mover_To_point(0, a  , -initalheight , 0.01)
     #print("finish")
 
 
@@ -96,11 +98,14 @@ def Move_Leg(leg,direction,distance):
     trans, hippp, kneeee, delay = Leg_Ellipse_Trajectory(initalheight, distance,direction, transverses[leg-1], hips[leg-1], knees[leg-1]
                                          ,legspos2joint[leg-1,0],legspos2joint[leg-1,1])
     for i in range(hippp.shape[0]):
+        if i >=90:
+            contact[leg-1] = 0
         ros.set_angle(0 + 3 * (leg - 1), trans[i])
         ros.set_angle(1 + 3 * (leg - 1), hippp[i])
         ros.set_angle(2 + 3 * (leg - 1), kneeee[i])
         time.sleep(delay*100)
 
+    contact[leg-1] = 1
     return delay
 
 def Move_Leg_V2(leg,x_target,y_target,z_target):
@@ -347,6 +352,101 @@ def Straightline_Trajectory(leg,plane,num_of_steps,distance):  # moves base with
     return transverse,hip,knee
 
 
+def Jointspace_Trajectory_V1(leg_no , x_tar , y_tar , z_tar , steps): 
+
+    transverses , hips, knees = getjointanglesfromvrep()
+    theta1_tar , theta2_tar , theta3_tar = inverse_kinematics_3d_v6(x_tar , y_tar , z_tar ,transverses[leg_no-1] , hips[leg_no-1] ,knees[leg_no-1] )
+
+    theta1 = np.zeros(steps)
+    theta2 = np.zeros(steps)
+    theta3 = np.zeros(steps)
+
+    ratio1 = (float(theta1_tar) - transverses[leg_no-1]) / steps
+    ratio2 = (float(theta2_tar) - hips[leg_no-1]) / steps
+    ratio3 = (float(theta3_tar) - knees[leg_no-1]) / steps
+
+    initial_thetas = np.zeros((3,1))
+    initial_thetas[0] = transverses[leg_no-1]
+    initial_thetas[1] = hips[leg_no-1]
+    initial_thetas[2] = knees[leg_no-1]
+
+    for i in range(steps):
+        theta1[i] =  initial_thetas[0] + ratio1
+        theta2[i] =  initial_thetas[1] + ratio2
+        theta3[i] =  initial_thetas[2] + ratio3
+
+        initial_thetas[0] = theta1[i]
+        initial_thetas[1] = theta2[i]
+        initial_thetas[2] = theta3[i]
+        
+    return theta1 , theta2 , theta3
+
+def Jointspace_Trajectory_V2(leg_no , theta1_tar , theta2_tar , theta3_tar  , steps): 
+
+    transverses , hips, knees = getjointanglesfromvrep()
+    #theta1_tar , theta2_tar , theta3_tar = inverse_kinematics_3d_v6(x_tar , y_tar , z_tar ,transverses[leg_no-1] , hips[leg_no-1] ,knees[leg_no-1] )
+
+    theta1 = np.zeros(steps)
+    theta2 = np.zeros(steps)
+    theta3 = np.zeros(steps)
+
+    ratio1 = (float(theta1_tar) - transverses[leg_no-1]) / steps
+    ratio2 = (float(theta2_tar) - hips[leg_no-1]) / steps
+    ratio3 = (float(theta3_tar) - knees[leg_no-1]) / steps
+
+    initial_thetas = np.zeros((3,1))
+    initial_thetas[0] = transverses[leg_no-1]
+    initial_thetas[1] = hips[leg_no-1]
+    initial_thetas[2] = knees[leg_no-1]
+
+    for i in range(steps):
+        theta1[i] =  initial_thetas[0] + ratio1
+        theta2[i] =  initial_thetas[1] + ratio2
+        theta3[i] =  initial_thetas[2] + ratio3
+
+        initial_thetas[0] = theta1[i]
+        initial_thetas[1] = theta2[i]
+        initial_thetas[2] = theta3[i]
+        
+    return theta1 , theta2 , theta3
+
+def Cheetah_Wakeup():
+    Body_mover_To_point( 0, a  , -390 , 0.01)
+
+
+def Cheetah_Sleep():
+    Body_mover('d',0.02,200)
+    time.sleep(0.5)
+
+    transverse = np.zeros((50,4))
+    hip = np.zeros((50,4))
+    knee = np.zeros((50,4))
+
+    transverse[:,0] , hip[:,0] , knee[:,0]  = Jointspace_Trajectory_V2( 1 , 0 , -4.186 , 2.09 , 50)
+    transverse[:,1] , hip[:,1] , knee[:,1]  = Jointspace_Trajectory_V2( 2 , 0 , -4.186 , 2.09 , 50)
+    transverse[:,2] , hip[:,2] , knee[:,2]  = Jointspace_Trajectory_V2( 3 , 0 , -4.186 , 2.09 , 50)
+    transverse[:,3] , hip[:,3] , knee[:,3]  = Jointspace_Trajectory_V2( 4 , 0 , -4.186 , 2.09 , 50)
+
+    for i in range(50):#moves the stepsize determined
+        for ii in range(4):
+            ros.set_angle((0+3*ii),transverse[i,ii])
+            ros.set_angle((1+3*ii),hip[i,ii])
+            ros.set_angle((2+3*ii),knee[i,ii])
+            time.sleep(0.1)
+
+    print("finished")
+
+
+def move(leg_no):
+    transverse1 , hip1 , knee1  = Jointspace_Trajectory_V2( leg_no , 0 , -4.186 , 2.09 , 100)
+
+    for i in range(100):#moves the stepsize determined
+            ros.set_angle((0+3*(leg_no-1)),transverse1[i])
+            ros.set_angle((1+3*(leg_no-1)),hip1[i])
+            ros.set_angle((2+3*(leg_no-1)),knee1[i])
+            time.sleep(0.1)
+
+    print("finished")
 
 def Body_mover(direction,delay,distance):  # moves base with same length as stride
 
@@ -543,11 +643,11 @@ def trot2(leg,direction,distance):
         time.sleep(delay*8)
 
 def Dancing():
-    Body_mover('f',0.005,110)
+    Body_mover('f',0.01,110)
     time.sleep(0.5)
-    Body_mover('b',0.005,220)
+    Body_mover('b',0.01,220)
     time.sleep(0.5)
-    Body_mover('f',0.005,110)
+    Body_mover('f',0.01,110)
     time.sleep(0.5)
     Body_mover_To_point(-80, a - 80 , -390 , 0.01)
     time.sleep(0.8)
@@ -559,11 +659,11 @@ def Dancing():
     time.sleep(0.8)
     Body_mover_To_point( 0, a  , -390 , 0.01)
     time.sleep(0.8)
-    Body_mover('l',0.005,90)
+    Body_mover('l',0.01,90)
     time.sleep(0.5)
-    Body_mover('r',0.005,180)
+    Body_mover('r',0.01,180)
     time.sleep(0.5)
-    Body_mover('l',0.005,90)
+    Body_mover('l',0.01,90)
     time.sleep(0.5)
     Body_mover('d',0.02,200)
     time.sleep(0.5)
@@ -575,7 +675,7 @@ def Dancing():
     time.sleep(0.5)
 
 
-def generalbasemover_modifed(leg,direction,distance):  # moves base with same length as stride
+def generalbasemover_modifed(leg,direction,distance,numofsteps):  # moves base with same length as stride
     if direction == 'r':
         sign = -1
         y = 1
@@ -595,7 +695,7 @@ def generalbasemover_modifed(leg,direction,distance):  # moves base with same le
     transverses, hips, knees = getjointanglesfromvrep()
     legspos2cg, legspos2joint = GetEndEffectorPos(transverses, hips,
                                                   knees)  # effector pos with respect to cg got correct angles 
-    numofsteps = stp
+    ratio = float(distance)/numofsteps
     trans = np.zeros((numofsteps, 1))
     hip = np.zeros((numofsteps, 1))
     knee = np.zeros((numofsteps, 1))
@@ -606,7 +706,7 @@ def generalbasemover_modifed(leg,direction,distance):  # moves base with same le
 
     for i in range(numofsteps):  # moves the base    
         trans[i], hip[i], knee[i] = inverse_kinematics_3d_v6(
-                (legspos2joint[leg-1,0] - sign*x*(i + 1)*(distance/ numofsteps)), (legspos2joint[leg-1, 1] - sign*y*(i + 1)*(distance/ numofsteps)), legspos2joint[leg-1, 2],
+                (legspos2joint[leg-1,0] - sign*x*(i + 1)*ratio), (legspos2joint[leg-1, 1] - sign*y*(i + 1)*ratio), legspos2joint[leg-1, 2],
                 initial_transverse, initial_hip, initial_knee)
         initial_transverse = trans[i]
         initial_hip = hip[i]
@@ -625,13 +725,13 @@ def onestepcreeping(direction,distance):
     delay = Move_Leg(x[1], direction, distance)
     time.sleep(0.3)
     #Body_mover(direction,delay*250,distance)
-    Body_mover_To_point(-40, a - 40 , -initalheight , 0.0005)
+    Body_mover_To_point(-40, a - 40 , -initalheight , 0.01)
     time.sleep(0.3)
     delay = Move_Leg(x[2] ,direction, distance)
     time.sleep(0.3)
     delay = Move_Leg(x[3], direction, distance)
     time.sleep(0.3)
-    Body_mover_To_point(0,a , -initalheight , 0.0005)
+    Body_mover_To_point(0,a , -initalheight , 0.001)
 
 
 def One_Trot(direction,distance):
