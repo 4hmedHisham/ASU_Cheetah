@@ -3,10 +3,11 @@ import numpy as np
 from numpy import sin , cos , arctan2
 from timeit import default_timer as time
 import rospy 
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32MultiArray , String
 
 start = time()
-rospy.init_node('pd',anonymous=True)
+rospy.init_node('Impedance',anonymous=True)
+pub= rospy.Publisher('torques',String,queue_size=10)
 rate = rospy.Rate(1)
 
 l1 = 244.59
@@ -14,8 +15,8 @@ l2 = 208.4
 a = 20
 kp = 1.0
 kd = 0.1
-sizeof_fwdk_array = 2 # x1 y1 z1 x2 y2 z2....
-sizeof_desired_array = 2
+sizeof_fwdk_array = 12 # x1 y1 z1 x2 y2 z2....
+sizeof_desired_array = 3
 sizeof_getter_array = 36
 leg_no = 1
 current_time = 0
@@ -57,8 +58,10 @@ def desired_pos(data):
     msg = np.reshape(msg,sizeof_desired_array)
     global x_desired
     global y_desired
+    global leg_no
     x_desired = msg[0]
     y_desired = msg[1]
+    leg_no = msg[2]
 
 def current_theta(data):
     msg = data.data
@@ -86,11 +89,19 @@ def pd():
     
 
 while not rospy.is_shutdown():
-    if x_current<11:
-        print(np.matmul(pd(),polar_jacoian(50)))
-        x_current = 10
-        y_current = 10
-        rate.sleep()
+    listener_current_pos()
+    listener_desired_pos()
+    listener_theta()
+    torques = np.matmul(pd(),polar_jacoian(theta_knee))
+    torques = torques.flatten()
+    t = "%s %s"%((3*leg_no)-2 , torques[0])
+    pub.publish(t)
+    t = "%s %s"%((3*leg_no)-1  , torques[1])
+    pub.publish(t)
+    rate.sleep()
+    
+
+    
 
 
     
@@ -100,10 +111,10 @@ while not rospy.is_shutdown():
 
 
 def listener_current_pos():
-    rospy.Subscriber('getter',Float32MultiArray,current_pos)
+    rospy.Subscriber('fwd_kin',Float32MultiArray,current_pos)
 
 def listener_desired_pos():
     rospy.Subscriber('zmp',Float32MultiArray,desired_pos)
 
-def listener_rheta():
-    rospy.Subscriber('theta',Float32MultiArray,current_theta)
+def listener_theta():
+    rospy.Subscriber('getter',Float32MultiArray,current_theta)

@@ -59,7 +59,8 @@ def set_vrep_angels(data):
 def start_vrep_node():
 	
 	pub = rospy.Publisher('getter', Float32MultiArray, queue_size=10)
-	sub = rospy.Subscriber('setter',String,set_vrep_angels)	
+	sub = rospy.Subscriber('setter',String,set_vrep_angels)
+	rospy.Subscriber('torques',String,set_vrep_torques)	
 	rospy.init_node('vrep', anonymous=True)
 	rate = rospy.Rate(100) # 10hz
 	while not rospy.is_shutdown():
