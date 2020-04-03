@@ -8,7 +8,7 @@
 #
 # sim.py, simConst.py, and the remote API library available
 # in programming/remoteApiBindings/lib/lib
-
+ 
 try:
     import sim
 except:
@@ -19,10 +19,10 @@ except:
     print ('or appropriately adjust the file "sim.py"')
     print ('--------------------------------------------------------------')
     print ('')
-
+ 
 import math
 import time
-
+ 
 class Client:
     def __enter__(self):
         self.intSignalName='legacyRemoteApiStepCounter'
@@ -34,15 +34,15 @@ class Client:
     
     def __exit__(self,*err):
         sim.simxFinish(-1)
-
+ 
 with Client() as client:
     client.runInSynchronousMode=True
     
     print("running")
-
+ 
     if client.id!=-1:
         print ('Connected to remote API server')
-
+ 
         def stepSimulation():
             if client.runInSynchronousMode:
                 currentStep=client.stepCounter
@@ -62,7 +62,7 @@ with Client() as client:
                     if client.lastImageAcquisitionTime!=imageSimTime:
                         client.lastImageAcquisitionTime=imageSimTime
                         sim.simxSetVisionSensorImage(client.id,client.passiveVisionSensorHandle,img,0,sim.simx_opmode_oneshot)
-
+ 
         # Start streaming client.intSignalName integer signal, that signals when a step is finished:
         sim.simxGetIntegerSignal(client.id,client.intSignalName,sim.simx_opmode_streaming)
         
@@ -75,7 +75,7 @@ with Client() as client:
         # enable the synchronous mode on the client:
         if client.runInSynchronousMode:
             sim.simxSynchronous(client.id,True)
-
+ 
         sim.simxStartSimulation(client.id,sim.simx_opmode_oneshot)
         
         startTime=time.time()
