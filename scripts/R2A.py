@@ -34,6 +34,7 @@ def ros_init(node=0):
 	global sub
 	rospy.Subscriber('getter',Float32MultiArray,callback)
 	pub = rospy.Publisher('setter', String, queue_size=10)
+	pub2=rospy.Publisher('desired',Float32MultiArray)
 	time.sleep(2)
 	if node==0:
 		rospy.init_node('algorithm', anonymous=True)
@@ -103,4 +104,9 @@ def set_angle(joint,angle):
 	msg=str(joint)+' '+str(sendangle)
 	pub.publish(msg)
 
+def desired_xy(transverse,hip,knee,legno):
 
+
+
+	msg=[x,y,legno]
+	pub2.publish(msg)
