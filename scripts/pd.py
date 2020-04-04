@@ -13,11 +13,11 @@ rate = rospy.Rate(1)
 l1 = 244.59
 l2 = 208.4
 a = 20
-kp = 1.0
-kd = 0.1
-sizeof_fwdk_array = 12 # x1 y1 z1 x2 y2 z2....
+kp = 8.0
+kd = 0.25
+sizeof_fwdk_array = 24 # x1 y1 z1 x2 y2 z2....
 sizeof_desired_array = 3
-sizeof_getter_array = 36
+sizeof_getter_array = 42
 leg_no = 1
 current_time = 0
 x_current = 9
@@ -101,17 +101,9 @@ while not rospy.is_shutdown():
     rate.sleep()
     
 
-    
-
-
-    
-    
-    
-
-
 
 def listener_current_pos():
-    rospy.Subscriber('fwd_kin',Float32MultiArray,current_pos)
+    rospy.Subscriber('fwd',Float32MultiArray,current_pos)
 
 def listener_desired_pos():
     rospy.Subscriber('zmp',Float32MultiArray,desired_pos)
