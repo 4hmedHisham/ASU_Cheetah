@@ -6,7 +6,7 @@ import numpy as np
 import time
 import vrep
 import GP2_Function_V7 as gait
-import GP2_Vrep_V7 as v
+import GP2_Vrep_V3 as v
 
 # Parameters
 
@@ -15,7 +15,7 @@ clientID = 0
 # TopLeft 1   Top Right 2 Rear Right 3 RearLeft 4
 
 # Starting Vrep Interface
-v.vrepInterface()
+v.vrepInterface(19999)
 v.get_angles_firsttime()
 #v.Get_Torques_Firsttime()
 

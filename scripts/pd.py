@@ -98,14 +98,17 @@ def listener_theta():
     rospy.Subscriber('getter',Float32MultiArray,current_theta)
 
 while not rospy.is_shutdown():
+    '''
     listener_current_pos()
     listener_desired_pos()
     listener_theta()
     torques = np.matmul(pd(),polar_jacoian(theta_knee))
     torques = torques.flatten()
+    
     t = "%s %s"%((3*leg_no)-2 , torques[0])
     pub.publish(t)
-    t = "%s %s"%((3*leg_no)-1  , torques[1])
+    '''
+    t = "%s %s"%((3*leg_no)-1  , 50)
     pub.publish(t)
     rate.sleep()
     
