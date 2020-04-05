@@ -2,6 +2,7 @@
 import rospy
 import time
 import GP2_Vrep_V3 as v
+import GP2_Function_V7 as gait1
 import numpy as np
 import threading
 from std_msgs.msg import Float32MultiArray
@@ -105,8 +106,6 @@ def set_angle(joint,angle):
 	pub.publish(msg)
 
 def desired_xy(transverse,hip,knee,legno):
-
-
-
-	msg=[x,y,legno]
+	x,y,z = gait1.forward_kinematics_V3(transverse,hip,knee)
+	msg=[x,z,legno]
 	pub2.publish(msg)

@@ -87,6 +87,15 @@ def pd():
     output = [[p_error,d_error]]
     return output 
     
+    
+def listener_current_pos():
+    rospy.Subscriber('fwd',Float32MultiArray,current_pos)
+
+def listener_desired_pos():
+    rospy.Subscriber('desired',Float32MultiArray,desired_pos)
+
+def listener_theta():
+    rospy.Subscriber('getter',Float32MultiArray,current_theta)
 
 while not rospy.is_shutdown():
     listener_current_pos()
@@ -102,11 +111,4 @@ while not rospy.is_shutdown():
     
 
 
-def listener_current_pos():
-    rospy.Subscriber('fwd',Float32MultiArray,current_pos)
 
-def listener_desired_pos():
-    rospy.Subscriber('zmp',Float32MultiArray,desired_pos)
-
-def listener_theta():
-    rospy.Subscriber('getter',Float32MultiArray,current_theta)
