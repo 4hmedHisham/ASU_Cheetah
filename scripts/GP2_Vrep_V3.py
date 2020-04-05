@@ -19,7 +19,7 @@ from timeit import default_timer  as timer
 #Commit2From the deletedpart of a line
 #COmmit1
 #7atet satr gded
-
+clientID=0
 def get_angles_firsttime():
     for i in range(12):
         print('handler is')
@@ -428,6 +428,9 @@ def gyro_read():
         error3,z=sim.simxGetFloatSignal(0,'gyroZ',sim.simx_opmode_streaming)
     return [x,y,z]
 def vrep_init(port):
+    clientID=sim.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to CoppeliaSim
+    returnCode=sim.simxStartSimulation(clientID,sim.simx_opmode_oneshot)
+    time.sleep(1.2)
     vrepInterface(port)
     time.sleep(0.5)
     get_angles_firsttime()

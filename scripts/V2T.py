@@ -10,7 +10,7 @@ counter=0
 testing=False
 printing=False
 if not testing :
-	v.vrep_init(19999)
+	v.vrep_init(19997)
 def is_number(n):
     try:
         float(n)   # Type-casting the string to `float`.
@@ -63,6 +63,7 @@ def start_vrep_node():
 	sub = rospy.Subscriber('setter',String,set_vrep_angels)
 	rospy.Subscriber('torques',String,set_vrep_torques)	
 	rospy.init_node('vrep', anonymous=True)
+	print("ROS NODE INTIALIZED")
 	rate = rospy.Rate(100) # 10hz
 	while not rospy.is_shutdown():
 		i=0
