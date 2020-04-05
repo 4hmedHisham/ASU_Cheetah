@@ -20,6 +20,7 @@ def is_number(n):
         return False
     return True
 def set_vrep_angels(data):
+	''' This callback function takes angels from topic "getter" and feed it to vrep using python api.'''
 	switch=False
 	joint=[]
 	ang=[]
@@ -57,7 +58,7 @@ def set_vrep_angels(data):
 		print('Recieved ')
 	# print(ang)
 def start_vrep_node():
-	
+	''' This function instialze the node responsible for vrep/ros interaction.'''
 	pub = rospy.Publisher('getter', Float32MultiArray, queue_size=10)
 	sub = rospy.Subscriber('setter',String,set_vrep_angels)
 	rospy.Subscriber('torques',String,set_vrep_torques)	
@@ -102,6 +103,7 @@ def start_vrep_node():
 		rate.sleep()
 
 def set_vrep_torques(data):
+	'''This callback function feeds torques fround in topic "torques" to vrep though python api function'''
 	switch=False
 	joint=[]
 	ang=[]
