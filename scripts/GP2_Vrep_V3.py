@@ -450,11 +450,14 @@ def vrep_init(port, mode='p'):
     gyro_read_firsttime()
     imu_read_firsttime()
     time.sleep(2)
-    ctrl_en(mode)
     if mode=='p':
         print("Position mode is running...")
     elif mode=='t':
         print("Torque mode is running...")
+        raw_input("Press enter any key to disable control loop: ")
+        
+    ctrl_en(mode)
+
         
     print('Vrep Up and Running...')
 
