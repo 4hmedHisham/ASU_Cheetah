@@ -11,6 +11,7 @@ import time
 import platform
 print(platform.python_version())
 from timeit import default_timer  as timer
+import rospy
 
 
 
@@ -20,6 +21,16 @@ from timeit import default_timer  as timer
 #COmmit1
 #7atet satr gded
 clientID=0
+def ctrl_en(on_off):
+    if on_off=='p':
+        param=1
+    elif on_off=='t':
+        param=0
+    else:
+         print("INVALID INPUT!")
+    for i in range(12):
+        ret=sim.simxSetObjectIntParameter(clientID,int(angles_handler[i]),2000,param,sim.simx_opmode_blocking)
+        print("RETURN CODE IS "+str(ret))
 def get_angles_firsttime():
     for i in range(12):
         print('handler is')
@@ -427,7 +438,7 @@ def gyro_read():
     while(error3!=0):
         error3,z=sim.simxGetFloatSignal(0,'gyroZ',sim.simx_opmode_streaming)
     return [x,y,z]
-def vrep_init(port):
+def vrep_init(port, mode='p'):
     clientID=sim.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to CoppeliaSim
     returnCode=sim.simxStartSimulation(clientID,sim.simx_opmode_oneshot)
     time.sleep(1.2)
@@ -439,20 +450,17 @@ def vrep_init(port):
     gyro_read_firsttime()
     imu_read_firsttime()
     time.sleep(2)
-    print('Vrep Up and Running')
-# vrepInterface(19999)
-# set_angle('bc2',0)
-# get_vel_firsttime()
-# for i in range(10):
-#     print(get_vel('bc2'))
+    ctrl_en(mode)
+    if mode=='p':
+        print("Position mode is running...")
+    elif mode=='t':
+        print("Torque mode is running...")
+        
+    print('Vrep Up and Running...')
 
 
-#get_angles_firsttime()
-# # print(angles_handler)
-# # print(angles_error)
-
-#print('wat' + str(set_angle('cd1',1.2)))
-
-# print(str(set_angle('ab3',1.2)))
-
+# vrep_init(19997)
+# time.sleep(2)
+# ctrl_en(0)
+# print("DONE")
 
