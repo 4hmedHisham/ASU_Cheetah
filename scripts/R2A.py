@@ -105,7 +105,8 @@ def set_angle(joint,angle):
 	pub.publish(msg)
 
 def desired_xy(transverse,hip,knee,legno):
+	msg = Float32MultiArray()
 	x,y,z = gait1.forward_kinematics_V3(transverse,hip,knee)
-	msg=[x,z,legno]
+	msg.data=[float(x),float(z),legno]
 	pub2 = rospy.Publisher('desired',Float32MultiArray)
 	pub2.publish(msg)

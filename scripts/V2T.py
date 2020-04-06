@@ -76,7 +76,12 @@ def start_vrep_node(mode = 'p'):
 	v.vrep_init(19997)
 	
 	counterrr = 0
+	init=0
 	while not rospy.is_shutdown():
+		if init==0:
+			#raw_input("INIT UR NODES")
+			init=init+1
+		
 		if counterrr == 1:
 				mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
 				while ((mode!='p') and (mode!='t')):
@@ -85,6 +90,7 @@ def start_vrep_node(mode = 'p'):
 				if mode == 't':
 					raw_input("Press enter any key to disable control loop: ")
     				v.ctrl_en(mode)
+		
 				
 				
 

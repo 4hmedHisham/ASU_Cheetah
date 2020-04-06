@@ -21,16 +21,20 @@ import rospy
 #COmmit1
 #7atet satr gded
 clientID=0
-def ctrl_en(on_off):
+def ctrl_en(on_off,all_or_1='all'):
     if on_off=='p':
         param=1
     elif on_off=='t':
         param=0
     else:
          print("INVALID INPUT!")
-    for i in range(12):
-        ret=sim.simxSetObjectIntParameter(clientID,int(angles_handler[i]),2000,param,sim.simx_opmode_blocking)
-        print("RETURN CODE IS "+str(ret))
+    if(all_or_1=='all'):
+        for i in range(12):
+            if (i%3)!=0:
+                ret=sim.simxSetObjectIntParameter(clientID,int(angles_handler[i]),2001,param,sim.simx_opmode_blocking)
+                print("RETURN CODE IS "+str(ret))
+            
+    
 def get_angles_firsttime():
     for i in range(12):
         print('handler is')
@@ -170,7 +174,7 @@ def get_angles(getangles):
 def set_angle(setangle, angle):
     #print(' the angler is '+ setangle)
     error=9
-    start= timer()
+    #start= timer()
   
     if setangle == 'ab3' or setangle == 0:
         while(error!=0):     
@@ -210,13 +214,13 @@ def set_angle(setangle, angle):
     elif setangle == 'cd2' or setangle == 11:
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[11]), angle, sim.simx_opmode_streaming)
-    end = timer()
-    print("TIMER IS ")
-    print(end-start)
+    #end = timer()
+    #print("TIMER IS ")
+    #print(end-start)
 
 def set_torque(set_torque, torque):
     error=9
-    start= timer()
+    #start= timer()
     
     if set_torque == 'ab3' or set_torque == 0:
         while(error!=0):     
@@ -304,9 +308,9 @@ def set_torque(set_torque, torque):
             set_target_vel(int(angles_handler[11]),'p')
         else:
             set_target_vel(int(angles_handler[11]),'n')
-    end = timer()
-    print("TIMER IS ")
-    print(end-start)
+    #end = timer()
+    #print("TIMER IS ")
+    #print(end-start)
 
 def vrepInterface(port):
     global angles_handler
@@ -454,14 +458,12 @@ def vrep_init(port, mode='p'):
         print("Position mode is running...")
     elif mode=='t':
         print("Torque mode is running...")
-        
-
-        
+        raw_input("Press enter any key to disable control loop  : ")      
     print('Vrep Up and Running...')
 
 
 # vrep_init(19997)
 # time.sleep(2)
-# ctrl_en(0)
+# ctrl_en('t')
 # print("DONE")
 
