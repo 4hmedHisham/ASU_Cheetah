@@ -100,9 +100,12 @@ def Move_Leg(leg,direction,distance):
     for i in range(hippp.shape[0]):
         if i >=90:
             contact[leg-1] = 0
+            '''
         ros.set_angle(0 + 3 * (leg - 1), trans[i])
         ros.set_angle(1 + 3 * (leg - 1), hippp[i])
         ros.set_angle(2 + 3 * (leg - 1), kneeee[i])
+        '''
+        ros.desired_xy(trans[i],hippp[i],kneeee[i],leg)
         time.sleep(delay*100)
 
     contact[leg-1] = 1
