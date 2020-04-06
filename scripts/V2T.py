@@ -10,7 +10,11 @@ counter=0
 testing=False
 printing=False
 if not testing :
-	v.vrep_init(19997)
+	mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
+	while ((mode!='p') and (mode!='t')):
+		print('Please enter a vaild control mode')
+		mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
+	v.vrep_init(19997,mode)
 def is_number(n):
     try:
         float(n)   # Type-casting the string to `float`.
