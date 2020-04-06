@@ -270,15 +270,16 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
         xnew = np.zeros([steps, 1], dtype=float)
         t = 0;
         i = 0;
-        initial_distance_f = legfix_initial_hip
+        if leg_no == 4:
+            initial_distance_f = leg_pos4_hip[0]
+        else:
+            initial_distance_f = leg_pos3_hip[0]
 
         for t in np.arange(0, cycle_time_f, sample_time_f):
             xnew[i] = (stride_f * ((t / cycle_time_f) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time_f)))) - (stride_f / 2) + stride_f / 2) + initial_distance_f
             i = i + 1;
         xnew = xnew
-
-
-  
+ 
         i = 0;
         ynew = np.zeros([steps, 1], dtype=float)
 
@@ -302,7 +303,10 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
         ynew = np.zeros([steps, 1], dtype=float)
         t = 0
         i = 0
-        initial_distance=legvar_initial_hip
+        if leg_no == 2:
+            initial_distance = leg_pos2_hip[0]
+        else:
+            initial_distance = leg_pos1_hip[0]
 
         if leg_no == 2:
             var = 1
@@ -540,8 +544,7 @@ if __name__ == '__main__':
     rospy.Subscriber('fwd', Float32MultiArray, leg_pos)
     rospy.Subscriber('getter', Float32MultiArray , imudata)
     time.sleep(2)
-    rate = rospy.Rate(10)  # 10hz
-    time.sleep(0.04)   
+    rate = rospy.Rate(100)  # 10hz 
     while not rospy.is_shutdown():
 
         legfix_initial_hip = leg_pos4_hip[0]
@@ -566,19 +569,7 @@ if __name__ == '__main__':
         time.sleep(0.01)         
 
         Gate_Publisher(3 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg3_Prev_angs,leg1_Prev_angs)
-        Gate_Publisher(1 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg3_Prev_angs,leg1_Prev_angs)
-        # trans,hip,knee = gait.generalbasemover_modifed(4, 'f',150 ,20)
-        # trans1,hip1,knee1 = gait.generalbasemover_modifed(2, 'f',150 ,20)
-
-        # for iii in range(20):           
-        #     set_angle((3*3),trans[iii])
-        #     set_angle((3*3)+1 , hip[iii])
-        #     set_angle(((3*3)+2), knee[iii])          
-        #     set_angle((1*3),trans1[iii])
-        #     set_angle((1*3)+1 , hip1[iii])
-        #     set_angle(((1*3)+2), knee1[iii])
-        #     time.sleep(0.02)
-                      
+        Gate_Publisher(1 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg3_Prev_angs,leg1_Prev_angs)                      
         #rate.sleep()        
         
         
