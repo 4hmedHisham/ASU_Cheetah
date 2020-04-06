@@ -454,9 +454,7 @@ def vrep_init(port, mode='p'):
         print("Position mode is running...")
     elif mode=='t':
         print("Torque mode is running...")
-        raw_input("Press enter any key to disable control loop: ")
         
-    ctrl_en(mode)
 
         
     print('Vrep Up and Running...')

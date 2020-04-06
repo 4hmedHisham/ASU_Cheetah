@@ -34,7 +34,7 @@ time.sleep(0.5)
 
 
 
-gait.Dancing()
+
 time.sleep(0.5)
 
 for i in range(20):

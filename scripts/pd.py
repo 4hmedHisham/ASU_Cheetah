@@ -8,7 +8,7 @@ from std_msgs.msg import Float32MultiArray , String
 start = time()
 rospy.init_node('Impedance',anonymous=True)
 pub= rospy.Publisher('torques',String,queue_size=10)
-rate = rospy.Rate(1)
+rate = rospy.Rate(1000)
 
 l1 = 244.59
 l2 = 208.4
@@ -98,16 +98,13 @@ def listener_theta():
     rospy.Subscriber('getter',Float32MultiArray,current_theta)
 
 while not rospy.is_shutdown():
-    '''
     listener_current_pos()
     listener_desired_pos()
     listener_theta()
     torques = np.matmul(pd(),polar_jacoian(theta_knee))
     torques = torques.flatten()
-    
     t = "%s %s"%((3*leg_no)-2 , torques[0])
     pub.publish(t)
-    '''
     t = "%s %s"%((3*leg_no)-1  , 50)
     pub.publish(t)
     rate.sleep()

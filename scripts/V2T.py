@@ -5,16 +5,20 @@ import numpy as np
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
 import GP2_Vrep_V3 as v
+boolean = 1
+mode = 'p'
 #ADDED VREP Iinit in one function
 counter=0
 testing=False
 printing=False
+'''
 if not testing :
 	mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
 	while ((mode!='p') and (mode!='t')):
 		print('Please enter a vaild control mode')
 		mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
 	v.vrep_init(19997,mode)
+'''
 def is_number(n):
     try:
         float(n)   # Type-casting the string to `float`.
@@ -61,7 +65,7 @@ def set_vrep_angels(data):
 	if printing == True:
 		print('Recieved ')
 	# print(ang)
-def start_vrep_node():
+def start_vrep_node(mode = 'p'):
 	''' This function instialze the node responsible for vrep/ros interaction.'''
 	pub = rospy.Publisher('getter', Float32MultiArray, queue_size=10)
 	sub = rospy.Subscriber('setter',String,set_vrep_angels)
@@ -69,7 +73,21 @@ def start_vrep_node():
 	rospy.init_node('vrep', anonymous=True)
 	print("ROS NODE INTIALIZED")
 	rate = rospy.Rate(100) # 10hz
+	v.vrep_init(19997)
+	
+	counterrr = 0
 	while not rospy.is_shutdown():
+		if counterrr == 1:
+				mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
+				while ((mode!='p') and (mode!='t')):
+					print('Please enter a vaild control mode')
+					mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
+				if mode == 't':
+					raw_input("Press enter any key to disable control loop: ")
+    				v.ctrl_en(mode)
+				
+				
+
 		i=0
 		total = Float32MultiArray()
 		total.data = []
@@ -104,7 +122,8 @@ def start_vrep_node():
 		total.data=vrep_param
 		#print(total.data)
 		pub.publish(total)
-
+		counterrr = counterrr +1 
+		print(counterrr,"ahoo")
 		rate.sleep()
 
 def set_vrep_torques(data):
@@ -149,7 +168,7 @@ def set_vrep_torques(data):
 if __name__ == '__main__':
 	try:
 		
-		start_vrep_node()
+		start_vrep_node(mode)
 	except rospy.ROSInterruptException:
 		pass
 
