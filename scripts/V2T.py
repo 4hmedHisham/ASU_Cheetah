@@ -57,13 +57,16 @@ def set_vrep_angels(data):
 		print('Recieved ')
 	# print(ang)
 def start_vrep_node():
-	
+	#print("\n I reached this point \n")
+
 	pub = rospy.Publisher('getter', Float32MultiArray, queue_size=10)
 	sub = rospy.Subscriber('setter',String,set_vrep_angels)
 	rospy.Subscriber('torques',String,set_vrep_torques)	
 	rospy.init_node('vrep', anonymous=True)
 	rate = rospy.Rate(100) # 10hz
 	while not rospy.is_shutdown():
+		#print("\n I reached this point \n")
+
 		i=0
 		total = Float32MultiArray()
 		total.data = []
@@ -71,32 +74,26 @@ def start_vrep_node():
 		global counter
 		if not testing :
 			for i in range(12):
-				#angs=v.get_angles(i)
-				#print(angs)
 				vrep_param.append(v.get_angles(i))
 			for i in range(12):
 				vrep_param.append(v.get_torque(i))
 			for i in range(12):
 				vrep_param.append(v.get_vel(i))
-			linear_accs=v.imu_read()
-			anglular_accs=v.gyro_read()
-			for linear_acc in linear_accs:
-				vrep_param.append(linear_acc)
-			for angular_acc in anglular_accs :
-				vrep_param.append(angular_acc)
-			
-
-
-				
+			#linear_accs=v.imu_read()
+			#anglular_accs=v.gyro_read()
+			#for linear_acc in linear_accs:
+			#	vrep_param.append(linear_acc)
+			#for angular_acc in anglular_accs :
+			#	vrep_param.append(angular_acc)			
 		else :
+			#print("\n I reached this point \n")
 			while i in range(12):
 				#print(angs)
 				vrep_param.append(counter)
 				counter=counter+1
 				i=i+1
 
-		total.data=vrep_param
-		#print(total.data)
+		total.data=vrep_param		
 		pub.publish(total)
 
 		rate.sleep()
@@ -140,9 +137,5 @@ def set_vrep_torques(data):
 	# print(ang)
 
 if __name__ == '__main__':
-	try:
-		
 		start_vrep_node()
-	except rospy.ROSInterruptException:
-		pass
 
