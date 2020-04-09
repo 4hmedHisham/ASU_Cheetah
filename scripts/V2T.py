@@ -4,6 +4,7 @@ import time
 import numpy as np
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
+from std_msgs.msg import Bool
 import GP2_Vrep_V3 as v
 boolean = 1
 mode = 'p'
@@ -65,10 +66,12 @@ def set_vrep_angels(data):
 	if printing == True:
 		print('Recieved ')
 	# print(ang)
-def start_vrep_node(mode = 'p'):
+def start_vrep_node():
+	global mode
 	''' This function instialze the node responsible for vrep/ros interaction.'''
 	pub = rospy.Publisher('getter', Float32MultiArray, queue_size=10)
 	sub = rospy.Subscriber('setter',String,set_vrep_angels)
+	sub = rospy.Subscriber('disable',Bool,disable)
 	rospy.Subscriber('torques',String,set_vrep_torques)	
 	rospy.init_node('vrep', anonymous=True)
 	print("ROS NODE INTIALIZED")
@@ -87,9 +90,9 @@ def start_vrep_node(mode = 'p'):
 				while ((mode!='p') and (mode!='t')):
 					print('Please enter a vaild control mode')
 					mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
-				if mode == 't':
-					raw_input("Press enter any key to disable control loop: ")
-    				v.ctrl_en(mode)
+				# if mode == 't':
+				# 	raw_input("Press enter any key to disable control loop: ")
+    			# 	v.ctrl_en(mode)
 		
 				
 				
@@ -108,12 +111,12 @@ def start_vrep_node(mode = 'p'):
 				vrep_param.append(v.get_torque(i))
 			for i in range(12):
 				vrep_param.append(v.get_vel(i))
-			#linear_accs=v.imu_read()
-			#anglular_accs=v.gyro_read()
-			#for linear_acc in linear_accs:
-			#	vrep_param.append(linear_acc)
-			#for angular_acc in anglular_accs :
-			#	vrep_param.append(angular_acc)
+			linear_accs=v.imu_read()
+			anglular_accs=v.gyro_read()
+			for linear_acc in linear_accs:
+				vrep_param.append(linear_acc)
+			for angular_acc in anglular_accs :
+				vrep_param.append(angular_acc)
 			
 
 
@@ -129,7 +132,7 @@ def start_vrep_node(mode = 'p'):
 		#print(total.data)
 		pub.publish(total)
 		counterrr = counterrr +1 
-		print(counterrr,"ahoo")
+		#print(counterrr,"ahoo")
 		rate.sleep()
 
 def set_vrep_torques(data):
@@ -170,11 +173,25 @@ def set_vrep_torques(data):
 	if printing == True:
 		print('Recieved ')
 	# print(ang)
+def disable(data):
+	en=data.data
+	print("DATA IS ")
+	print(en)
+	if(mode=='p'):
+		print("You are in Position Control mode, hence u dont have access to chance control loop")
+	elif(mode=='t'):
+		if en==False:
+			v.ctrl_en('p')
+			print("Control loop enabled!")
+		else :
+			v.ctrl_en('t')
+			print("Control loop disabled!")
+
 
 if __name__ == '__main__':
 	try:
 		
-		start_vrep_node(mode)
+		start_vrep_node()
 	except rospy.ROSInterruptException:
 		pass
 

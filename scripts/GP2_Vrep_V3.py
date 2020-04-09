@@ -451,8 +451,8 @@ def vrep_init(port, mode='p'):
     get_angles_firsttime()
     get_torques_firsttime()
     get_vel_firsttime()
-    #gyro_read_firsttime()
-    #imu_read_firsttime()
+    gyro_read_firsttime()
+    imu_read_firsttime()
     time.sleep(2)
     if mode=='p':
         print("Position mode is running...")
