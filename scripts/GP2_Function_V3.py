@@ -42,7 +42,7 @@ stp = 100
 
 	
 def getjointanglesfromvrep():#transverse,hips,knees
-
+    '''This function get all joint angles from vrep.'''
     hipangles = np.zeros((4, 1))
     kneeangles = np.zeros((4, 1))
     transverseangles = np.zeros((4, 1))
@@ -56,6 +56,9 @@ def getjointanglesfromvrep():#transverse,hips,knees
 
 
 def GetEndEffectorPos(transverseangles, hipangles, kneeangles):  # Gets End effectors Positions
+    """This function gets end-effector position with respect to joint and cg \n
+    Input:Transverse angles , Hip angels, Knee angles(array of 3 each) \n
+    Returns: Position with respect to joint, Position with respect to cg (array of 3 elements each)"""
     leg_pos_x = [254, 254, -258, -258]  # the endeffector position relative to the cg in the x-axis
     leg_pos_y = [116, -116, -116, +116]  # the endeffector position relative to the cg in the y-axis
     # This array will have the pos. of the 4 endeffector

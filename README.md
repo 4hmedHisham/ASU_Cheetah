@@ -4,7 +4,7 @@ TO Start the project
 
 0-On Ubuntu Open CoppeliaSim by typing ./coppeliaSim.sh in coppeliasim's directory
 
-1-Open Vrep Scene (FINAL_URDF_Position_Control is position control OR FINAL_URDF_Torque_Control if torque control)
+1-Open Vrep Scene and start the simulation(FINAL_URDF_Position_Control is position control OR FINAL_URDF_Torque_Control if torque control)
 
 2-Open roscore
 

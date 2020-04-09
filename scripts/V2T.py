@@ -10,7 +10,11 @@ counter=0
 testing=False
 printing=False
 if not testing :
-	v.vrep_init(19999)
+	mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
+	while ((mode!='p') and (mode!='t')):
+		print('Please enter a vaild control mode')
+		mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
+	v.vrep_init(19997,mode)
 def is_number(n):
     try:
         float(n)   # Type-casting the string to `float`.
@@ -20,6 +24,7 @@ def is_number(n):
         return False
     return True
 def set_vrep_angels(data):
+	''' This callback function takes angels from topic "getter" and feed it to vrep using python api.'''
 	switch=False
 	joint=[]
 	ang=[]
@@ -57,12 +62,17 @@ def set_vrep_angels(data):
 		print('Recieved ')
 	# print(ang)
 def start_vrep_node():
+<<<<<<< HEAD
 	#print("\n I reached this point \n")
 
+=======
+	''' This function instialze the node responsible for vrep/ros interaction.'''
+>>>>>>> cb9190477016a03253a387771732e11fe46b1fe7
 	pub = rospy.Publisher('getter', Float32MultiArray, queue_size=10)
 	sub = rospy.Subscriber('setter',String,set_vrep_angels)
 	rospy.Subscriber('torques',String,set_vrep_torques)	
 	rospy.init_node('vrep', anonymous=True)
+	print("ROS NODE INTIALIZED")
 	rate = rospy.Rate(100) # 10hz
 	while not rospy.is_shutdown():
 		#print("\n I reached this point \n")
@@ -99,6 +109,7 @@ def start_vrep_node():
 		rate.sleep()
 
 def set_vrep_torques(data):
+	'''This callback function feeds torques fround in topic "torques" to vrep though python api function'''
 	switch=False
 	joint=[]
 	ang=[]
