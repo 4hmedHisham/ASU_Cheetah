@@ -62,12 +62,8 @@ def set_vrep_angels(data):
 		print('Recieved ')
 	# print(ang)
 def start_vrep_node():
-<<<<<<< HEAD
 	#print("\n I reached this point \n")
 
-=======
-	''' This function instialze the node responsible for vrep/ros interaction.'''
->>>>>>> cb9190477016a03253a387771732e11fe46b1fe7
 	pub = rospy.Publisher('getter', Float32MultiArray, queue_size=10)
 	sub = rospy.Subscriber('setter',String,set_vrep_angels)
 	rospy.Subscriber('torques',String,set_vrep_torques)	
