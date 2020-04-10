@@ -51,7 +51,7 @@ def current_pos(data):
     msg = data.data
     msg = np.reshape(msg,sizeof_fwdk_array)
     x = msg[(3*leg_no)-3] #[0 1 2 3 4 5 6 7 8 9 10 11]
-    y = msg[(3*leg_no)-2]
+    y = msg[(3*leg_no)-1]
     global x_current
     global y_current
     x_current = x
@@ -85,8 +85,8 @@ def pd():
     r,theta = cart2polar(error_x,error_y)
     p_error = kp*(r+theta)
     d_error = kd*((r - prev_r)/elapsed_time) + kd*((theta - prev_theta)/elapsed_time)
-    print('r',r,prev_r,'-------','theta',theta,prev_theta)
-    print(error_x,error_y)
+    #print('r',r,prev_r,'-------','theta',theta,prev_theta)
+    #print(error_x,error_y)
     prev_r = r
     prev_theta = theta
     prev_time = current_time
@@ -106,10 +106,10 @@ def listener_theta():
     rospy.Subscriber('getter',Float32MultiArray,current_theta)
 listener_current_pos()
 listener_desired_pos()
-listener_theta()
 pub1.publish(1)
 print("Subcribed")
 while not rospy.is_shutdown():
+    listener_theta()
     torques = np.matmul(pd(),polar_jacoian(theta_knee))
     torques = torques.flatten()
     t = "%s %s"%((3*leg_no)-2 , torques[0])
