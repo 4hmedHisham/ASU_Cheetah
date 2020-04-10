@@ -25,17 +25,30 @@ print("start")
 
 #gait.Cheetah_Wakeup()
 #gait.Cheetah_Sleep()
+<<<<<<< HEAD
 
 #gait.onestepcreeping('f',120)
 #time.sleep(0.5)
 #gait.Body_mover_To_point(0,gait.a,-gait.initalheight,0.01) # el line dah byraga3 el joints lel initial position
 #time.sleep(0.5)
+=======
+
+# gait.onestepcreeping('f',120)
+# time.sleep(0.5)
+# gait.Body_mover_To_point(0,gait.a,-gait.initalheight,0.01) # el line dah byraga3 el joints lel initial position
+# time.sleep(0.5)
+
+>>>>>>> 12e56bb1ec3a09c303ebd347d190f22653623f0e
 
 
 
 
+<<<<<<< HEAD
 #gait.Dancing()
 #time.sleep(0.5)
+=======
+time.sleep(0.5)
+>>>>>>> 12e56bb1ec3a09c303ebd347d190f22653623f0e
 
 for i in range(20):
     gait.onestepcreeping('f',180)
