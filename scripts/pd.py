@@ -9,6 +9,7 @@ start = time()
 rospy.init_node('Impedance',anonymous=True)
 pub= rospy.Publisher('torques',String,queue_size=10)
 pub1 = rospy.Publisher('disbale',Bool,queue_size=10)
+pub2 = rospy.Publisher('t',Float32MultiArray,queue_size=10)
 rate = rospy.Rate(1000)
 
 l1 = 244.59
@@ -29,7 +30,7 @@ y_desired = 0
 prev_r = 0
 prev_theta = 0
 theta_knee = 0
-
+trqs = Float32MultiArray()
 
 def polar_jacoian(theta3):
     r_row = [[0, -2 * l1 * l2 * sin(theta3) * 1 / (2 * np.sqrt(l1 * l1 + l2 * l2 + 2 * l1 * l2 * cos(theta3)))]]
@@ -112,11 +113,13 @@ while not rospy.is_shutdown():
     listener_theta()
     torques = np.matmul(pd(),polar_jacoian(theta_knee))
     torques = torques.flatten()
+    trqs.data = torques
     t = "%s %s"%((3*leg_no)-2 , torques[0])
     #print(t)
     pub.publish(t)
     t = "%s %s"%((3*leg_no)-1  , torques[1])
     pub.publish(t)
+    pub2.publish(trqs)
     #print(np.matmul(pd(),polar_jacoian(theta_knee)))
     #print(start)
    #print(x_current,y_current)
