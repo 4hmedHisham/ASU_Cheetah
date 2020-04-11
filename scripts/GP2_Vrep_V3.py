@@ -75,7 +75,7 @@ def set_target_vel(joint_handler,sign):
     else:
         val=-90000000000
     while(error!=0):
-        error=sim.simxSetJointTargetVelocity(clientID,joint_handler,val,sim.simx_opmode_blocking)
+        error=sim.simxSetJointTargetVelocity(clientID,joint_handler,val,sim.simx_opmode_streaming)
     
 
 
@@ -240,7 +240,7 @@ def set_torque(set_torque, torque):
     elif set_torque == 'bc3' or set_torque == 1:
         while(error!=0):
             error=sim.simxSetJointForce(clientID, int(angles_handler[1]), torque, sim.simx_opmode_streaming)
-            set_target_vel(int(angles_handler[1]),sign)
+        set_target_vel(int(angles_handler[1]),sign)
         
     elif set_torque == 'cd3' or set_torque == 2:
         while(error!=0):
