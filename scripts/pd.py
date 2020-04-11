@@ -8,9 +8,9 @@ from std_msgs.msg import Float32MultiArray , String, Bool
 start = time()
 rospy.init_node('Impedance',anonymous=True)
 pub= rospy.Publisher('torques',String,queue_size=10)
-pub1 = rospy.Publisher('disbale',Bool,queue_size=10)
+pub1 = rospy.Publisher('disable',Bool,queue_size=10)
 pub2 = rospy.Publisher('t',Float32MultiArray,queue_size=10)
-rate = rospy.Rate(1000)
+rate = rospy.Rate(10)
 
 l1 = 244.59
 l2 = 208.4
@@ -92,6 +92,7 @@ def pd():
     prev_theta = theta
     prev_time = current_time
     output = [[p_error,d_error]]
+    output = np.reshape(output,(2,1))
     #print(output)
     
     return output 
@@ -105,14 +106,21 @@ def listener_desired_pos():
 
 def listener_theta():
     rospy.Subscriber('getter',Float32MultiArray,current_theta)
+
+
 listener_current_pos()
 listener_desired_pos()
-pub1.publish(1)
+t = Bool()
+t = True
+pub1.publish(t)
 print("Subcribed")
 while not rospy.is_shutdown():
     listener_theta()
-    torques = np.matmul(pd(),polar_jacoian(theta_knee))
+    
+    torques = np.matmul(polar_jacoian(theta_knee),pd())
     torques = torques.flatten()
+
+    torques = np.clip(torques,-18,18)
     trqs.data = torques
     t = "%s %s"%((3*leg_no)-2 , torques[0])
     #print(t)
@@ -123,7 +131,7 @@ while not rospy.is_shutdown():
     #print(np.matmul(pd(),polar_jacoian(theta_knee)))
     #print(start)
    #print(x_current,y_current)
-    
+    rate.sleep()
     
 
 

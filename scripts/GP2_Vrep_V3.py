@@ -222,10 +222,11 @@ def set_angle(setangle, angle):
     #print(end-start)
 
 def set_torque(set_torque, torque):
+    
     error=9
     sign='p'
 
-    #start= timer()
+    start= timer()
     if (set_torque<0):
                 set_torque=-set_torque#(making it positive)
                 sign='n'
@@ -234,17 +235,17 @@ def set_torque(set_torque, torque):
         while(error!=0):     
             
             error=sim.simxSetJointForce(clientID, int(angles_handler[0]), torque, sim.simx_opmode_streaming)
-            set_target_vel(int(angles_handler[0]),sign)
+        set_target_vel(int(angles_handler[0]),sign)
         
     elif set_torque == 'bc3' or set_torque == 1:
         while(error!=0):
             error=sim.simxSetJointForce(clientID, int(angles_handler[1]), torque, sim.simx_opmode_streaming)
-        set_target_vel(int(angles_handler[1]),sign)
+            set_target_vel(int(angles_handler[1]),sign)
         
     elif set_torque == 'cd3' or set_torque == 2:
         while(error!=0):
             error=sim.simxSetJointForce(clientID, int(angles_handler[2]), torque, sim.simx_opmode_streaming)
-        set_target_vel(int(angles_handler[2]),sign))
+        set_target_vel(int(angles_handler[2]),sign)
 
     elif set_torque == 'ab4' or set_torque == 3:
         while(error!=0):
@@ -267,9 +268,9 @@ def set_torque(set_torque, torque):
             error=sim.simxSetJointForce(clientID, int(angles_handler[7]), torque, sim.simx_opmode_streaming)
         set_target_vel(int(angles_handler[7]),sign)
     elif set_torque == 'cd1' or set_torque == 8:
-        while(error!=0):
+       while(error!=0):
             error=sim.simxSetJointForce(clientID, int(angles_handler[8]), torque, sim.simx_opmode_streaming)
-       set_target_vel(int(angles_handler[8]),sign)
+            set_target_vel(int(angles_handler[8]),sign)
             #print('another error is '+str(error))
     elif set_torque == 'ab2' or set_torque == 9:
         while(error!=0):
@@ -283,9 +284,9 @@ def set_torque(set_torque, torque):
         while(error!=0):
             error=sim.simxSetJointForce(clientID, int(angles_handler[11]), torque, sim.simx_opmode_streaming)
         set_target_vel(int(angles_handler[11]),sign)
-    #end = timer()
-    #print("TIMER IS ")
-    #print(end-start)
+    end = timer()
+    print("TIMER IS ")
+    print(end-start)
 
 def vrepInterface(port):
     global angles_handler
