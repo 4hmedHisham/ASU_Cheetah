@@ -69,11 +69,14 @@ def get_vel_firsttime():
         counter=counter+1
         print(vel) 
 def set_target_vel(joint_handler,sign):
+    error=9
     if sign=='p': 
         val=900000000
     else:
         val=-90000000000
-    sim.simxSetJointTargetVelocity(clientID,joint_handler,val,sim.simx_opmode_oneshot)
+    while(error!=0):
+        error=sim.simxSetJointTargetVelocity(clientID,joint_handler,val,sim.simx_opmode_blocking)
+    
 
 
         
