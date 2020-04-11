@@ -33,8 +33,8 @@ theta_knee = 0
 trqs = Float32MultiArray()
 
 def polar_jacoian(theta3):
-    r_row = [[0, -2 * l1 * l2 * sin(theta3) * 1 / (2 * np.sqrt(l1 * l1 + l2 * l2 + 2 * l1 * l2 * cos(theta3)))]]
-    theta_row = [[1, (l2 * l2 + l1 * l2 * cos(theta3) / (l1 * l1 + l2 * l2 + 2 * l1 * l2 * cos(theta3)))]]
+    r_row = [[0, (-2 * l1 * l2 * sin(theta3)) / (2 * np.sqrt(l1**2 + l2**2 + (2 * l1 * l2 * cos(theta3))))]]
+    theta_row = [[1, ((l2**2 + l1*l2*cos(theta3)) / (l1**2 + l2**2 + (2 * l1 * l2 * cos(theta3))))]]
     Jp = np.concatenate((r_row, theta_row), axis=0)
     Jp = Jp.reshape(2,2)
     #print(theta3)
@@ -92,6 +92,7 @@ def pd():
     prev_theta = theta
     prev_time = current_time
     output = [[p_error,d_error]]
+    output = np.reshape(output,(2,1))
     #print(output)
     
     return output 
@@ -110,6 +111,7 @@ listener_desired_pos()
 pub1.publish(1)
 print("Subcribed")
 while not rospy.is_shutdown():
+    '''
     listener_theta()
     torques = np.matmul(pd(),polar_jacoian(theta_knee))
     torques = torques.flatten()
@@ -122,7 +124,10 @@ while not rospy.is_shutdown():
     pub2.publish(trqs)
     #print(np.matmul(pd(),polar_jacoian(theta_knee)))
     #print(start)
-   #print(x_current,y_current)
+    #print(x_current,y_current)
+    '''
+    print(np.matmul(polar_jacoian(8),pd()))
+    
     
     
 
