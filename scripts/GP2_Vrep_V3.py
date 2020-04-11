@@ -36,6 +36,7 @@ def ctrl_en(on_off,all_or_1='all'):
                     ret=sim.simxSetObjectIntParameter(clientID,int(angles_handler[i]),2001,param,sim.simx_opmode_blocking)
                 #print("RETURN CODE IS "+str(ret))
                 print("Done")
+                ret=1
             
     
 def get_angles_firsttime():
@@ -233,7 +234,8 @@ def set_torque(set_torque, torque):
     
     error=9
     sign='p'
-
+    print("JOINT IS "+str(set_torque)+"AND TOURQE IS "+str(torque))
+    print(type(torque))
     start= timer()
     if (set_torque<0):
                 set_torque=-set_torque#(making it positive)
@@ -253,7 +255,7 @@ def set_torque(set_torque, torque):
     elif set_torque == 'cd3' or set_torque == 2:
         while(error!=0):
             error=sim.simxSetJointForce(clientID, int(angles_handler[2]), torque, sim.simx_opmode_streaming)
-        print("Yarab")
+        #print("Yarab")
         set_target_vel(int(angles_handler[2]),sign)
 
     elif set_torque == 'ab4' or set_torque == 3:
@@ -439,6 +441,7 @@ def vrep_init(port, mode='p'):
     gyro_read_firsttime()
     imu_read_firsttime()
     time.sleep(2)
+    ctrl_en('p')
     if mode=='p':
         print("Position mode is running...")
     elif mode=='t':
@@ -450,5 +453,7 @@ def vrep_init(port, mode='p'):
 # vrep_init(19997)
 # time.sleep(2)
 # ctrl_en('t')
+# set_torque(2,4)
+
 # print("DONE")
 
