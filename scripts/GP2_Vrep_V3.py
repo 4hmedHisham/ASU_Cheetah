@@ -22,6 +22,7 @@ import rospy
 #7atet satr gded
 clientID=0
 def ctrl_en(on_off,all_or_1='all'):
+    ret = 1
     if on_off=='p':
         param=1
     elif on_off=='t':
@@ -31,8 +32,10 @@ def ctrl_en(on_off,all_or_1='all'):
     if(all_or_1=='all'):
         for i in range(12):
             if (i%3)!=0:
-                ret=sim.simxSetObjectIntParameter(clientID,int(angles_handler[i]),2001,param,sim.simx_opmode_blocking)
-                print("RETURN CODE IS "+str(ret))
+                while ret!=0 :
+                    ret=sim.simxSetObjectIntParameter(clientID,int(angles_handler[i]),2001,param,sim.simx_opmode_blocking)
+                #print("RETURN CODE IS "+str(ret))
+                print("Done")
             
     
 def get_angles_firsttime():
@@ -83,6 +86,7 @@ def set_target_vel(joint_handler,sign):
 
 
 def get_torque(joint):
+    #start = timer()
     angles = []
     error = []
     if joint == 'ab3' or joint == 0:
@@ -121,6 +125,10 @@ def get_torque(joint):
     elif joint == 'cd2' or joint == 11:
         trash, torque = sim.simxGetJointForce(clientID, int(angles_handler[11]), sim.simx_opmode_buffer)
         # angels.append(ang)
+
+    #end = timer()
+    #print("Get Torques = ")
+    #print(end - start)
     return torque
 
 
@@ -245,6 +253,7 @@ def set_torque(set_torque, torque):
     elif set_torque == 'cd3' or set_torque == 2:
         while(error!=0):
             error=sim.simxSetJointForce(clientID, int(angles_handler[2]), torque, sim.simx_opmode_streaming)
+        print("Yarab")
         set_target_vel(int(angles_handler[2]),sign)
 
     elif set_torque == 'ab4' or set_torque == 3:

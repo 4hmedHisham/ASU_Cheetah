@@ -121,11 +121,12 @@ while not rospy.is_shutdown():
     torques = torques.flatten()
 
     torques = np.clip(torques,-18,18)
-    trqs.data = torques
-    t = "%s %s"%((3*leg_no)-2 , torques[0])
+    trqs.data = np.array((5.5,-9.3))
+
+    t = "%s %s"%((3*leg_no)-2,5.5)#torques[0])
     #print(t)
     pub.publish(t)
-    t = "%s %s"%((3*leg_no)-1  , torques[1])
+    t = "%s %s"%((3*leg_no)-1 ,-9.3)#torques[1])
     pub.publish(t)
     pub2.publish(trqs)
     #print(np.matmul(pd(),polar_jacoian(theta_knee)))

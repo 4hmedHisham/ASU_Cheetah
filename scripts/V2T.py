@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import rospy
 import time
+from timeit import default_timer  as timer
 import numpy as np
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
@@ -75,12 +76,13 @@ def start_vrep_node():
 	rospy.Subscriber('torques',String,set_vrep_torques)	
 	rospy.init_node('vrep', anonymous=True)
 	print("ROS NODE INTIALIZED")
-	rate = rospy.Rate(100) # 10hz
+	rate = rospy.Rate(1000) # 10hz
 	v.vrep_init(19997)
 	
 	counterrr = 0
 	init=0
 	while not rospy.is_shutdown():
+		start = timer()
 		if init==0:
 			#raw_input("INIT UR NODES")
 			init=init+1
@@ -93,10 +95,6 @@ def start_vrep_node():
 				# if mode == 't':
 				# 	raw_input("Press enter any key to disable control loop: ")
     			# 	v.ctrl_en(mode)
-		
-				
-				
-
 		i=0
 		total = Float32MultiArray()
 		total.data = []
@@ -116,11 +114,7 @@ def start_vrep_node():
 			for linear_acc in linear_accs:
 				vrep_param.append(linear_acc)
 			for angular_acc in anglular_accs :
-				vrep_param.append(angular_acc)
-			
-
-
-				
+				vrep_param.append(angular_acc)			
 		else :
 			while i in range(12):
 				#print(angs)
@@ -133,7 +127,13 @@ def start_vrep_node():
 		pub.publish(total)
 		counterrr = counterrr +1 
 		#print(counterrr,"ahoo")
+		#end = timer()
+		#print("before sleep = ")
+		#print(end - start)
 		rate.sleep()
+		end = timer()
+		#print("After sleep = ")
+		#print(end - start)
 
 def set_vrep_torques(data):
 	'''This callback function feeds torques fround in topic "torques" to vrep though python api function'''
