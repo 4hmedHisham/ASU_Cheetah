@@ -22,6 +22,7 @@ import rospy
 #7atet satr gded
 clientID=0
 def ctrl_en(on_off,all_or_1='all'):
+    ret = 1
     if on_off=='p':
         param=1
     elif on_off=='t':
@@ -31,8 +32,11 @@ def ctrl_en(on_off,all_or_1='all'):
     if(all_or_1=='all'):
         for i in range(12):
             if (i%3)!=0:
-                ret=sim.simxSetObjectIntParameter(clientID,int(angles_handler[i]),2001,param,sim.simx_opmode_blocking)
-                print("RETURN CODE IS "+str(ret))
+                while ret!=0 :
+                    ret=sim.simxSetObjectIntParameter(clientID,int(angles_handler[i]),2001,param,sim.simx_opmode_blocking)
+                #print("RETURN CODE IS "+str(ret))
+                print("Done")
+                ret=1
             
     
 def get_angles_firsttime():
@@ -75,7 +79,7 @@ def set_target_vel(joint_handler,sign):
     else:
         val=-90000000000
     while(error!=0):
-        error=sim.simxSetJointTargetVelocity(clientID,joint_handler,val,sim.simx_opmode_blocking)
+        error=sim.simxSetJointTargetVelocity(clientID,joint_handler,val,sim.simx_opmode_streaming)
     
 
 
@@ -83,6 +87,7 @@ def set_target_vel(joint_handler,sign):
 
 
 def get_torque(joint):
+    #start = timer()
     angles = []
     error = []
     if joint == 'ab3' or joint == 0:
@@ -121,6 +126,10 @@ def get_torque(joint):
     elif joint == 'cd2' or joint == 11:
         trash, torque = sim.simxGetJointForce(clientID, int(angles_handler[11]), sim.simx_opmode_buffer)
         # angels.append(ang)
+
+    #end = timer()
+    #print("Get Torques = ")
+    #print(end - start)
     return torque
 
 
@@ -222,10 +231,12 @@ def set_angle(setangle, angle):
     #print(end-start)
 
 def set_torque(set_torque, torque):
+    
     error=9
     sign='p'
-
-    #start= timer()
+    print("JOINT IS "+str(set_torque)+"AND TOURQE IS "+str(torque))
+    print(type(torque))
+    start= timer()
     if (set_torque<0):
                 set_torque=-set_torque#(making it positive)
                 sign='n'
@@ -234,7 +245,7 @@ def set_torque(set_torque, torque):
         while(error!=0):     
             
             error=sim.simxSetJointForce(clientID, int(angles_handler[0]), torque, sim.simx_opmode_streaming)
-            set_target_vel(int(angles_handler[0]),sign)
+        set_target_vel(int(angles_handler[0]),sign)
         
     elif set_torque == 'bc3' or set_torque == 1:
         while(error!=0):
@@ -244,7 +255,8 @@ def set_torque(set_torque, torque):
     elif set_torque == 'cd3' or set_torque == 2:
         while(error!=0):
             error=sim.simxSetJointForce(clientID, int(angles_handler[2]), torque, sim.simx_opmode_streaming)
-        set_target_vel(int(angles_handler[2]),sign))
+        #print("Yarab")
+        set_target_vel(int(angles_handler[2]),sign)
 
     elif set_torque == 'ab4' or set_torque == 3:
         while(error!=0):
@@ -267,9 +279,9 @@ def set_torque(set_torque, torque):
             error=sim.simxSetJointForce(clientID, int(angles_handler[7]), torque, sim.simx_opmode_streaming)
         set_target_vel(int(angles_handler[7]),sign)
     elif set_torque == 'cd1' or set_torque == 8:
-        while(error!=0):
+       while(error!=0):
             error=sim.simxSetJointForce(clientID, int(angles_handler[8]), torque, sim.simx_opmode_streaming)
-       set_target_vel(int(angles_handler[8]),sign)
+            set_target_vel(int(angles_handler[8]),sign)
             #print('another error is '+str(error))
     elif set_torque == 'ab2' or set_torque == 9:
         while(error!=0):
@@ -283,9 +295,9 @@ def set_torque(set_torque, torque):
         while(error!=0):
             error=sim.simxSetJointForce(clientID, int(angles_handler[11]), torque, sim.simx_opmode_streaming)
         set_target_vel(int(angles_handler[11]),sign)
-    #end = timer()
-    #print("TIMER IS ")
-    #print(end-start)
+    end = timer()
+    print("TIMER IS ")
+    print(end-start)
 
 def vrepInterface(port):
     global angles_handler
@@ -429,6 +441,7 @@ def vrep_init(port, mode='p'):
     gyro_read_firsttime()
     imu_read_firsttime()
     time.sleep(2)
+    ctrl_en('p')
     if mode=='p':
         print("Position mode is running...")
     elif mode=='t':
@@ -440,5 +453,7 @@ def vrep_init(port, mode='p'):
 # vrep_init(19997)
 # time.sleep(2)
 # ctrl_en('t')
+# set_torque(2,4)
+
 # print("DONE")
 

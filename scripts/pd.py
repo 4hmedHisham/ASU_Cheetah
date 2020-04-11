@@ -8,9 +8,9 @@ from std_msgs.msg import Float32MultiArray , String, Bool
 start = time()
 rospy.init_node('Impedance',anonymous=True)
 pub= rospy.Publisher('torques',String,queue_size=10)
-pub1 = rospy.Publisher('disbale',Bool,queue_size=10)
+pub1 = rospy.Publisher('disable',Bool,queue_size=10)
 pub2 = rospy.Publisher('t',Float32MultiArray,queue_size=10)
-rate = rospy.Rate(1000)
+rate = rospy.Rate(10)
 
 l1 = 244.59
 l2 = 208.4
@@ -39,7 +39,6 @@ def polar_jacoian(theta3):
     Jp = Jp.reshape(2,2)
     #print(theta3)
     return np.transpose(Jp)
-
 
 def cart2polar(x,y):
     r = np.sqrt(x**2 + y**2)
@@ -106,30 +105,31 @@ def listener_desired_pos():
 
 def listener_theta():
     rospy.Subscriber('getter',Float32MultiArray,current_theta)
+
+
 listener_current_pos()
 listener_desired_pos()
-pub1.publish(1)
+t = Bool()
+t = True
+pub1.publish(t)
 print("Subcribed")
 while not rospy.is_shutdown():
-    '''
     listener_theta()
-    torques = np.matmul(pd(),polar_jacoian(theta_knee))
+    
+    torques = np.matmul(polar_jacoian(theta_knee),pd())
     torques = torques.flatten()
-    trqs.data = torques
-    t = "%s %s"%((3*leg_no)-2 , torques[0])
+
+    torques = np.clip(torques,-18,18)
+    trqs.data = np.array((5.5,-9.3))
+
+    t = "%s %s"%((3*leg_no)-2,5.5)#torques[0])
     #print(t)
     pub.publish(t)
-    t = "%s %s"%((3*leg_no)-1  , torques[1])
+    t = "%s %s"%((3*leg_no)-1 ,-9.3)#torques[1])
     pub.publish(t)
     pub2.publish(trqs)
     #print(np.matmul(pd(),polar_jacoian(theta_knee)))
     #print(start)
-    #print(x_current,y_current)
-    '''
-    print(np.matmul(polar_jacoian(8),pd()))
+   #print(x_current,y_current)
+    rate.sleep()
     
-    
-    
-
-
-
