@@ -237,8 +237,8 @@ def set_torque(set_torque, torque):
     print("JOINT IS "+str(set_torque)+"AND TOURQE IS "+str(torque))
     print(type(torque))
     start= timer()
-    if (set_torque<0):
-                set_torque=-set_torque#(making it positive)
+    if (torque<0):
+                torque=-torque#(making it positive)
                 sign='n'
     
     if set_torque == 'ab3' or set_torque == 0:

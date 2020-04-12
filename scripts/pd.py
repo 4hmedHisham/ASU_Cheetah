@@ -34,7 +34,7 @@ trqs = Float32MultiArray()
 
 def polar_jacoian(theta3):
     r_row = [[0, (-2 * l1 * l2 * sin(theta3)) / (2 * np.sqrt(l1**2 + l2**2 + (2 * l1 * l2 * cos(theta3))))]]
-    theta_row = [[1, ((l2**2 + l1*l2*cos(theta3)) / (l1**2 + l2**2 + (2 * l1 * l2 * cos(theta3))))]]
+    theta_row = [[1, ((l2**2 + (l1*l2*cos(theta3))) / (l1**2 + l2**2 + (2 * l1 * l2 * cos(theta3))))]]
     Jp = np.concatenate((r_row, theta_row), axis=0)
     Jp = Jp.reshape(2,2)
     #print(theta3)
@@ -120,16 +120,16 @@ while not rospy.is_shutdown():
     torques = torques.flatten()
 
     torques = np.clip(torques,-18,18)
-    trqs.data = np.array((5.5,-9.3))
-
-    t = "%s %s"%((3*leg_no)-2,5.5)#torques[0])
+    trqs.data = torques
+    t = "%s %s"%((3*leg_no)-2,torques[0])
     #print(t)
     pub.publish(t)
-    t = "%s %s"%((3*leg_no)-1 ,-9.3)#torques[1])
+    t = "%s %s"%((3*leg_no)-1 ,torques[1])
     pub.publish(t)
     pub2.publish(trqs)
     #print(np.matmul(pd(),polar_jacoian(theta_knee)))
     #print(start)
-   #print(x_current,y_current)
+    #print(x_current,y_current)
+    print(theta_knee)
     rate.sleep()
     
