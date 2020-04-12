@@ -2,6 +2,7 @@
 import rospy
 import time
 import GP2_Vrep_V3 as v
+import GP2_Function_V7 as gait1
 import numpy as np
 import threading
 from std_msgs.msg import Float32MultiArray
@@ -34,7 +35,6 @@ def ros_init(node=0):
 	global sub
 	rospy.Subscriber('getter',Float32MultiArray,callback)
 	pub = rospy.Publisher('setter', String, queue_size=10)
-	pub2=rospy.Publisher('desired',Float32MultiArray)
 	time.sleep(2)
 	if node==0:
 		rospy.init_node('algorithm', anonymous=True)
@@ -105,8 +105,8 @@ def set_angle(joint,angle):
 	pub.publish(msg)
 
 def desired_xy(transverse,hip,knee,legno):
-
-
-
-	msg=[x,y,legno]
+	msg = Float32MultiArray()
+	x,y,z = gait1.forward_kinematics_V3(transverse,hip,knee)
+	msg.data=[float(x),float(z),legno]
+	pub2 = rospy.Publisher('desired',Float32MultiArray)
 	pub2.publish(msg)
