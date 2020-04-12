@@ -442,11 +442,19 @@ def gyro_read():
     while(error3!=0):
         error3,z=sim.simxGetFloatSignal(0,'gyroZ',sim.simx_opmode_streaming)
     return [x,y,z]
+def vrep_init_angels():
+    hipinit=-2.0589882059651674
+    kneeinit=1.0711307090938094
+    for i in range (4):
+        set_angle(i*3,0)
+        set_angle((i*3)+1,hipinit)
+        set_angle((i*3)+2,kneeinit)
 def vrep_init(port, mode='p'):
     clientID=sim.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to CoppeliaSim
     returnCode=sim.simxStartSimulation(clientID,sim.simx_opmode_oneshot)
     time.sleep(1.2)
     vrepInterface(port)
+    vrep_init_angels()
     time.sleep(0.5)
     get_angles_firsttime()
     get_torques_firsttime()
@@ -460,6 +468,7 @@ def vrep_init(port, mode='p'):
         print("Torque mode is running...")
         raw_input("Press enter any key to disable control loop  : ")      
     print('Vrep Up and Running...')
+    
 
 
 # vrep_init(19997)

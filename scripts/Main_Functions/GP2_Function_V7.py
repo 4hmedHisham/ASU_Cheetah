@@ -100,13 +100,13 @@ def Move_Leg(leg,direction,distance):
     for i in range(hippp.shape[0]):
         if i >=90:
             contact[leg-1] = 0
-            '''
+        
         ros.set_angle(0 + 3 * (leg - 1), trans[i])
         ros.set_angle(1 + 3 * (leg - 1), hippp[i])
         ros.set_angle(2 + 3 * (leg - 1), kneeee[i])
-        '''
-        ros.desired_xy(trans[i],hippp[i],kneeee[i],leg)
-        time.sleep(delay*100)
+        
+        #ros.desired_xy(trans[i],hippp[i],kneeee[i],leg)
+        time.sleep(delay*1000)
 
     contact[leg-1] = 1
     return delay
@@ -194,10 +194,10 @@ def Leg_Ellipse_Trajectory_V2(x_target,y_target,z_target, Transverse_Angle, hipa
     return theta1, theta2, theta3, St
 
 
-def Leg_Ellipse_Trajectory(intial_leg_height,s,direction,Transverse_Angle,hipangle,kneeangle,xt,yt):#Gets angles for leg trajectory  xc stands for current x
+def Leg_Ellipse_Trajectory(intial_leg_height,s,direction,Transverse_Angle,hipangle,kneeangle,xt,yt,T=0.001):#Gets angles for leg trajectory  xc stands for current x
 
     #H = 100 #height
-    T = 0.001 #total time for each cycle
+    #T = 0.001 #total time for each cycle
     h = 100#100 #hsmall
     #intial_leg_height = 300 #from ground to joint
     stp=100#100 #number of steps even number for some reason
@@ -621,12 +621,12 @@ def trot2(leg,direction,distance):
 
     if (leg == 1):
         leg_for_base = [1, 3]
-        trans3, hip3, knee3 = generalbasemover_modifed(leg_for_base[0] +1 , direction,distance)
-        trans4, hip4, knee4 = generalbasemover_modifed(leg_for_base[1] +1 , direction,distance)
+        trans3, hip3, knee3 = generalbasemover_modifed(leg_for_base[0] +1 , direction,distance,stp)
+        trans4, hip4, knee4 = generalbasemover_modifed(leg_for_base[1] +1 , direction,distance,stp)
     else:
         leg_for_base = [0, 2]
-        trans3, hip3, knee3 = generalbasemover_modifed(leg_for_base[0] +1 , direction,distance)
-        trans4, hip4, knee4 = generalbasemover_modifed(leg_for_base[1] +1 , direction,distance)
+        trans3, hip3, knee3 = generalbasemover_modifed(leg_for_base[0] +1 , direction,distance,stp)
+        trans4, hip4, knee4 = generalbasemover_modifed(leg_for_base[1] +1 , direction,distance,stp)
     numofsteps = stp
 
     for i in range(numofsteps):
@@ -643,7 +643,7 @@ def trot2(leg,direction,distance):
         ros.set_angle((0 + 3 * (leg_for_base[1])), trans4[i])
         ros.set_angle((1 + 3 * (leg_for_base[1])), hip4[i])
         ros.set_angle((2 + 3 * (leg_for_base[1])), knee4[i])
-        time.sleep(delay*8)
+        time.sleep(delay)
 
 def Dancing():
     Body_mover('f',0.01,110)
@@ -728,13 +728,13 @@ def onestepcreeping(direction,distance):
     delay = Move_Leg(x[1], direction, distance)
     time.sleep(0.3)
     #Body_mover(direction,delay*250,distance)
-    Body_mover_To_point(-40, a - 40 , -initalheight , 0.01)
+    Body_mover_To_point(-40, a - 40 , -initalheight , 0.1)
     time.sleep(0.3)
     delay = Move_Leg(x[2] ,direction, distance)
     time.sleep(0.3)
     delay = Move_Leg(x[3], direction, distance)
     time.sleep(0.3)
-    Body_mover_To_point(0,a , -initalheight , 0.001)
+    Body_mover_To_point(0,a , -initalheight , 0.1)
 
 
 def One_Trot(direction,distance):

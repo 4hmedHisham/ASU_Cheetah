@@ -53,8 +53,9 @@ l2 =208.4
 a=gait.a
 initial_leg_height = 390 # from ground to joint
 stride = 150
+ct=1.3
 h = 100     # maximum height of trajectory
-cycle_time = 0.5  # total time for each cycle
+cycle_time =ct  # total time for each cycle
 steps = 20 # number of steps 'even'
 initial_distance = 0 # along x
 
@@ -66,7 +67,7 @@ y_fixed = np.zeros([steps, 1], dtype=float)
 initial_leg_height_f = 390
 stride_f = 150
 h_f = 100
-cycle_time_f = 0.5
+cycle_time_f = ct
 initial_distance_f = None
 sample_time_f = None
 pub = 0
