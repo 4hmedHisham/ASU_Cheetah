@@ -9,7 +9,7 @@ from numpy import sin , cos
 import scipy.linalg
 from sympy.solvers import solve
 from sympy import Symbol, Eq
-from sympy.solvers.solveset import linsolve
+#from sympy.solvers.solveset import linsolve
 from timeit import default_timer as time
 import time
 from std_msgs.msg import String
@@ -31,7 +31,7 @@ var =0
 var2 = 0
 var3 =0
 var4 = 0
-delay_seq = 1
+delay_seq = 0.25
 #inert = 
 
 global pub
@@ -54,7 +54,7 @@ l2 =208.4
 a=gait.a
 initial_leg_height = 390 # from ground to joint
 stride = 150
-ct=0.5
+ct=0.8
 h = 100     # maximum height of trajectory
 cycle_time =ct  # total time for each cycle
 steps = 20 # number of steps 'even'
@@ -224,7 +224,7 @@ def Mod_contact(leg_no, leg_pos1, leg_pos2_y):
 
 
 
-def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg):
+def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,st):
 
     # Parameters:
     global l1
@@ -265,7 +265,10 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
     last_fix = 0
     sample_time = np.float(cycle_time) / steps # sample time
     sample_time_f =np.float(cycle_time_f) / steps   # sample time
+    stride= st
+    stride_f=st
 
+    z=0
 
     if leg_no == 4 or leg_no == 3:    
 
@@ -355,8 +358,8 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
                 set_angle((var2*3)+1 , hip0)
                 set_angle((var2*3)+2, knee0)
                 if flag_start == 0:
-                    trans3,hip3,knee3 = gait.generalbasemover_modifed(var3, 'f',120 ,steps)
-                    trans1,hip1,knee1 = gait.generalbasemover_modifed(var4, 'f',120 ,steps)
+                    trans3,hip3,knee3 = gait.generalbasemover_modifed(var3, 'f',st ,steps)
+                    trans1,hip1,knee1 = gait.generalbasemover_modifed(var4, 'f',st ,steps)
                     flag_start =1
                 # Move Body                                    
                 set_angle(((var3-1)*3),trans3[i])
@@ -546,25 +549,52 @@ if __name__ == '__main__':
     rospy.Subscriber('getter', Float32MultiArray , imudata)
     time.sleep(2)
     rate = rospy.Rate(100)  # 10hz 
+    first_step_flag=1
     while not rospy.is_shutdown():
-        legfix_initial_hip = leg_pos4_hip[0]
-        legvar_initial_hip = leg_pos2_hip[0]
-        legfix_initial_cg = leg_pos4_cg
-        legvar_initial_cg = leg_pos2_cg
+
+        if first_step_flag == 1:
+            legfix_initial_hip = leg_pos4_hip[0]
+            legvar_initial_hip = leg_pos2_hip[0]
+            legfix_initial_cg = leg_pos4_cg
+            legvar_initial_cg = leg_pos2_cg
 
 
-        time.sleep(delay_seq)        
-        Gate_Publisher(4 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg)
-        Gate_Publisher(2 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg)     
+            time.sleep(delay_seq)        
+            Gate_Publisher(4 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,150)
+            Gate_Publisher(2 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,150)     
 
-        legfix_initial_hip = leg_pos3_hip[0]
-        legvar_initial_hip = leg_pos1_hip[0]
-        legfix_initial_cg = leg_pos3_cg
-        legvar_initial_cg = leg_pos1_cg
+            legfix_initial_hip = leg_pos3_hip[0]
+            legvar_initial_hip = leg_pos1_hip[0]
+            legfix_initial_cg = leg_pos3_cg
+            legvar_initial_cg = leg_pos1_cg
 
-        time.sleep(delay_seq)         
+            time.sleep(delay_seq)         
 
-        Gate_Publisher(3 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg)
-        Gate_Publisher(1 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg)                     
+            Gate_Publisher(3 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,300)
+            Gate_Publisher(1 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,300)  
+            first_step_flag=0    
+        
+        else:
+            legfix_initial_hip = leg_pos4_hip[0]
+            legvar_initial_hip = leg_pos2_hip[0]
+            legfix_initial_cg = leg_pos4_cg
+            legvar_initial_cg = leg_pos2_cg
+
+
+            time.sleep(delay_seq)        
+            Gate_Publisher(4 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,300)
+            Gate_Publisher(2 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,300)     
+
+            legfix_initial_hip = leg_pos3_hip[0]
+            legvar_initial_hip = leg_pos1_hip[0]
+            legfix_initial_cg = leg_pos3_cg
+            legvar_initial_cg = leg_pos1_cg
+
+            time.sleep(delay_seq)         
+
+            Gate_Publisher(3 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,300)
+            Gate_Publisher(1 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,300)   
+
+            
 
         #rate.sleep()        

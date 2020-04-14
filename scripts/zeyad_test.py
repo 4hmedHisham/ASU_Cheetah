@@ -9,7 +9,6 @@ from numpy import sin , cos
 import scipy.linalg
 from sympy.solvers import solve
 from sympy import Symbol, Eq
-from sympy.solvers.solveset import linsolve
 from timeit import default_timer as time
 import time
 from std_msgs.msg import String
@@ -46,7 +45,7 @@ a=gait.a
 initial_leg_height = 390 # from ground to joint
 stride = 150
 h = 100     # maximum height of trajectory
-cycle_time = 1.2  # total time for each cycle
+cycle_time = 0.8  # total time for each cycle
 steps = 20 # number of steps 'even'
 initial_distance = 0 # along x
 
@@ -58,12 +57,12 @@ y_fixed = np.zeros([steps, 1], dtype=float)
 initial_leg_height_f = 390
 stride_f = 150
 h_f = 100
-cycle_time_f = 1.2
+cycle_time_f = 0.8
 initial_distance_f = None
 sample_time_f = None
 pub = 0
 indx_fix = 0
-linear_acc_threshold = 20 
+linear_acc_threshold = 20
 angular_acc_threshold = 20
 
 
@@ -118,10 +117,6 @@ def imudata(data):
     global leg1_ang
     global leg2_ang
     global z        
-
-    
-    linear_acc_threshold = 10
-    angular_acc_threshold = 10
     
     lin_acc_prev=lin_acc    ######save previous imu readings
     Ang_acc_prev=Ang_acc
@@ -244,8 +239,7 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
     global var3 
     global var4    
 
-
-
+    flag_start =0
     x_current = 0 
     y_current = 0
     x_current_f =0
@@ -334,6 +328,18 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
                 set_angle((var2*3),trans)
                 set_angle((var2*3)+1 , hip)
                 set_angle((var2*3)+2, knee)
+                if flag_start == 0:
+
+                    trans3,hip3,knee3 = gait.generalbasemover_modifed(var, 'f',150 ,20)
+                    trans1,hip1,knee1 = gait.generalbasemover_modifed(var2, 'f',150 ,20)
+                    flag_start =1
+                
+                set_angle((var3*3),trans3[i])
+                set_angle((var3*3)+1 , hip3[i])
+                set_angle(((var3*3)+2), knee3[i])         
+                set_angle((var4*3),trans1[i])
+                set_angle((var4*3)+1 , hip1[i])
+                set_angle(((var4*3)+2), knee1[i])
 
                 if(z == 1):
                     x_current = xnew[i]
@@ -347,6 +353,7 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
                 t = t + sample_time_f
 
             if (i == steps):
+                flag_start =0
                 break               
 
         if z == 1:
@@ -552,18 +559,7 @@ if __name__ == '__main__':
         time.sleep(1)        
         Gate_Publisher(4 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg4_Prev_angs,leg2_Prev_angs)
         Gate_Publisher(2 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg4_Prev_angs,leg2_Prev_angs)
-        trans3,hip3,knee3 = gait.generalbasemover_modifed(1, 'f',150 ,20)
-        trans1,hip1,knee1 = gait.generalbasemover_modifed(3, 'f',150 ,20)
-        time.sleep(1)
         
-        for ii in range(20):
-            set_angle((0*3),trans3[ii])
-            set_angle((0*3)+1 , hip3[ii])
-            set_angle(((0*3)+2), knee3[ii])         
-            set_angle((2*3),trans1[ii])
-            set_angle((2*3)+1 , hip1[ii])
-            set_angle(((2*3)+2), knee1[ii])
-            time.sleep(0.09) 
 
 
         legfix_initial_hip = leg_pos3_hip[0]
@@ -576,17 +572,17 @@ if __name__ == '__main__':
 
         Gate_Publisher(3 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg3_Prev_angs,leg1_Prev_angs)
         Gate_Publisher(1 ,legfix_initial_hip,legvar_initial_hip,legfix_initial_cg,legvar_initial_cg,leg3_Prev_angs,leg1_Prev_angs)
-        trans,hip,knee = gait.generalbasemover_modifed(4, 'f',150 ,20)
-        trans1,hip1,knee1 = gait.generalbasemover_modifed(2, 'f',150 ,20)
+        # trans,hip,knee = gait.generalbasemover_modifed(4, 'f',150 ,20)
+        # trans1,hip1,knee1 = gait.generalbasemover_modifed(2, 'f',150 ,20)
 
-        for iii in range(20):           
-            set_angle((3*3),trans[iii])
-            set_angle((3*3)+1 , hip[iii])
-            set_angle(((3*3)+2), knee[iii])          
-            set_angle((1*3),trans1[iii])
-            set_angle((1*3)+1 , hip1[iii])
-            set_angle(((1*3)+2), knee1[iii])
-            time.sleep(0.09)
+        # for iii in range(20):           
+        #     set_angle((3*3),trans[iii])
+        #     set_angle((3*3)+1 , hip[iii])
+        #     set_angle(((3*3)+2), knee[iii])          
+        #     set_angle((1*3),trans1[iii])
+        #     set_angle((1*3)+1 , hip1[iii])
+        #     set_angle(((1*3)+2), knee1[iii])
+        #     time.sleep(0.02)
                       
         #rate.sleep()        
         
