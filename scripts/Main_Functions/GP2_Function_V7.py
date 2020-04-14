@@ -25,12 +25,13 @@ clientID=0
 l1 =245
 l2 =208.4
 a = 112.75
-initalheight=390
+initalheight=320
 stride=60
 plus2pi=False
 stability=True
 movement=True
 stp = 100
+
 
 #Functions:
 
@@ -881,4 +882,16 @@ iteration = 0
 
 
 #y = inverse_kinematics(5,200,0.1,0.1)
-print("finish")
+def get_initial_angels(sign,initial_distance,intial_leg_height):
+    s=120
+    t=0
+    T=0.001 
+    h=100
+    xnew=sign*(s*((t/T)-((1/(2*np.pi))*np.sin(2*np.pi*(t/T))))-(s/2)+s/2)+initial_distance
+    znew = (-(h / (2 * np.pi)) * np.sin(((4 * np.pi) / T) * t) + ((2 * h * t) / T) - (h / 2)) + (
+                    h / 2) - intial_leg_height
+    theta1, theta2, theta3 = inverse_kinematics_3d_v6(xnew, a, znew,0, (-110*np.pi/180), (20*np.pi/180))
+    print("Transverse IS "+str(theta1)+" HIP IS "+str(theta2)+" KNEE IS "+str(theta3))
+
+get_initial_angels(1,0,initalheight)
+#print("finish")

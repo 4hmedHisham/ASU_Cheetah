@@ -31,7 +31,7 @@ var =0
 var2 = 0
 var3 =0
 var4 = 0
-delay_seq = 0.25
+delay_seq = 0.1
 #inert = 
 
 global pub
@@ -52,7 +52,7 @@ global leg2_ang
 l1 =245
 l2 =208.4
 a=gait.a
-initial_leg_height = 390 # from ground to joint
+initial_leg_height = 320 # from ground to joint
 stride = 150
 ct=0.8
 h = 100     # maximum height of trajectory
@@ -65,7 +65,7 @@ y_fixed = np.zeros([steps, 1], dtype=float)
 
 
 
-initial_leg_height_f = 390
+initial_leg_height_f = initial_leg_height
 stride_f = 150
 h_f = 100
 cycle_time_f = ct
