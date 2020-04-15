@@ -194,4 +194,4 @@ if __name__ == '__main__':
 		start_vrep_node()
 	except rospy.ROSInterruptException:
 		pass
-
+	v.stop_sim()

@@ -12,6 +12,7 @@ import platform
 print(platform.python_version())
 from timeit import default_timer  as timer
 import rospy
+from Main_Functions import GP2_Function_V7 as inits
 
 
 
@@ -322,7 +323,7 @@ def vrepInterface(port):
     global inital_name
     print('Program started')
     sim.simxFinish(-1)  # just in case, close all opened connections
-    ID = sim.simxStart('127.0.0.1', port, True, True, 5000, 5)  # Connect to V-REP
+    ID = sim.simxStart('127.0.0.1', port, True, True, 5000, 5)  # Connect to V-REP clientID=sim.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to CoppeliaSim
     print(ID)
     if ID != -1:
         print('Connected to remote API server')
@@ -443,25 +444,29 @@ def gyro_read():
         error3,z=sim.simxGetFloatSignal(0,'gyroZ',sim.simx_opmode_streaming)
     return [x,y,z]
 def vrep_init_angels():
-    hipinit=-2.27999663185   #   was HIP -2.0589882059651674
-    kneeinit=1.57918160492  #KNEE WAS 1.0711307090938094
+    hipinit , kneeinit =inits.get_initial_angels(1,0,inits.initalheight)
+    # hipinit=-2.27999663185   #   was HIP -2.0589882059651674
+    # kneeinit=1.57918160492  #KNEE WAS 1.0711307090938094
     for i in range (4):
         set_angle(i*3,0)
         set_angle((i*3)+1,hipinit)
         set_angle((i*3)+2,kneeinit)
 def vrep_init(port, mode='p'):
-    clientID=sim.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to CoppeliaSim
-    returnCode=sim.simxStartSimulation(clientID,sim.simx_opmode_oneshot)
-    time.sleep(1.2)
     vrepInterface(port)
+    static_body(True)
+    returnCode=sim.simxStartSimulation(clientID,sim.simx_opmode_oneshot)
+    print("Static and initialize")
     vrep_init_angels()
+    time.sleep(1)
+    static_body(False)
+    print("Body is being dropped...")
     time.sleep(0.5)
     get_angles_firsttime()
     get_torques_firsttime()
     get_vel_firsttime()
     gyro_read_firsttime()
     imu_read_firsttime()
-    time.sleep(2)
+    time.sleep(1)
     if mode=='p':
         print("Position mode is running...")
     elif mode=='t':
@@ -469,6 +474,24 @@ def vrep_init(port, mode='p'):
         raw_input("Press enter any key to disable control loop  : ")      
     print('Vrep Up and Running...')
     
+def static_body(state):
+    error, body = sim.simxGetObjectHandle(clientID, 'a_respondable',sim.simx_opmode_blocking)
+    ret=sim.simxSetObjectIntParameter(clientID,int(body),3003,state,sim.simx_opmode_blocking)
+def stop_sim():
+    sim.simxStopSimulation(clientID,sim.simx_opmode_blocking)
+    print("Simulation stopped.")
+def initialize_handlers():
+    global angles_handler
+    angles_handler = np.zeros(12)
+    global angles_error
+    angles_error = np.zeros(12)
+    #global clientID
+    clientID = 0
+    global inital_name
+    intial_name = ['ab3', 'bc3', 'cd3', 'ab4', 'bc4', 'cd4', 'ab1', 'bc1', 'cd1', 'ab2', 'bc2', 'cd2']
+    for i in range(angles_handler.shape[0]):
+        angles_error[i], angles_handler[i] = sim.simxGetObjectHandle(clientID, intial_name[i],
+                                                                      sim.simx_opmode_blocking)
 
 
 # vrep_init(19997)

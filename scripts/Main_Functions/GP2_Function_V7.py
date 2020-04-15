@@ -892,6 +892,7 @@ def get_initial_angels(sign,initial_distance,intial_leg_height):
                     h / 2) - intial_leg_height
     theta1, theta2, theta3 = inverse_kinematics_3d_v6(xnew, a, znew,0, (-110*np.pi/180), (20*np.pi/180))
     print("Transverse IS "+str(theta1)+" HIP IS "+str(theta2)+" KNEE IS "+str(theta3))
+    return theta2,theta3
 
 get_initial_angels(1,0,initalheight)
 #print("finish")
