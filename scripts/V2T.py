@@ -95,6 +95,19 @@ def start_vrep_node():
 				# if mode == 't':
 				# 	raw_input("Press enter any key to disable control loop: ")
     			# 	v.ctrl_en(mode)
+				state=raw_input("Please enter 's' for static or 'd' for dynamic:  ")
+				while ((mode!='p') and (mode!='t')):
+					print('Please enter a vaild state')
+					state=raw_input("Please enter 's' for static or 'd' for dynamic:  ")
+				# if mode == 't':
+				# 	raw_input("Press enter any key to disable control loop: ")
+    			# 	v.ctrl_en(mode)
+				if state =='s':
+					v.static_body(True)
+				elif state=='d':
+					v.static_body(False)
+		
+		
 		i=0
 		total = Float32MultiArray()
 		total.data = []
