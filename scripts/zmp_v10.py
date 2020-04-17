@@ -52,7 +52,7 @@ global leg2_ang
 l1 =245
 l2 =208.4
 a=gait.a
-initial_leg_height = 320 # from ground to joint
+initial_leg_height = 390 # from ground to joint
 stride = 150
 ct=0.8
 h = 100     # maximum height of trajectory
