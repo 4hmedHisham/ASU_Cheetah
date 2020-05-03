@@ -7,16 +7,16 @@ x_arr=[]
 y_arr=[]
 z_arr=[]
 
-for theta1 in np.arange(0,3.14,0.001):
-    for theta2 in np.arange(0,3.14,0.001):
-        for theta3 in np.arange(0,3.14,0.001):
+for theta1 in np.arange(0,3.14,0.01):
+    for theta2 in np.arange(0,3.14,0.01):
+        for theta3 in np.arange(0,3.14,0.01):
             x,y,z=gait.forward_kinematics_V3(theta1,theta2,theta3)
             x_arr.append(x)
             y_arr.append(y)
             z_arr.append(z)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.plot_wireframe(x,y,z, rstride=2, cstride=2)
+ax.plot_wireframe(x_arr,y_arr,z_arr, rstride=2, cstride=2)
 
 plt.show()
 print("Done")
