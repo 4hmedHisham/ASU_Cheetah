@@ -12,7 +12,7 @@ import platform
 print(platform.python_version())
 from timeit import default_timer  as timer
 import rospy
-from Main_Functions import GP2_Function_V7 as inits
+#from Main_Functions import GP2_Function_V7 as inits
 
 
 

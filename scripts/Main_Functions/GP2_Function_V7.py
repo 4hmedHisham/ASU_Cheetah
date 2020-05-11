@@ -35,6 +35,20 @@ stp = 100
 
 #Functions:
 
+def global_paramters():
+    contact = np.ones((4,1))
+    clientID=0
+    l1 =245
+    l2 =208.4
+    a = 112.75
+    initalheight=320
+    stride=60
+    plus2pi=False
+    stability=True
+    movement=True
+    stp = 100
+
+
 def getjointanglesfromvrep():#transverse,hips,knees
 
     hipangles = np.zeros((4, 1))
@@ -717,6 +731,22 @@ def generalbasemover_modifed(leg,direction,distance,numofsteps):  # moves base w
         initial_knee = knee[i]
 
     return trans,hip,knee
+def virtual_general_base_mover(legspos2joint,initial_transverse,initial_hip,initial_knee,numofsteps,distance):
+    sign=1
+    x=1
+    y=0
+    trans = np.zeros((numofsteps, 1))
+    hip = np.zeros((numofsteps, 1))
+    knee = np.zeros((numofsteps, 1))
+    ratio = float(distance)/numofsteps
+    for i in range(numofsteps):  # moves the base    
+        trans[i], hip[i], knee[i] = inverse_kinematics_3d_v6(
+                (legspos2joint[0] - sign*x*(i + 1)*ratio), (legspos2joint[1] - sign*y*(i + 1)*ratio), legspos2joint[2],
+                initial_transverse, initial_hip, initial_knee)
+        initial_transverse = trans[i]
+        initial_hip = hip[i]
+        initial_knee = knee[i]
+    return initial_transverse,initial_hip,initial_knee
 
 def onestepcreeping(direction,distance):
     if direction == 'f':
