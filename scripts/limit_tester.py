@@ -52,15 +52,16 @@ if(acc_test==True):
     trans=l_t
     hip=l_hip
     knee=l_knee
-last_ang1=0
+
 last_ang1_vel=0
 last_ang1_acc=0
 vel_arr_rad=[]
 acc_arr_rad=[]
 last_ang2_vel=0
 last_ang2_acc=0
-transverse_arr,hip_arr,knee_arr,delay=gait.Leg_Ellipse_Trajectory(last_z,stridelen,'f',trans,hip,knee,last_x,last_y)
-stp_time=0.001/100
+transverse_arr,hip_arr,knee_arr,delay=gait.Leg_Ellipse_Trajectory(last_z,stridelen,'f',trans,hip,knee,last_x,last_y,0.8)
+last_ang1=hip_arr[0]
+stp_time=delay
 for ang in hip_arr:
     curr_ang1_vel=float((ang-last_ang1)/(stp_time))
     vel_arr_rad.append(float(curr_ang1_vel))
