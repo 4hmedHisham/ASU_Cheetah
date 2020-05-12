@@ -21,3 +21,4 @@ ax.plot_wireframe(x_arr,y_arr,z_arr, rstride=2, cstride=2)
 plt.show()
 print("Done")
             
+ 

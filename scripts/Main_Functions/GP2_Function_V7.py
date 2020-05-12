@@ -25,16 +25,23 @@ clientID=0
 l1 =245
 l2 =208.4
 a = 112.75
-initalheight=320
+initalheight=390
 stride=60
 plus2pi=False
 stability=True
 movement=True
 stp = 100
+mode='2d'
 
 
 #Functions:
-
+def initialize():
+    hip,knee=get_initial_angels(1,0,initalheight)
+    for i in range (4):
+        ros.set_angle((1 + 3 * (i)), hip)
+        ros.set_angle((2 + 3 * (i)), knee)
+    time.sleep(2)
+    print("Done")
 def getjointanglesfromvrep():#transverse,hips,knees
 
     hipangles = np.zeros((4, 1))
@@ -66,6 +73,14 @@ def GetEndEffectorPos(transverseangles, hipangles, kneeangles):  # Gets End effe
         pos2joint[i, 2] = z  # Height  (z-axis)
 
     return pos2cg, pos2joint
+def trying_new():
+    stride=[]
+    transverses, hips, knees = getjointanglesfromvrep()
+    legspos2cg, legspos2joint = GetEndEffectorPos(transverses, hips,knees)
+    for i in range(4):
+        stride.append(r_stride-legspos2joint[i*3])
+    
+    
 def Move_side(direction):
     if direction == 'r':
         x = [2,3,1,4]
@@ -86,8 +101,6 @@ def Move_side(direction):
     delay = Move_Leg(x[3],direction,stride)
     Body_mover_To_point(0, a  , -initalheight , 0.01)
     #print("finish")
-
-
 
 def Rotate(leg):
     Move_Leg_V2(1,50,-50,initalheight)
@@ -195,11 +208,11 @@ def Leg_Ellipse_Trajectory_V2(x_target,y_target,z_target, Transverse_Angle, hipa
     return theta1, theta2, theta3, St
 
 
-def Leg_Ellipse_Trajectory(intial_leg_height,s,direction,Transverse_Angle,hipangle,kneeangle,xt,yt,T=0.001):#Gets angles for leg trajectory  xc stands for current x
+def Leg_Ellipse_Trajectory(intial_leg_height,s,direction,Transverse_Angle,hipangle,kneeangle,xt,yt,T=0.4):#Gets angles for leg trajectory  xc stands for current x
 
     #H = 100 #height
     #T = 0.001 #total time for each cycle
-    h = 100#100 #hsmall
+    h = 50#100 #hsmall
     #intial_leg_height = 300 #from ground to joint
     stp=100#100 #number of steps even number for some reason
     St=T/stp #sample time
@@ -313,7 +326,7 @@ def generalbasemover(direction,stride): #moves base with same length as stride
     for i in range(numofsteps):  #moves the base
         iteration.append(i)
         for ii in range(4):#gets required angles for this step-size    
-            transverse[ii],hip[ii],knee[ii]=inverse_kinematics_3d_v6((legspos2joint[ii,0]-sign*(i+1)*((stride)/numofsteps)) ,-a,legspos2joint[ii,2] ,transverses[ii,0] ,initial_hip[ii] ,initial_knee[ii])
+            transverse[ii],hip[ii],knee[ii]=inverse_kinematics_3d_v6((legspos2joint[ii,0]-sign*(i+1)*((stride)/numofsteps)) ,-a,legspos2joint[ii,2]+4 ,transverses[ii,0] ,initial_hip[ii] ,initial_knee[ii])
 
         initial_hip = hip
         initial_knee = knee
@@ -611,6 +624,50 @@ def move_2_legs(leg1,leg2,direction,distance):
         ros.set_angle((2 + 3 * (leg2)), knee2[i])
         time.sleep(delay*2)
 
+def trot3_adjusted(seq,direction,distance):
+    transverses, hips, knees = getjointanglesfromvrep()
+    legspos2cg, legspos2joint = GetEndEffectorPos(transverses, hips,knees)
+#here we assume the starting position is zero and the target is distance, if that aint true here we will reach the required distnce still
+
+
+    if (seq == 1):
+        dist1=distance-legspos2joint[0,0]
+        dist2=distance-legspos2joint[2,0]
+        trans1, hip1, knee1, delay = Leg_Ellipse_Trajectory(initalheight ,(dist1) ,direction , transverses[seq-1], hips[seq-1], knees[seq-1]
+                                            ,legspos2joint[seq-1,0],legspos2joint[seq-1,1])
+        trans2, hip2, knee2, delay = Leg_Ellipse_Trajectory(initalheight, (dist2) ,direction , transverses[seq+1], hips[seq+1], knees[seq+1]
+                                            ,legspos2joint[seq+1,0],legspos2joint[seq+1,1])
+        leg_for_base = [1, 3]
+        trans3, hip3, knee3 = generalbasemover_modifed(leg_for_base[0] +1 , direction,(distance-legspos2joint[1,0]),stp)
+        trans4, hip4, knee4 = generalbasemover_modifed(leg_for_base[1] +1 , direction,(distance-legspos2joint[3,0]),stp)
+    else:
+        dist1=-legspos2joint[1,0]
+        dist2=-legspos2joint[3,0]
+        trans1, hip1, knee1, delay = Leg_Ellipse_Trajectory(initalheight,(dist1) ,direction , transverses[seq-1], hips[seq-1], knees[seq-1]
+                                            ,legspos2joint[seq-1,0],legspos2joint[seq-1,1])
+        trans2, hip2, knee2, delay = Leg_Ellipse_Trajectory(initalheight,(dist2) ,direction , transverses[seq+1], hips[seq+1], knees[seq+1]
+                                            ,legspos2joint[seq+1,0],legspos2joint[seq+1,1])
+        leg_for_base = [0, 2]
+        trans3, hip3, knee3 = generalbasemover_modifed(leg_for_base[0] +1 , direction,distance,stp)
+        trans4, hip4, knee4 = generalbasemover_modifed(leg_for_base[1] +1 , direction,distance,stp)
+    numofsteps = stp
+
+    for i in range(numofsteps):
+        #removed tranverse to minimize sources of error
+        #ros.set_angle((0 + 3 * (seq - 1)), trans1[i])
+        ros.set_angle((1 + 3 * (seq - 1)), hip1[i])
+        ros.set_angle((2 + 3 * (seq - 1)), knee1[i])
+        #ros.set_angle((0 + 3 * (seq + 1)), trans2[i])
+        ros.set_angle((1 + 3 * (seq + 1)), hip2[i])
+        ros.set_angle((2 + 3 * (seq + 1)), knee2[i])
+        time.sleep(delay*2)
+        #ros.set_angle((0 + 3 * (leg_for_base[0])), trans3[i])
+        ros.set_angle((1 + 3 * (leg_for_base[0])), hip3[i])
+        ros.set_angle((2 + 3 * (leg_for_base[0])), knee3[i])
+        #ros.set_angle((0 + 3 * (leg_for_base[1])), trans4[i])
+        ros.set_angle((1 + 3 * (leg_for_base[1])), hip4[i])
+        ros.set_angle((2 + 3 * (leg_for_base[1])), knee4[i])
+        time.sleep(delay)
 def trot2(leg,direction,distance):
     transverses, hips, knees = getjointanglesfromvrep()
     legspos2cg, legspos2joint = GetEndEffectorPos(transverses, hips,knees)

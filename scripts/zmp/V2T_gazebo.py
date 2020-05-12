@@ -6,8 +6,7 @@ import numpy as np
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
 from std_msgs.msg import Bool
-import GP2_Vrep_V3 as v
-import subprocess
+import gp2_gazebo as v
 
 boolean = 1
 mode = 'p'
@@ -15,14 +14,7 @@ mode = 'p'
 counter=0
 testing=False
 printing=False
-'''
-if not testing :
-	mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
-	while ((mode!='p') and (mode!='t')):
-		print('Please enter a vaild control mode')
-		mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
-	v.vrep_init(19997,mode)
-'''
+
 def is_number(n):
     try:
         float(n)   # Type-casting the string to `float`.
@@ -74,13 +66,15 @@ def start_vrep_node():
 	''' This function instialze the node responsible for vrep/ros interaction.'''
 	pub = rospy.Publisher('getter', Float32MultiArray, queue_size=10)
 	sub = rospy.Subscriber('setter',String,set_vrep_angels)
-	sub = rospy.Subscriber('disable',Bool,disable)
-	rospy.Subscriber('torques',String,set_vrep_torques)	
+	#sub = rospy.Subscriber('disable',Bool,disable)
+	rospy.Subscriber('torques',String,set_vrep_torques)
 	rospy.init_node('vrep', anonymous=True)
+	v.ros_init_gaz()	
+	time.sleep(0.5)
+	v.init_angles()
+	time.sleep(0.5)	
 	print("ROS NODE INTIALIZED")
-	rate = rospy.Rate(1000) # 10hz
-	v.vrep_init(19997)
-	
+	rate = rospy.Rate(1000) # 10hz	
 	counterrr = 0
 	init=0
 	while not rospy.is_shutdown():
@@ -89,27 +83,14 @@ def start_vrep_node():
 			#raw_input("INIT UR NODES")
 			init=init+1
 		
-		if counterrr == 1:
-				mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
-				while ((mode!='p') and (mode!='t')):
-					print('Please enter a vaild control mode')
-					mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
-				# if mode == 't':
-				# 	raw_input("Press enter any key to disable control loop: ")
-    			# 	v.ctrl_en(mode)
-				state=raw_input("Please enter 's' for static or 'd' for dynamic:  ")
-				while ((mode!='p') and (mode!='t')):
-					print('Please enter a vaild state')
-					state=raw_input("Please enter 's' for static or 'd' for dynamic:  ")
-				# if mode == 't':
-				# 	raw_input("Press enter any key to disable control loop: ")
-    			# 	v.ctrl_en(mode)
-				if state =='s':
-					v.static_body(True)
-				elif state=='d':
-					v.static_body(False)
-		
-		
+		# if counterrr == 1:
+		# 		mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
+		# 		while ((mode!='p') and (mode!='t')):
+		# 			print('Please enter a vaild control mode')
+		# 			mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
+		# 		# if mode == 't':
+		# 		# 	raw_input("Press enter any key to disable control loop: ")
+    	# 		# 	v.ctrl_en(mode)
 		i=0
 		total = Float32MultiArray()
 		total.data = []
@@ -120,16 +101,16 @@ def start_vrep_node():
 				#angs=v.get_angles(i)
 				#print(angs)
 				vrep_param.append(v.get_angles(i))
-			for i in range(12):
-				vrep_param.append(v.get_torque(i))
-			for i in range(12):
-				vrep_param.append(v.get_vel(i))
-			linear_accs=v.imu_read()
-			anglular_accs=v.gyro_read()
-			for linear_acc in linear_accs:
-				vrep_param.append(linear_acc)
-			for angular_acc in anglular_accs :
-				vrep_param.append(angular_acc)			
+			# for i in range(12):
+			# 	vrep_param.append(v.get_torque(i))
+			# for i in range(12):
+			# 	vrep_param.append(v.get_vel(i))
+			# linear_accs=v.imu_read()
+			# anglular_accs=v.gyro_read()
+			# for linear_acc in linear_accs:
+			# 	vrep_param.append(linear_acc)
+			# for angular_acc in anglular_accs :
+			# 	vrep_param.append(angular_acc)			
 		else :
 			while i in range(12):
 				#print(angs)
@@ -184,32 +165,16 @@ def set_vrep_torques(data):
 	angle=float(ang)
 	
 	print(angle)
-	v.set_torque(joint,angle)
+	#v.set_torque(joint,angle)
 	if printing == True:
 		print('Recieved ')
 	# print(ang)
-def disable(data):
-	en=data.data
-	print("DATA IS ")
-	print(en)
-	if(mode=='p'):
-		print("You are in Position Control mode, hence u dont have access to chance control loop")
-	elif(mode=='t'):
-		if en==False:
-			v.ctrl_en('p')
-			print("Control loop enabled!")
-		else :
-			v.ctrl_en('t')
-			print("Control loop disabled!")
+
 
 #SO GIT YA5OD BALO
 if __name__ == '__main__':
-	try:
-		roscore = subprocess.Popen('roscore')
-		time.sleep(1)  # wait a bit to be sure the roscore is really launched
-		print("ROSCORE OPEN!")
+	try:		
 		start_vrep_node()
-		
 	except rospy.ROSInterruptException:
 		pass
-	v.stop_sim()
+
