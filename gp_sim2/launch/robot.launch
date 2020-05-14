@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+ 
+
+  <include file="$(find gp_sim2)/launch/main.launch"/>
+  
+  <include file="$(find gp_sim2)/launch/spawn_robot_control.launch"/>
+
+  <include file="$(find gp_sim2)/launch/robot_control.launch"/>
+
+</launch>
+
+
+
+

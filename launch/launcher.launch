@@ -1,4 +1,0 @@
-<launch>
-	<node name="vrep" pkg="isolation" type="V2T.py" respawn="false" output="screen"/>
-	<node name="algorithm" pkg="isolation" type="R2Aq.py" respawn="false" output="screen"/>
-</launch>
