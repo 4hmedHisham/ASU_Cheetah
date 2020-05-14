@@ -1,0 +1,3 @@
+[submodule "spawn_robot_tools_pkg"]
+	path = spawn_robot_tools_pkg
+	url = https://github.com/shadowzone22/spawn_robot_tools_pkg.git
