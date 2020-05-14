@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+
+ <!-- <param name="robot_description" command="cat $(find gp_sim)/urdf/AssemMayar1_control.urdf"/> -->
+
+
+  <rosparam file="$(find gp_sim2)/config/robot.yaml"
+            command="load"/>
+
+
+
+
+  <node name="robot_state_publisher_SimplifiedAssembly" pkg="robot_state_publisher" type="robot_state_publisher"
+        respawn="false" output="screen">
+            <param name="publish_frequency" type="double" value="30.0" />
+            <param name="ignore_timestamp" type="bool" value="true" />
+            <param name="tf_prefix" type="string" value="SimplifiedAssembly" />
+            <remap from="/joint_states" to="/SimplifiedAssembly/joint_states" />
+  </node>
+
+
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+        output="screen" ns="/SimplifiedAssembly" args="joint_state_controller
+                              
+                              ab1_position_controller
+                              bc1_position_controller
+                              cd1_position_controller
+
+                              ab2_position_controller
+                              bc2_position_controller
+                              cd2_position_controller
+                              
+                              ab3_position_controller
+                              bc3_position_controller
+                              cd3_position_controller
+                              
+                              ab4_position_controller
+                              bc4_position_controller
+                              cd4_position_controller
+
+                              --shutdown-timeout 3">
+  </node>
+
+</launch>
