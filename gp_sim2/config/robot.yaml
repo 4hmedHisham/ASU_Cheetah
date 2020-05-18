@@ -1,0 +1,72 @@
+# .yaml config file
+#
+# The PID gains and controller settings must be saved in a yaml file that gets loaded
+# to the param server via the roslaunch file (monoped_control.launch).
+
+SimplifiedAssembly:
+  # Publish all joint states -----------------------------------
+  # Creates the /joint_states topic necessary in ROS
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 1000
+
+  # Effort Controllers ---------------------------------------
+  ab1_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: ab1
+    pid: {p: 170.0, i: 0.0, d: 4.0}
+   
+  bc1_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: bc1
+    pid: {p: 120.0, i: 0.0, d: 2.0}
+    
+  cd1_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: cd1
+    pid: {p: 120.0, i: 0.0, d: 0.5}
+
+  ab2_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: ab2
+    pid: {p: 170.0, i: 0.0, d: 4.0}
+    
+  bc2_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: bc2
+    pid: {p: 120.0, i: 0.0, d: 2.0}
+    
+  cd2_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: cd2
+    pid: {p: 120.0, i: 0.0, d: 0.5}
+
+  ab3_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: ab3
+    pid: {p: 170.0, i: 0.0, d: 4.0}
+ 
+  bc3_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: bc3
+    pid: {p: 120.0, i: 0.0, d: 2.0}
+   
+  cd3_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: cd3
+    pid: {p: 120.0, i: 0.0, d: 0.5}
+
+  ab4_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: ab4
+    pid: {p: 170.0, i: 0.0, d: 4.0}
+   
+  bc4_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: bc4
+    pid: {p: 120.0, i: 0.0, d: 2.0}
+   
+  cd4_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: cd4
+    pid: {p: 120.0, i: 0.0, d: 0.5}

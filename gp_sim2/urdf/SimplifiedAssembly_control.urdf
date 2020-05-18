@@ -1,0 +1,1000 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="SimplifiedAssembly">
+
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/SimplifiedAssembly</robotNamespace>
+    </plugin>
+  </gazebo>
+
+
+
+
+  <link
+    name="a">
+    <inertial>
+      <origin
+        xyz="0.19284 0.27643 -0.15673"
+        rpy="0 0 0" />
+      <mass
+        value="9.2" />
+      <inertia
+        ixx="0.040749"
+        ixy="1.1879E-06"
+        ixz="3.0258E-16"
+        iyy="0.018249"
+        iyz="2.1739E-14"
+        izz="0.054303" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/a.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/a.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="a">
+    <kp>1000.0</kp>
+    <kd>1000.0</kd>
+    <mu1>0.5</mu1>
+    <mu2>0.5</mu2>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+
+  <!-- IMU sensor -->
+  <gazebo>
+        <plugin name="gazebo_ros_imu_controller" filename="libgazebo_ros_imu.so">
+          <robotNamespace>/SimplifiedAssembly</robotNamespace>
+          <topicName>imu/data</topicName>
+          <serviceName>imu/service</serviceName>
+          <bodyName>a</bodyName>
+          <gaussianNoise>0</gaussianNoise>
+          <rpyOffsets>0 0 0</rpyOffsets>
+          <!--<updateRate>50.0</updateRate>-->
+          <alwaysOn>true</alwaysOn>
+          <gaussianNoise>0</gaussianNoise>
+        </plugin>
+  </gazebo>
+
+
+  <link
+    name="b1">
+    <inertial>
+      <origin
+        xyz="-0.012048 -4.7684E-14 0.078769"
+        rpy="0 0 0" />
+      <mass
+        value="0.965" />
+      <inertia
+        ixx="0.00043238"
+        ixy="-1.7926E-18"
+        ixz="1.1624E-05"
+        iyy="0.00026764"
+        iyz="8.7573E-18"
+        izz="0.00025388" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/b1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/b1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="b1">
+    <kp>1000.0</kp>
+    <kd>1000.0</kd>
+    <mu1>0.5</mu1>
+    <mu2>0.5</mu2>
+    <material>Gazebo/BlueLaser</material>
+  </gazebo>
+
+  <joint
+    name="ab1"
+    type="continuous">
+    <origin
+      xyz="0.0678406204337187 0.505929163431331 -0.145853654698431"
+      rpy="1.5707963267949 0 3.14159265358979" />
+    <parent
+      link="a" />
+    <child
+      link="b1" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="c1">
+    <inertial>
+      <origin
+        xyz="0.072029 -0.029298 -0.0089026"
+        rpy="0 0 0" />
+      <mass
+        value="1.1" />
+      <inertia
+        ixx="0.0015109"
+        ixy="-1.8255E-08"
+        ixz="4.9324E-08"
+        iyy="0.00041062"
+        iyz="-0.00030529"
+        izz="0.0011913" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/c1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/c1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="c1">
+    <kp>1000.0</kp>
+    <kd>1000.0</kd>
+    <mu1>0.5</mu1>
+    <mu2>0.5</mu2>
+    <material>Gazebo/BlueLaser</material>
+  </gazebo>
+
+
+  <joint
+    name="bc1"
+    type="continuous">
+    <origin
+      xyz="0.00999999999967371 0 0.0846500000000681"
+      rpy="1.216315618 0 0" />
+    <parent
+      link="b1" />
+    <child
+      link="c1" />
+    <axis
+      xyz="1 0 0" />
+  </joint>
+  <link
+    name="d1">
+    <inertial>
+      <origin
+        xyz="-0.029913 -0.078375 0.043972"
+        rpy="0 0 0" />
+      <mass
+        value="0.18" />
+      <inertia
+        ixx="0.00051766"
+        ixy="-3.2746E-11"
+        ixz="2.1922E-11"
+        iyy="0.00020158"
+        iyz="0.00023278"
+        izz="0.00032484" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/d1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/d1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="d1">
+    <kp>1000.0</kp>
+    <kd>1000.0</kd>
+    <mu1>15</mu1>
+    <mu2>15</mu2>
+    <material>Gazebo/BlueLaser</material>
+  </gazebo>
+
+
+  <joint
+    name="cd1"
+    type="continuous">
+    <origin
+      xyz="0.0708499999998587 -0.229767581450385 -0.0850403346328576"
+      rpy="-2.92377114111487 0 -3.14159265358978" />
+    <parent
+      link="c1" />
+    <child
+      link="d1" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="b2">
+    <inertial>
+      <origin
+        xyz="-0.012048 -8.8818E-16 0.078769"
+        rpy="0 0 0" />
+      <mass
+        value="0.965" />
+      <inertia
+        ixx="0.00043238"
+        ixy="5.0773E-18"
+        ixz="1.1624E-05"
+        iyy="0.00026764"
+        iyz="5.485E-19"
+        izz="0.00025388" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/b2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/b2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="b2">
+    <kp>1000.0</kp>
+    <kd>1000.0</kd>
+    <mu1>0.5</mu1>
+    <mu2>0.5</mu2>
+    <material>Gazebo/BlueLaser</material>
+  </gazebo>
+
+
+
+  <joint
+    name="ab2"
+    type="continuous">
+    <origin
+      xyz="0.317840620433723 0.505929163431131 -0.145853654698437"
+      rpy="-1.57079632679551 0 0" />
+    <parent
+      link="a" />
+    <child
+      link="b2" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="c2">
+    <inertial>
+      <origin
+        xyz="0.072029 -0.029298 -0.0089026"
+        rpy="0 0 0" />
+      <mass
+        value="1.1" />
+      <inertia
+        ixx="0.0015109"
+        ixy="-1.8255E-08"
+        ixz="4.9324E-08"
+        iyy="0.00041062"
+        iyz="-0.00030529"
+        izz="0.0011913" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/c2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/c2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="c2">
+    <kp>1000.0</kp>
+    <kd>1000.0</kd>
+    <mu1>0.5</mu1>
+    <mu2>0.5</mu2>
+    <material>Gazebo/BlueLaser</material>
+  </gazebo>
+
+  <joint
+    name="bc2"
+    type="continuous">
+    <origin
+      xyz="0.00999999999980866 0 0.0846500000000526"
+      rpy="1.216315618 0 0" />             
+    <parent
+      link="b2" />
+    <child
+      link="c2" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="d2">
+    <inertial>
+      <origin
+        xyz="0.030087 -0.078375 0.043972"
+        rpy="0 0 0" />
+      <mass
+        value="0.18" />
+      <inertia
+        ixx="0.00051766"
+        ixy="-3.2746E-11"
+        ixz="2.1922E-11"
+        iyy="0.00020158"
+        iyz="0.00023278"
+        izz="0.00032484" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/d2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/d2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="d2">
+    <kp>1000.0</kp>
+    <kd>1000.0</kd>
+    <mu1>15</mu1>
+    <mu2>15</mu2>
+    <material>Gazebo/BlueLaser</material>
+  </gazebo>
+
+  <joint
+    name="cd2"
+    type="continuous">
+    <origin
+      xyz="0.0708500000002597 -0.229767581450278 -0.0850403346328106"
+      rpy="0.926782929741215 0 0" />
+    <parent
+      link="c2" />
+    <child
+      link="d2" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="b3">
+    <inertial>
+      <origin
+        xyz="-0.012048 -2.2204E-16 0.03184"
+        rpy="0 0 0" />
+      <mass
+        value="0.965" />
+      <inertia
+        ixx="0.00043238"
+        ixy="-4.0343E-20"
+        ixz="1.1624E-05"
+        iyy="0.00026764"
+        iyz="6.8191E-20"
+        izz="0.00025388" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/b3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/b3.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="b3">
+    <kp>1000.0</kp>
+    <kd>1000.0</kd>
+    <mu1>0.5</mu1>
+    <mu2>0.5</mu2>
+    <material>Gazebo/BlueLaser</material>
+  </gazebo>
+
+  <joint
+    name="ab3"
+    type="continuous">
+    <origin
+      xyz="0.317840620433344 0 -0.145853654698063"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="a" />
+    <child
+      link="b3" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="c3">
+    <inertial>
+      <origin
+        xyz="0.072029 -0.029298 -0.0089026"
+        rpy="0 0 0" />
+      <mass
+        value="1.1" />
+      <inertia
+        ixx="0.0015109"
+        ixy="-1.8255E-08"
+        ixz="4.9324E-08"
+        iyy="0.00041062"
+        iyz="-0.00030529"
+        izz="0.0011913" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/c3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/c3.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="c3">
+    <kp>1000.0</kp>
+    <kd>1000.0</kd>
+    <mu1>0.5</mu1>
+    <mu2>0.5</mu2>
+    <material>Gazebo/BlueLaser</material>
+  </gazebo>
+
+  <joint
+    name="bc3"
+    type="continuous">
+    <origin
+      xyz="0.0100000000000001 0 0.0377208365684645"
+      rpy="4.356315618 0 0" />
+    <parent
+      link="b3" />
+    <child
+      link="c3" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="d3">
+    <inertial>
+      <origin
+        xyz="0.030087 -0.078375 0.043972"
+        rpy="0 0 0" />
+      <mass
+        value="0.18" />
+      <inertia
+        ixx="0.00051766"
+        ixy="-3.2747E-11"
+        ixz="2.1923E-11"
+        iyy="0.00020158"
+        iyz="0.00023278"
+        izz="0.00032484" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/d3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/d3.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="d3">
+    <kp>1000.0</kp>
+    <kd>1000.0</kd>
+    <mu1>15</mu1>
+    <mu2>15</mu2>
+    <material>Gazebo/BlueLaser</material>
+  </gazebo>
+
+  <joint
+    name="cd3"
+    type="continuous">
+    <origin
+      xyz="0.0708499999999574 -0.229767581450119 -0.0850403346322273"
+      rpy="0.926782929739437 0 0" />
+    <parent
+      link="c3" />
+    <child
+      link="d3" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="b4">
+    <inertial>
+      <origin
+        xyz="-0.012048 -1.9124E-14 0.03184"
+        rpy="0 0 0" />
+      <mass
+        value="0.965" />
+      <inertia
+        ixx="0.00043238"
+        ixy="-6.8986E-18"
+        ixz="1.1624E-05"
+        iyy="0.00026764"
+        iyz="8.1696E-18"
+        izz="0.00025388" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/b4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/b4.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="b4">
+    <kp>1000.0</kp>
+    <kd>1000.0</kd>
+    <mu1>0.5</mu1>
+    <mu2>0.5</mu2>
+    <material>Gazebo/BlueLaser</material>
+  </gazebo>
+
+  <joint
+    name="ab4"
+    type="continuous">
+    <origin
+      xyz="0.0678406204333118 0 -0.145853654698131"
+      rpy="-1.5707963267949 0 3.14159265358979" />
+    <parent
+      link="a" />
+    <child
+      link="b4" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="c4">
+    <inertial>
+      <origin
+        xyz="0.082029 -0.040813 -0.013165"
+        rpy="0 0 0" />
+      <mass
+        value="1.1" />
+      <inertia
+        ixx="0.0015109"
+        ixy="-1.8255E-08"
+        ixz="4.9324E-08"
+        iyy="0.00041062"
+        iyz="-0.00030529"
+        izz="0.0011913" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/c4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/c4.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="c4">
+    <kp>1000.0</kp>
+    <kd>1000.0</kd>
+    <mu1>0.5</mu1>
+    <mu2>0.5</mu2>
+    <material>Gazebo/BlueLaser</material>
+  </gazebo>
+
+  <joint
+    name="bc4"
+    type="continuous">
+    <origin
+      xyz="0 0 0.05"
+      rpy="4.357908272 0 0" />
+    <parent
+      link="b4" />
+    <child
+      link="c4" />
+    <axis
+      xyz="1 0 0" />
+  </joint>
+  <link
+    name="d4">
+    <inertial>
+      <origin
+        xyz="-0.029913 -0.078375 0.043972"
+        rpy="0 0 0" />
+      <mass
+        value="0.18" />
+      <inertia
+        ixx="0.00051766"
+        ixy="-3.2748E-11"
+        ixz="2.1924E-11"
+        iyy="0.00020158"
+        iyz="0.00023278"
+        izz="0.00032484" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/d4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://gp_description2/meshes/d4.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="d4">
+    <kp>1000.0</kp>
+    <kd>1000.0</kd>
+    <mu1>15</mu1>
+    <mu2>15</mu2>
+    <material>Gazebo/BlueLaser</material>
+  </gazebo>
+
+  <joint
+    name="cd4"
+    type="continuous">
+    <origin
+      xyz="0.0808499999995903 -0.241283310772285 -0.0893024740908864"
+      rpy="-2.92377114111488 0 -3.14159265358978" />
+    <parent
+      link="c4" />
+    <child
+      link="d4" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+
+  <transmission name="ab1_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="ab1">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="ab1Motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+
+
+  <transmission name="bc1_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="bc1">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="bc1Motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+
+
+
+  <transmission name="cd1_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="cd1">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="cd1Motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+
+
+  <transmission name="bc2_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="bc2">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="bc2Motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+
+
+  <transmission name="cd2_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="cd2">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="cd2Motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+
+
+  <transmission name="ab3_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="ab3">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="ab3Motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+
+
+
+
+  <transmission name="bc3_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="bc3">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="bc3Motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+
+
+  <transmission name="cd3_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="cd3">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="cd3Motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+
+
+
+  <transmission name="ab4_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="ab4">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="ab4Motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+
+
+
+  <transmission name="bc4_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="bc4">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="bc4Motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+
+  <transmission name="cd4_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="cd4">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="cd4Motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+
+  <transmission name="ab2_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="ab2">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="ab2Motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+</robot>
