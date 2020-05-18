@@ -445,8 +445,8 @@ def gyro_read():
     return [x,y,z]
 def vrep_init_angels():
     #hipinit , kneeinit =inits.get_initial_angels(1,0,inits.initalheight)
-    hipinit=-2.27999663185   #   was HIP -2.0589882059651674
-    kneeinit=1.57918160492  #KNEE WAS 1.0711307090938094
+    hipinit=-2.0589882059651674   #   was HIP -2.27999663185
+    kneeinit=1.0711307090938094  #KNEE WAS 1.57918160492
     for i in range (4):
         set_angle(i*3,0)
         set_angle((i*3)+1,hipinit)
