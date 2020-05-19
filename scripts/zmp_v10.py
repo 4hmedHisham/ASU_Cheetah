@@ -52,7 +52,7 @@ global leg2_ang
 l1 =245
 l2 =208.4
 a=gait.a
-initial_leg_height = 390 # from ground to joint
+initial_leg_height = 320 # from ground to joint
 stride = 150
 ct=0.8
 h = 100     # maximum height of trajectory
@@ -280,8 +280,10 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
         else:
             initial_distance_f = leg_pos3_hip[0]
 
+        stride_f_mod=stride_f-initial_distance_f
+
         for t in np.arange(0, cycle_time_f, sample_time_f):
-            xnew[i] = (stride_f * ((t / cycle_time_f) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time_f)))) - (stride_f / 2) + stride_f / 2) + initial_distance_f
+            xnew[i] = (stride_f_mod * ((t / cycle_time_f) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time_f)))) - (stride_f_mod / 2) + stride_f_mod / 2) + initial_distance_f
             i = i + 1;
         xnew = xnew
  
@@ -324,6 +326,7 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
             var3 = 2 
             var4 = 4            
 
+        stride_mod=stride-initial_distance
 
         while(1):
 
@@ -337,7 +340,7 @@ def Gate_Publisher(leg_no,legfix_initial_hip,legvar_initial_hip,legfix_initial_c
 
             if ((current - last_fix) > sample_time_f ) and i < steps:        
                 last_fix = current
-                xnew[i] = (stride * ((t / cycle_time) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time)))) - (stride / 2) + stride / 2) + initial_distance
+                xnew[i] = (stride_mod * ((t / cycle_time) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time)))) - (stride_mod / 2) + stride_mod / 2) + initial_distance
                 
                 if t < (cycle_time / 2):
 

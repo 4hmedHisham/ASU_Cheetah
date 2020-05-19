@@ -31,7 +31,7 @@ var =0
 var2 = 0
 var3 =0
 var4 = 0
-delay_seq = 0.3
+delay_seq = 0.1
 #inert = 
 
 global pub
@@ -54,10 +54,10 @@ l2 =208.4
 a=gait.a
 initial_leg_height = 390 # from ground to joint   320
 stride = 150
-ct=1.2
-h = 100     # maximum height of trajectory
+ct=0.5
+h = 15    # maximum height of trajectory
 cycle_time =ct  # total time for each cycle
-steps = 20 # number of steps 'even'
+steps = 100 # number of steps 'even'
 initial_distance = 0 # along x
 
 x_fixed = np.zeros([steps, 1], dtype=float)

@@ -633,7 +633,7 @@ def move_base():
     global steps
     global sample_time_f
     #st = 40
-    cycle_time_f = 0.2
+    cycle_time_f = 0.05
     current = 0
     last_fix = 0
     i=0
@@ -689,13 +689,13 @@ if __name__ == '__main__':
 
         if first_step_flag == 1:
             move_leg(3)
-            time.sleep(1.2)
+            time.sleep(0.5)
             move_leg(1)
-            time.sleep(1.2)            
+            time.sleep(0.5)            
             move_leg(4)    
-            time.sleep(1.2)                    
+            time.sleep(0.5)                    
             move_leg(2)
-            time.sleep(1.2)
+            time.sleep(0.5)
             move_base()
             first_step_flag =0
 
