@@ -56,7 +56,7 @@ def getjointanglesfromvrep():#transverse,hips,knees
     return transverseangles, hipangles, kneeangles
 
 def GetEndEffectorPos(transverseangles, hipangles, kneeangles):  # Gets End effectors Positions
-    leg_pos_x = [300.78, 300.78, -300.78, -300.78]  # the endeffector position relative to the cg in the x-axis
+    leg_pos_x = [311, 311, -311, -311] #Old Numbers before cheack [300.78, 300.78, -300.78, -300.78] # the endeffector position relative to the cg in the x-axis
     leg_pos_y = [123.5, -123.5, -123.5, 123.5]  # the endeffector position relative to the cg in the y-axis
     # This array will have the pos. of the 4 endeffector
     pos2cg = np.zeros((4, 3))
