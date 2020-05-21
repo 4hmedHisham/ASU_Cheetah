@@ -2,7 +2,6 @@
 import rospy
 import time
 import GP2_Vrep_V3 as v
-import GP2_Function_V7 as gait1
 import numpy as np
 import threading
 from std_msgs.msg import Float32MultiArray
@@ -32,9 +31,11 @@ def callback(data):
 def ros_init(node=0):
 	
 	global pub
+	global pub2
 	global sub
 	rospy.Subscriber('getter',Float32MultiArray,callback)
 	pub = rospy.Publisher('setter', String, queue_size=10)
+	pub2 = rospy.Publisher('ik_setter', Float32MultiArray, queue_size=10)
 	time.sleep(2)
 	if node==0:
 		rospy.init_node('algorithm', anonymous=True)
@@ -97,6 +98,13 @@ def get_torques(pos):
 	if pos=='cd2' or pos==11 :
 		trq=params[23]
 	return trq
+def send_ik_point(x,y,z,leg):
+	total = Float32MultiArray()
+	total.data = []
+	arr=[x,y,z,leg]
+	total.data=arr
+	pub2.publish(total)
+
 
 def set_angle(joint,angle):
 	#msg=str(joint)+' '+str(angle)
@@ -105,6 +113,7 @@ def set_angle(joint,angle):
 	pub.publish(msg)
 
 def desired_xy(transverse,hip,knee,legno):
+	from Main_Functions import GP2_Function_V7 as gait1
 	msg = Float32MultiArray()
 	x,y,z = gait1.forward_kinematics_V3(transverse,hip,knee)
 	msg.data=[float(x),float(z),legno]

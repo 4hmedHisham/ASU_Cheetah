@@ -22,6 +22,42 @@ import rospy
 #COmmit1
 #7atet satr gded
 clientID=0
+Target_names=['Target_FL','Target_FR','Target_RR','Target_RL']
+Ref_names=['FL','FR','RR','RL']
+target_handle=[]
+ref_handle=[]
+def get_dummies():
+    global target_handle
+    global ref_handle
+    for name in Target_names:
+        err,handle=sim.simxGetObjectHandle(clientID, name,sim.simx_opmode_blocking)
+        target_handle.append(handle)
+    for name in Ref_names:
+        err,handle=sim.simxGetObjectHandle(clientID, name,sim.simx_opmode_blocking)
+        ref_handle.append(handle)
+    print(target_handle)
+    print(ref_handle)
+
+
+def set_ik_pos(x,y,z,leg):
+    x=x/1000.0
+    y=y/1000.0
+    z=z/1000.0
+    #changeing from mm to m to vrep
+    if leg==0:
+        target=target_handle[0]
+        ref=ref_handle[0]
+    
+    elif leg==1:
+        target=target_handle[1]
+        ref=ref_handle[1]
+    elif leg==2:
+        target=target_handle[2]
+        ref=ref_handle[2]
+    elif leg==3:
+        target=target_handle[3]
+        ref=ref_handle[3]
+    err=sim.simxSetObjectPosition(clientID,target,ref,[x,y,z],sim.simx_opmode_oneshot)
 def ctrl_en(on_off,all_or_1='all'):
     if on_off=='p':
         param=1
@@ -176,45 +212,94 @@ def set_angle(setangle, angle):
     #print(' the angler is '+ setangle)
     error=9
     #start= timer()
-  
+    counter=0
     if setangle == 'ab3' or setangle == 0:
         while(error!=0):     
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[0]), angle, sim.simx_opmode_streaming)
+            counter=counter+1
+            if(counter==100):
+                print("COMMAND Timed Out")
+                break
+
     elif setangle == 'bc3' or setangle == 1:
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[1]), angle, sim.simx_opmode_streaming)
+            counter=counter+1
+            if(counter==100):
+                print("COMMAND Timed Out")
+                break
         
     elif setangle == 'cd3' or setangle == 2:
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[2]), angle, sim.simx_opmode_streaming)
+            counter=counter+1
+            if(counter==100):
+                print("COMMAND Timed Out")
+                break
     elif setangle == 'ab4' or setangle == 3:
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[3]), angle, sim.simx_opmode_streaming)
+            counter=counter+1
+            if(counter==100):
+                print("COMMAND Timed Out")
+                break
     elif setangle == 'bc4' or setangle == 4:
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[4]), angle, sim.simx_opmode_streaming)
+            counter=counter+1
+            if(counter==100):
+                print("COMMAND Timed Out")
+                break
     elif setangle == 'cd4' or setangle == 5:
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[5]), angle, sim.simx_opmode_streaming)
+            counter=counter+1
+            if(counter==100):
+                print("COMMAND Timed Out")
+                break
     elif setangle == 'ab1' or setangle == 6:
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[6]), angle, sim.simx_opmode_streaming)
+            counter=counter+1
+            if(counter==100):
+                print("COMMAND Timed Out")
+                break
     elif setangle == 'bc1' or setangle == 7:
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[7]), angle, sim.simx_opmode_streaming)
+            counter=counter+1
+            if(counter==100):
+                print("COMMAND Timed Out")
+                break
     elif setangle == 'cd1' or setangle == 8:
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[8]), angle, sim.simx_opmode_streaming)
+            counter=counter+1
+            if(counter==100):
+                print("COMMAND Timed Out")
+                break
             #print('another error is '+str(error))
     elif setangle == 'ab2' or setangle == 9:
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[9]), angle, sim.simx_opmode_streaming)
+            counter=counter+1
+            if(counter==100):
+                print("COMMAND Timed Out")
+                break
     elif setangle == 'bc2' or setangle == 10:
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[10]), angle, sim.simx_opmode_streaming)
+            counter=counter+1
+            if(counter==100):
+                print("COMMAND Timed Out")
+                break
     elif setangle == 'cd2' or setangle == 11:
         while(error!=0):
             error=sim.simxSetJointTargetPosition(clientID, int(angles_handler[11]), angle, sim.simx_opmode_streaming)
+            counter=counter+1
+            if(counter==100):
+                print("COMMAND Timed Out")
+                break
     #end = timer()
     #print("TIMER IS ")
     #print(end-start)
@@ -341,6 +426,8 @@ def vrepInterface(port):
     for i in range(angles_handler.shape[0]):
         angles_error[i], angles_handler[i] = sim.simxGetObjectHandle(clientID, intial_name[i],
                                                                       sim.simx_opmode_blocking)
+    get_dummies()
+    print("GOT DUMMIES")
     return ID
 
 def get_vel(getangles):
@@ -495,7 +582,8 @@ def initialize_handlers():
 
 
 # vrep_init(19997)
-# time.sleep(2)
+# # time.sleep(2)
+# set_ik_pos(0,112,-390,0)
 # ctrl_en('t')
 # print("DONE")
 

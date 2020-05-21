@@ -23,6 +23,13 @@ if not testing :
 		mode=raw_input("Please enter 'p' for position control or 't' for torque control:  ")
 	v.vrep_init(19997,mode)
 '''
+def set_vrep_points(data):
+	x=data.data[0]
+	y=data.data[1]
+	z=data.data[2]
+	leg=data.data[3]
+	v.set_ik_pos(x,y,z,leg)
+
 def is_number(n):
     try:
         float(n)   # Type-casting the string to `float`.
@@ -75,6 +82,7 @@ def start_vrep_node():
 	pub = rospy.Publisher('getter', Float32MultiArray, queue_size=10)
 	sub = rospy.Subscriber('setter',String,set_vrep_angels)
 	sub = rospy.Subscriber('disable',Bool,disable)
+	sub= rospy.Subscriber('ik_setter',Float32MultiArray,set_vrep_points)
 	rospy.Subscriber('torques',String,set_vrep_torques)	
 	rospy.init_node('vrep', anonymous=True)
 	print("ROS NODE INTIALIZED")

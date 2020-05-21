@@ -33,15 +33,15 @@ print("start")
 
 
 
-
-
-time.sleep(0.5)
-gait.initialize()
-for i in range(20):
-    gait.trot3_adjusted(1,'f',100)
-    time.sleep(0.5)
-    gait.trot3_adjusted(2,'f',100)
-    time.sleep(0.5)
+gait.trial()
+#20 may 2020
+# time.sleep(0.5)
+# gait.initialize()
+# for i in range(20):
+#     gait.trot3_adjusted(1,'f',100)
+#     time.sleep(0.5)
+#     gait.trot3_adjusted(2,'f',100)
+#     time.sleep(0.5)
 
 
 

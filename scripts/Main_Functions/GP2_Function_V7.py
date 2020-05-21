@@ -15,6 +15,7 @@ import math
 import sys
 sys.path.insert(0, '/home/ahmed/catkin_ws/src/isolation/scripts')
 import R2A as ros
+import GP2_Vrep_V3 as hacking 
 #import GP2_Vrep_V3 as ros for direct vrep mode
 
 print(sys.path)
@@ -22,8 +23,15 @@ print("SUCcESSS")
 #Parameters:
 contact = np.ones((4,1))
 clientID=0
+shoesOn=False
+if shoesOn ==True:
+    shoes=25
+else :
+    shoes=0
+
+
 l1 =245
-l2 =208.4
+l2 =208.4+shoes
 a = 112.75
 initalheight=390
 stride=60
@@ -293,7 +301,81 @@ def Leg_Ellipse_Trajectory(intial_leg_height,s,direction,Transverse_Angle,hipang
     
     return theta1,theta2,theta3,St
 
+def Leg_Ellipse_Trajectory_Return_x_y_z(intial_leg_height,s,direction,Transverse_Angle,hipangle,kneeangle,xt,yt,T=0.4):#Gets angles for leg trajectory  xc stands for current x
 
+    #H = 100 #height
+    #T = 0.001 #total time for each cycle
+    h = 50#100 #hsmall
+    #intial_leg_height = 300 #from ground to joint
+    stp=100#100 #number of steps even number for some reason
+    St=T/stp #sample time
+    xnew = np.zeros([stp,1], dtype=float)
+    t=0
+    i=0
+
+    if direction == 'r':
+        initial_distance = yt
+        sign = -1
+        y = 1
+        x = 0
+    if direction == 'l':
+        initial_distance = yt
+        sign = 1
+        y = 1
+        x = 0
+    if direction == 'f':
+        initial_distance = xt
+        sign = 1
+        y = 0
+        x = 1
+    if direction == 'b':
+        initial_distance = xt
+        sign = -1
+        y = 0
+        x = 1
+
+    for t in np.arange(0,T,St):
+         xnew[i]=sign*(s*((t/T)-((1/(2*np.pi))*np.sin(2*np.pi*(t/T))))-(s/2)+s/2)+initial_distance
+         i=i+1;
+    
+    
+    tnew = np.zeros([stp,1], dtype=float)
+    i=0;
+    
+    # malhash lazma,ba2a leha lazma
+    for t in np.arange(0,stp,1):
+         tnew[i]=St*t
+         i=i+1
+
+    
+    i=0
+    ynew=np.zeros([stp,1], dtype=float)
+     #First part of Ynew in peicewise
+     
+    for t in np.arange(0,T/2, St):
+         ynew[i]=(-(h/(2*np.pi))*np.sin(((4*np.pi)/T)*t)+((2*h*t)/T)-(h/2))+(h/2)-intial_leg_height
+         i=i+1;
+    
+    n=(T/2)
+    for t in np.arange(n,T, St):
+        ynew[i]= (-(h/(2*np.pi))*np.sin(4*np.pi-(((4*np.pi)/T)*t))-((2*h*t)/T)+((3*h)/2))+(h/2)-intial_leg_height
+        i=i+1
+    
+    return xnew,112,ynew,St
+def trial():
+    distance=100
+    direction='f'
+    leg=0
+    transverses, hips, knees = getjointanglesfromvrep()
+    legspos2cg, legspos2joint = GetEndEffectorPos(transverses, hips,knees)
+    x,y,z,delay=Leg_Ellipse_Trajectory_Return_x_y_z(initalheight ,distance ,direction , transverses[leg-1], hips[leg-1], knees[leg-1]
+                                         ,0,-390)
+    for i in range(stp):
+        xi=float(x[i])
+        yi=y
+        zi=float(z[i])
+        ros.send_ik_point(xi,yi,zi,0)
+        time.sleep(delay)
 
 #Getting Desired Cg Pos for stability
 def getnewcg(pos , SwingLegNo):    # pos is array 4*3
@@ -952,4 +1034,6 @@ def get_initial_angels(sign,initial_distance,intial_leg_height):
     return theta2,theta3
 
 get_initial_angels(1,0,initalheight)
+data=forward_kinematics_V3(0,-2.05,1.07)
+print (data)
 #print("finish")
