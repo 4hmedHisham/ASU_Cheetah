@@ -1,4 +1,4 @@
-import GP2_Function_V3 as Alg
+from Main_Functions import GP2_Function_V7 as Alg
 import NodeMaker as make
 import numpy as np
 from std_msgs.msg import Float32MultiArray
@@ -16,9 +16,7 @@ Fwd_node=None
 flatten_list=None
 onetime=True
 
-def fwd_kin(data):
-
-    
+def fwd_kin(data):    
     global flag
     global legspos2cg
     global legspos2joint
