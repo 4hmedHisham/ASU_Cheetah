@@ -17,7 +17,6 @@ from Main_Functions import GP2_Function_V7 as gait
 
 # Constants
 g = 9.81
-
 hipOffset = 300.78
 mass = 20
 z = 0
@@ -42,22 +41,20 @@ global leg4_ang
 global leg1_ang
 global leg2_ang
 
-# Parameters:
+#Parameters:
 l1 =245
 l2 =208.4
 a=gait.a
 initial_leg_height = 390 
 stride = 80
 h = 30    # maximum height of trajectory
-ct=0.2
+ct=0.3
 cycle_time =ct  # total time for each cycle
 steps = 20 # number of steps 'even'
 initial_distance = 0 # along x
 
 x_fixed = np.zeros([steps, 1], dtype=float)
 y_fixed = np.zeros([steps, 1], dtype=float)
-
-
 
 initial_leg_height_f = initial_leg_height
 stride_f = 80
@@ -69,7 +66,6 @@ pub = 0
 indx_fix = 0
 linear_acc_threshold = 1000 
 angular_acc_threshold = 1000
-
 
 #initial position relative to hip and cg
 leg1_initial_hip=np.zeros([3, 1], dtype=float)
@@ -105,7 +101,6 @@ leg1_ang=np.zeros([3, 1], dtype=float)
 leg2_ang=np.zeros([3, 1], dtype=float)
 legfix_Prev_angs = np.zeros([3, 1], dtype=float)
 legvar_Prev_angs = np.zeros([3, 1], dtype=float)
-
 
 ########################################################################################################
 
@@ -144,7 +139,6 @@ def imudata(data):
         # else:
         #     z = 0
 
-
 ########################################################################################################
 
 def leg_pos(data):
@@ -169,11 +163,238 @@ def leg_pos(data):
     leg_pos1__cg =Array2[18:21] 
     leg_pos2__cg =Array2[21:24]
 	
-
-
 ##########################################################################################################
-
 # Functions:
+def three_d_trajv2 (leg_no,xpoint, ypoint):
+    # global l1
+    # global l2
+    # global initial_leg_height
+    # global h
+    # global cycle_time
+    # global steps
+    # global initial_distance
+    # sample_time = np.float(cycle_time) / steps # sample time
+    global leg_pos3_hip
+    global leg_pos4_hip
+    global leg_pos1_hip
+    global leg_pos2_hip
+    sign = 1
+    if leg_no == 1:
+        y_offset = leg_pos1_hip[1]
+        # sign = -1
+    elif leg_no ==2:
+        y_offset = leg_pos2_hip[1]
+        # sign = 1        
+    elif leg_no ==3:
+        y_offset = leg_pos3_hip[1]
+        # sign = 1        
+    elif leg_no ==4:
+        y_offset = leg_pos4_hip[1]
+        # sign = -1        
+
+
+    initial_leg_height=390
+    h=100
+    cycle_time=0.3
+    steps=20
+    initial_distance=0
+    sample_time = np.float(cycle_time) / steps # sample time
+    stride = np.sqrt(ypoint**2 + xpoint**2)
+
+    if ypoint != 0:
+        slope_plane= float(ypoint) / xpoint
+        angle_plane= np.arctan(slope_plane)
+    elif ypoint == 0 :
+        angle_plane=0
+    else:
+        angle_plane=((np.pi*90)/180)
+
+    xplane = np.zeros([steps+1, 1], dtype=float)
+    t = 0
+    i = 0
+
+    for t in np.arange(0, cycle_time+sample_time,sample_time):
+        xplane[i] = (stride * ((t / cycle_time) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time)))) - (stride / 2) + stride / 2) + initial_distance
+        i = i + 1
+    xplane= xplane
+
+
+    i = 0
+    zplane = np.zeros([steps+1, 1], dtype=float)
+    # First part of Ynew in peicewise
+
+    for t in np.arange(0, (cycle_time / 2)+sample_time, sample_time):
+        zplane[i] = (-(h / (2 * np.pi)) * np.sin(((4 * np.pi) / cycle_time) * t) + ((2 * h * t) / cycle_time) - (h / 2)) + (h / 2) - initial_leg_height
+        i = i + 1
+
+    n = (cycle_time / 2)+sample_time
+    for t in np.arange(n, cycle_time, sample_time):
+        zplane[i] = (-(h / (2 * np.pi)) * np.sin(4 * np.pi - (((4 * np.pi) / cycle_time) * t)) - ((2 * h * t) / cycle_time) + ((3 * h) / 2)) + (h / 2) - initial_leg_height
+        i = i + 1
+    zplane=zplane
+    i = 0
+    array_of_slopes = zplane/xplane
+    array_of_slopes[0]=0
+    #array_of_slopes[steps]=0
+    array_of_angles=np.arctan(array_of_slopes)
+    array_of_lengths=np.sqrt(xplane**2+ zplane**2)
+    array_of_projections=array_of_lengths*np.cos(array_of_angles)
+    array_of_projections[0] = 0
+    z=zplane
+    y=((array_of_projections*np.sin(angle_plane))*sign)+y_offset
+    x=array_of_projections*np.cos(angle_plane)
+
+    return x, y, z
+
+
+
+
+def three_d_trajv3 (leg_no,xpoint, ypoint):
+    # global l1
+    # global l2
+    # global initial_leg_height
+    # global h
+    # global cycle_time
+    # global steps
+    # global initial_distance
+    # sample_time = np.float(cycle_time) / steps # sample time
+    global leg_pos3_hip
+    global leg_pos4_hip
+    global leg_pos1_hip
+    global leg_pos2_hip
+    global stride
+
+    initial_leg_height=390
+    h=100
+    cycle_time=0.3
+    steps=20
+    initial_distance=0
+    sample_time = np.float(cycle_time) / steps # sample time
+    sign = 1
+
+    if leg_no == 1:
+        y_offset = leg_pos1_hip[1]
+        # sign = -1
+    elif leg_no ==2:
+        y_offset = leg_pos2_hip[1]
+        # sign = 1        
+    elif leg_no ==3:
+        y_offset = leg_pos3_hip[1]
+        # sign = 1        
+    elif leg_no ==4:
+        y_offset = leg_pos4_hip[1]
+        # sign = -1        
+
+    if ypoint != 0:
+        slope_plane= float(ypoint) / xpoint
+        angle_plane= np.arctan(slope_plane)
+        stride = np.sqrt(ypoint**2 + xpoint**2)
+    elif ypoint == 0 :
+        angle_plane=0
+    else:
+        angle_plane=((np.pi*90)/180)
+
+    xplane = np.zeros([steps+1, 1], dtype=float)
+    t = 0
+    i = 0
+
+    for t in np.arange(0, cycle_time+sample_time,sample_time):
+        xplane[i] = (stride * ((t / cycle_time) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time)))) - (stride / 2) + stride / 2) + initial_distance
+        i = i + 1
+    xplane= xplane
+
+
+    i = 0
+    zplane = np.zeros([steps+1, 1], dtype=float)
+    # First part of Ynew in peicewise
+
+    for t in np.arange(0, (cycle_time / 2)+sample_time, sample_time):
+        zplane[i] = (-(h / (2 * np.pi)) * np.sin(((4 * np.pi) / cycle_time) * t) + ((2 * h * t) / cycle_time) - (h / 2)) + (h / 2) - initial_leg_height
+        i = i + 1
+
+    n = (cycle_time / 2)+sample_time
+    for t in np.arange(n, cycle_time, sample_time):
+        zplane[i] = (-(h / (2 * np.pi)) * np.sin(4 * np.pi - (((4 * np.pi) / cycle_time) * t)) - ((2 * h * t) / cycle_time) + ((3 * h) / 2)) + (h / 2) - initial_leg_height
+        i = i + 1
+    zplane=zplane
+    i = 0
+    x=xplane
+    yplane=np.full((steps+1, 1), y_offset)
+    y=yplane
+    z=zplane
+    # if ypoint != 0:
+    array_of_slopes = zplane/xplane
+    array_of_slopes[0]=0
+    array_of_angles=np.arctan(array_of_slopes)
+    array_of_lengths=np.sqrt(xplane**2+ zplane**2)
+    array_of_projections=array_of_lengths*np.cos(array_of_angles)
+    array_of_projections[0] = 0
+    z=zplane
+    y=((array_of_projections*np.sin(angle_plane))*sign)+y_offset
+    x=array_of_projections*np.cos(angle_plane)
+    return x,y,z
+
+
+
+
+
+
+
+def move_leg(leg_no,x,y,z):
+
+    global leg_pos3_hip
+    global leg_pos4_hip
+    global leg_pos1_hip
+    global leg_pos2_hip
+    global x_fixed
+    global y_fixed
+    global var 
+    global var2
+    global var3 
+    global var4    
+    global indx_fix
+    global cycle_time
+    global steps
+    #sample_time = np.float(cycle_time) / steps # sample time
+    sample_time_f =np.float(cycle_time) / steps   # sample time
+    current = 0
+    last_fix = 0
+    t=0       
+    if leg_no == 1:
+        legfix_Prev_angs = leg1_ang
+    elif leg_no ==2:
+        legfix_Prev_angs = leg2_ang
+    elif leg_no ==3:
+        legfix_Prev_angs = leg3_ang
+    elif leg_no ==4:
+        legfix_Prev_angs = leg4_ang
+    i=0
+    if leg_no == 1:
+        var = 2
+    elif leg_no == 3:
+        var=0
+    elif leg_no == 4:
+        var=1       
+    elif leg_no == 2:
+        var=3
+                                        
+
+    while(1):
+        current = time.time()   #absolute
+        if ((current - last_fix) > sample_time_f ) and i < steps:        
+            last_fix = current
+            trans,hip,knee = gait.inverse_kinematics_3d_v6(x[i],y[i],z[i],legfix_Prev_angs[0] ,legfix_Prev_angs[1], legfix_Prev_angs[2] )
+            
+            #Publish Fixed leg point
+            # var = leg_no - 1                
+            set_angle((var*3),trans)
+            set_angle((var*3)+1 , hip)
+            set_angle(((var*3)+2), knee)       
+            i = i + 1
+            t = t + sample_time_f
+        if (i == steps):
+            flag_start =0
+            break  
 
 def Gate_Publisher(pair_no,st):
 
@@ -685,7 +906,6 @@ def Get_ZMP():
     #print(sol[Xzmp])
     return sol[Xzmp], sol[Yzmp], Zval
 
-
 def Mod_contact(leg_no, leg_pos1, leg_pos2_y):
 
     hipoffset = 253
@@ -701,7 +921,6 @@ def Mod_contact(leg_no, leg_pos1, leg_pos2_y):
         # X_leg = hipoffset- X_leg
     print(X_leg)
     return X_leg 
-
 
 def Mod_contact2(leg_no, legfix_final_cg ,legvar_final_cg):
 
@@ -734,7 +953,6 @@ def Mod_contact2(leg_no, legfix_final_cg ,legvar_final_cg):
 
     return x_target_fix, x_target_var
 
-
 def trueangle(two_angles,current_angle):
     diff = np.array((2,1),dtype=np.float)
     diff[0] = abs(current_angle - two_angles[0])
@@ -765,22 +983,15 @@ if __name__ == '__main__':
     while not rospy.is_shutdown():
         
         if first_step_flag == 1:
-            time.sleep(delay_seq)        
-            Gate_Publisher(2 ,75)
+            x,y,z = three_d_trajv3(2,80,-40)
+            move_leg(2,x,y,z)
+            x,y,z = three_d_trajv2(3,80,40)
+            move_leg(3,x,y,z)
+            x,y,z = three_d_trajv2(1,80,-40)
+            move_leg(1,x,y,z)
+            x,y,z = three_d_trajv2(4,80,40)
+            move_leg(4,x,y,z)                        
 
-            time.sleep(delay_seq)         
-
-            Gate_Publisher(1,150)  
             first_step_flag=0    
-        
-        else:
-            time.sleep(delay_seq)        
-            Gate_Publisher(2 ,150)
-
-            time.sleep(delay_seq)         
-
-            Gate_Publisher(1,150)  
-            first_step_flag=0    
-            
-
+    
         #rate.sleep()        

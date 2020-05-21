@@ -64,15 +64,21 @@ def getjointanglesfromvrep():#transverse,hips,knees
     return transverseangles, hipangles, kneeangles
 
 def GetEndEffectorPos(transverseangles, hipangles, kneeangles):  # Gets End effectors Positions
-    leg_pos_x = [311, 311, -311, -311] #Old Numbers before cheack [300.78, 300.78, -300.78, -300.78] # the endeffector position relative to the cg in the x-axis
-    leg_pos_y = [123.5, -123.5, -123.5, 123.5]  # the endeffector position relative to the cg in the y-axis
+
+    # leg_pos_x = [300.78, 300.78, -300.78, -300.78]  # the endeffector position relative to the cg in the x-axis
+    # leg_pos_y = [123.5, -123.5, -123.5, 123.5]  # the endeffector position relative to the cg in the y-axis
+    leg_pos_x = [-311, -311, 311, 311]  # the endeffector position relative to the cg in the x-axis
+    leg_pos_y = [-123.5, 123.5, 123.5, -123.5]  # the endeffector position relative to the cg in the y-axis
     # This array will have the pos. of the 4 endeffector
     pos2cg = np.zeros((4, 3))
     pos2joint = np.zeros((4, 3))
 
     for i in range(4):
-
-        x,y,z = forward_kinematics_V3(transverseangles[i,0], hipangles[i,0], kneeangles[i,0])
+        if i==0 or i==3:
+            leg = 'r'
+        else:
+            leg = 'l'    
+        x,y,z = forward_kinematics_V3(transverseangles[i,0], hipangles[i,0], kneeangles[i,0],leg)
         pos2cg[i, 0] = (leg_pos_x[i] + x)  # forward/backward (x-axis)
         pos2cg[i, 1] = leg_pos_y[i] - y  # tilting (y-axis)
         pos2cg[i, 2] = z  # Height  (z-axis)
@@ -941,11 +947,46 @@ def plot_torque(hip , knee , iteration):
     plt.ylabel('Torque(N.m)')
     plt.show()
 
-def inverse_kinematics_3d_v6(px,py,pz,ptran,phip,pknee):
+# def inverse_kinematics_3d_v6(px,py,pz,ptran,phip,pknee):
+#     two_angles = np.array((2, 1))
+#     u = np.sqrt((- a**2 + py**2 + pz**2))
+#     x = 2*np.arctan((pz - u)/(a + py))
+#     y = 2*np.arctan((pz + u)/(a + py))
+
+#     if np.abs(x-ptran) < np.abs(y-ptran):
+#         theta1 = x
+#     else:
+#         theta1 = y
+
+#     r = px**2 + py**2 + pz**2
+#     ratio = ((r - a**2 - l1**2 - l2**2) / (2*l1*l2))
+#     if ratio > 1 or ratio <-1 :
+#         print("error")
+#         if ratio >1:
+#             ratio = 1
+#         else:
+#             ratio =-1
+#     two_angles = acos2(ratio)
+#     theta3 = trueangle(two_angles, pknee)
+
+#     N = l2*cos(theta3) + l1
+#     num = px*N - l2*sin(theta1)*sin(theta3)*py + l2*sin(theta3)*cos(theta1)*pz
+#     den = l2*N*cos(theta3) + l1*N + (l2**2 * (sin(theta3))**2)
+#     ratio = num/den
+#     two_angles = acos2(ratio)
+#     theta2 = trueangle(two_angles, phip)
+#     return theta1,theta2,theta3
+
+def inverse_kinematics_3d_v6(px,py,pz,ptran,phip,pknee,leg='r'):
     two_angles = np.array((2, 1))
-    u = np.sqrt((- a**2 + py**2 + pz**2))
-    x = 2*np.arctan((pz - u)/(a + py))
-    y = 2*np.arctan((pz + u)/(a + py))
+    if leg == 'r':
+        u = np.sqrt((- a**2 + py**2 + pz**2))
+        x = -2*np.arctan((pz - u)/(a - py))
+        y = -2*np.arctan((pz + u)/(a - py))
+    elif leg == 'l':
+        u = np.sqrt((- a ** 2 + py ** 2 + pz ** 2))
+        x = 2 * np.arctan((pz - u) / (a + py))
+        y = 2 * np.arctan((pz + u) / (a + py))
 
     if np.abs(x-ptran) < np.abs(y-ptran):
         theta1 = x
@@ -972,6 +1013,7 @@ def inverse_kinematics_3d_v6(px,py,pz,ptran,phip,pknee):
     return theta1,theta2,theta3
 
 
+
 def forward_kinematics_V2( theta1 , theta2 , theta3):
     t = theta2 + theta3
     px = np.cos(theta1)*(l2*np.cos(t) + l1*np.cos(theta2)) + a*np.sin(theta1)
@@ -980,12 +1022,25 @@ def forward_kinematics_V2( theta1 , theta2 , theta3):
     return px,py,pz
 
 
-def forward_kinematics_V3( theta1 , theta2 , theta3):
+# def forward_kinematics_V3( theta1 , theta2 , theta3):
+#     t = theta2 + theta3
+#     pz = cos(theta1)*(l2*sin(t) + l1*sin(theta2)) + a*sin(theta1)
+#     py = -sin(theta1)*(l2*sin(t) + l1*sin(theta2)) + a*cos(theta1)
+#     px = l2*np.cos(t) + l1*np.cos(theta2)
+#     return px,py,pz
+
+def forward_kinematics_V3( theta1 , theta2 , theta3 , leg='r'):
     t = theta2 + theta3
-    pz = cos(theta1)*(l2*sin(t) + l1*sin(theta2)) + a*sin(theta1)
-    py = -sin(theta1)*(l2*sin(t) + l1*sin(theta2)) + a*cos(theta1)
     px = l2*np.cos(t) + l1*np.cos(theta2)
+    if leg == 'r':
+        py = -sin(theta1) * (l2 * sin(t) + l1 * sin(theta2)) - a * cos(theta1)
+        pz = cos(theta1) * (l2 * sin(t) + l1 * sin(theta2)) - a * sin(theta1)
+    elif leg == 'l':
+        py = -sin(theta1) * (l2 * sin(t) + l1 * sin(theta2)) + a * cos(theta1)
+        pz = cos(theta1) * (l2 * sin(t) + l1 * sin(theta2)) + a * sin(theta1)
+
     return px,py,pz
+
 
 
 l1 =244.59
