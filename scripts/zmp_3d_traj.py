@@ -68,11 +68,11 @@ linear_acc_threshold = 1000
 angular_acc_threshold = 1000
 
 
-xpoint_v = 
-ypoint_v =
+xpoint = 0
+ypoint = 0
 
-xpoint_f
-ypoint_f
+xpoint_f = 0
+ypoint_f = 0
 
 #initial position relative to hip and cg
 leg1_initial_hip=np.zeros([3, 1], dtype=float)
@@ -827,8 +827,8 @@ def Gate_Publisher_3D(pair_no):
         L_f='l'
         L_v='r'
         if ypoint_f != 0 and xpoint_f != 0:
-        slope_plane_f= float(ypoint_f) / xpoint_f
-        angle_plane_f= np.arctan(slope_plane_f)
+            slope_plane_f= float(ypoint_f) / xpoint_f
+            angle_plane_f= np.arctan(slope_plane_f)
         stride_f = np.sqrt(ypoint_f**2 + xpoint_f**2)
         if xpoint_f==0:
             angle_plane_f=((np.pi*90)/180)
@@ -837,15 +837,14 @@ def Gate_Publisher_3D(pair_no):
             stride_f=xpoint_f
 
         if ypoint != 0 and xpoint != 0:
-        slope_plane= float(ypoint) / xpoint
-        angle_plane= np.arctan(slope_plane)
-        stride = np.sqrt(ypoint**2 + xpoint**2)
+            slope_plane= float(ypoint) / xpoint
+            angle_plane= np.arctan(slope_plane)
+            stride = np.sqrt(ypoint**2 + xpoint**2)
         if xpoint==0:
             angle_plane=((np.pi*90)/180)
             stride = ypoint
         if ypoint==0:
             stride=xpoint            
-
 
         if  first_step_flag==1  :
                 if initial_distance_f >=0:
@@ -980,12 +979,12 @@ def Gate_Publisher_3D(pair_no):
                 set_angle(9,trans4[i])
                 set_angle(10 , hip4[i])
                 set_angle(11, knee4[i])
-                if(z == 1):
-                    x_current = xnew[i]
-                    y_current = ynew[i]
-                    t_left = cycle_time_f - t
-                    indx_fix = i+1
-                    break                                 
+                # if(z == 1):
+                #     x_current = xnew[i]
+                #     y_current = ynew[i]
+                #     t_left = cycle_time_f - t
+                #     indx_fix = i+1
+                #     break                                 
                 i = i + 1
                 t = t + sample_time_f
             if (i == steps):
@@ -1015,9 +1014,9 @@ def Gate_Publisher_3D(pair_no):
         L_f='r'
         L_v='l'
         if ypoint_f != 0 and xpoint_f != 0:
-        slope_plane_f= float(ypoint_f) / xpoint_f
-        angle_plane_f= np.arctan(slope_plane_f)
-        stride_f = np.sqrt(ypoint_f**2 + xpoint_f**2)
+            slope_plane_f= float(ypoint_f) / xpoint_f
+            angle_plane_f= np.arctan(slope_plane_f)
+            stride_f = np.sqrt(ypoint_f**2 + xpoint_f**2)
         if xpoint_f==0:
             angle_plane_f=((np.pi*90)/180)
             stride_f = ypoint_f
@@ -1025,8 +1024,8 @@ def Gate_Publisher_3D(pair_no):
             stride_f=xpoint_f
 
         if ypoint != 0 and xpoint != 0:
-        slope_plane= float(ypoint) / xpoint
-        angle_plane= np.arctan(slope_plane)
+            slope_plane= float(ypoint) / xpoint
+            angle_plane= np.arctan(slope_plane)
         stride = np.sqrt(ypoint**2 + xpoint**2)
         if xpoint==0:
             angle_plane=((np.pi*90)/180)
@@ -1152,8 +1151,8 @@ def Gate_Publisher_3D(pair_no):
                 trans2,hip2,knee2 = gait.inverse_kinematics_3d_v6(x_plane_f[i], y_plane_f[i], z_plane_f[i],legfix_Prev_angs[0] ,legfix_Prev_angs[1], legfix_Prev_angs[2],L_f)
                 trans4,hip4,knee4 = gait.inverse_kinematics_3d_v6(x_plane[i], y_plane[i], z_plane[i],legvar_Prev_angs[0] ,legvar_Prev_angs[1], legvar_Prev_angs[2],L_v )  
                 if flaag == 1:
-                    trans3,hip3,knee3 = gait.generalbasemover_modifed(3, 'f',st ,steps)
-                    trans1,hip1,knee1 = gait.generalbasemover_modifed(1, 'f',st ,steps)
+                    trans3,hip3,knee3 = gait.generalbasemover_modifed(3, 'f',stride_mod ,steps)
+                    trans1,hip1,knee1 = gait.generalbasemover_modifed(1, 'f',stride_mod ,steps)
                     flaag = 2
 
                 #Publish Fixed leg point               
@@ -1170,12 +1169,12 @@ def Gate_Publisher_3D(pair_no):
                 set_angle(6,trans3[i])
                 set_angle(7, hip3[i])
                 set_angle(8, knee3[i])
-                if(z == 1):
-                    x_current = xnew[i]
-                    y_current = ynew[i]
-                    t_left = cycle_time_f - t
-                    indx_fix = i+1
-                    break                  
+                # if(z == 1):
+                #     x_current = xnew[i]
+                #     y_current = ynew[i]
+                #     t_left = cycle_time_f - t
+                #     indx_fix = i+1
+                #     break                  
                 i = i + 1
                 t = t + sample_time_f
             if (i == steps):
@@ -1455,17 +1454,28 @@ if __name__ == '__main__':
     while not rospy.is_shutdown():
                 
         if first_step_flag == 1:
-            x,y,z = three_d_trajv3(2,80,40)
-            move_leg(2,x,y,z)
-            time.sleep(0.5)
-            x,y,z = three_d_trajv3(3,80,0)
-            move_leg(3,x,y,z)
-            time.sleep(0.5)
-            x,y,z = three_d_trajv3(1,0,40)
-            move_leg(1,x,y,z)
-            time.sleep(0.5)
-            x,y,z = three_d_trajv3(4,-80,0)
-            move_leg(4,x,y,z)                        
+            # x,y,z = three_d_trajv3(2,80,40)
+            # move_leg(2,x,y,z)
+            # time.sleep(0.5)
+            # x,y,z = three_d_trajv3(3,80,0)
+            # move_leg(3,x,y,z)
+            # time.sleep(0.5)
+            # x,y,z = three_d_trajv3(1,0,40)
+            # move_leg(1,x,y,z)
+            # time.sleep(0.5)
+            # x,y,z = three_d_trajv3(4,-80,0)
+            # move_leg(4,x,y,z)
+            xpoint_f=150
+            xpoint=150
+            ypoint_f=0
+            ypoint=0
+            Gate_Publisher_3D(1)
+            time.sleep(delay_seq)
+            xpoint_f=150
+            xpoint=150
+            ypoint_f=0
+            ypoint=0
+            Gate_Publisher_3D(2)                       
             first_step_flag=0    
     
         #rate.sleep()        
