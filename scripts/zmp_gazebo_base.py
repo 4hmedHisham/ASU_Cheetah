@@ -54,7 +54,7 @@ l2 =208.4
 a=gait.a
 initial_leg_height = 390 # from ground to joint   320
 stride = 80
-ct = 0.2
+ct = 2
 h = 150    # maximum height of trajectory
 cycle_time =ct  # total time for each cycle
 steps = 100 # number of steps 'even'
@@ -600,14 +600,14 @@ def move_leg(leg_no):
 
     x_fixed = xnew
     y_fixed = ynew        
-    if leg_no == 1:
-        legfix_Prev_angs = leg1_ang
-    elif leg_no ==2:
-        legfix_Prev_angs = leg2_ang
-    elif leg_no ==3:
-        legfix_Prev_angs = leg3_ang
-    elif leg_no ==4:
-        legfix_Prev_angs = leg4_ang
+    # if leg_no == 1:
+    #     legfix_Prev_angs = leg1_ang
+    # elif leg_no ==2:
+    #     legfix_Prev_angs = leg2_ang
+    # elif leg_no ==3:
+    #     legfix_Prev_angs = leg3_ang
+    # elif leg_no ==4:
+    #     legfix_Prev_angs = leg4_ang
     i=0    
 
     while(1):
@@ -615,12 +615,14 @@ def move_leg(leg_no):
 
         if ((current - last_fix) > sample_time_f ) and i < steps:        
             last_fix = current
-            trans,hip,knee = gait.inverse_kinematics_3d_v6(x_fixed[i], 112.75, y_fixed[i],0 ,legfix_Prev_angs[1], legfix_Prev_angs[2] )
+            # trans,hip,knee = gait.inverse_kinematics_3d_v6(x_fixed[i], 112.75, y_fixed[i],0 ,legfix_Prev_angs[1], legfix_Prev_angs[2] )
             #Publish Fixed leg point
             var = leg_no - 1                
-            set_angle((var*3),trans)
-            set_angle((var*3)+1 , hip)
-            set_angle(((var*3)+2), knee)       
+            # set_angle((var*3),trans)
+            # set_angle((var*3)+1 , hip)
+            # set_angle(((var*3)+2), knee)
+            send_ik_point(x_fixed[i],112.75,y_fixed[i],3) 
+                   
             i = i + 1
             t = t + sample_time_f
         if (i == steps):
@@ -674,6 +676,13 @@ def move_base():
                 flag_start =0
                 break
 
+def send_ik_point(x,y,z,leg):
+	total = Float32MultiArray()
+	total.data = []
+	arr=[x,y,z,leg]
+	total.data=arr
+	pub2.publish(total)
+
 #####################################################################################################################
 # Main
 if __name__ == '__main__':
@@ -682,21 +691,22 @@ if __name__ == '__main__':
     gait.ros.ros_init(1)
     rospy.Subscriber('fwd', Float32MultiArray, leg_pos)
     rospy.Subscriber('getter', Float32MultiArray , imudata)
+    pub2 = rospy.Publisher('ik_setter',Float32MultiArray,queue_size=10)   
     time.sleep(2)
     rate = rospy.Rate(100)  # 10hz 
     first_step_flag=1
     while not rospy.is_shutdown():
 
         if first_step_flag == 1:
-            move_leg(3)
-            time.sleep(0.5)
-            move_leg(1)
-            time.sleep(0.5)            
-            move_leg(4)    
-            time.sleep(0.5)                    
-            move_leg(2)
-            time.sleep(0.5)
-            move_base()
+            move_leg(4)
+            # time.sleep(0.5)
+            # move_leg(1)
+            # time.sleep(0.5)            
+            # move_leg(4)    
+            # time.sleep(0.5)                    
+            # move_leg(2)
+            # time.sleep(0.5)
+            # move_base()
             first_step_flag =0
 
 
