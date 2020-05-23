@@ -64,8 +64,8 @@ initial_distance_f = None
 sample_time_f = None
 pub = 0
 indx_fix = 0
-linear_acc_threshold = 1000 
-angular_acc_threshold = 1000
+linear_acc_threshold = 90000000000000000 
+angular_acc_threshold = 90000000000000000
 
 
 xpoint = 0
@@ -140,8 +140,8 @@ def imudata(data):
         lin_acc_diff=np.absolute(lin_acc[i]-lin_acc_prev[i])
         ang_acc_diff=np.absolute(Ang_acc[i]-Ang_acc_prev[i])
         if (lin_acc_diff>linear_acc_threshold) or (ang_acc_diff> angular_acc_threshold):
-            z = 1 
-            print("z value changed")
+            z = 0 
+            #print("z value changed")
             break
         # else:
         #     z = 0
@@ -732,7 +732,6 @@ def Gate_Publisher(pair_no,st):
             trajectory_modification2(x_current, y_current,x_target_fix,x_target_var,cycletime_required,indx_fix,pair_no)
             z = 0                    
 
-
 def Gate_Publisher_3D(pair_no):
 
     # Parameters:
@@ -962,8 +961,8 @@ def Gate_Publisher_3D(pair_no):
                 trans3,hip3,knee3 = gait.inverse_kinematics_3d_v6(x_plane_f[i], y_plane_f[i], z_plane_f[i],legfix_Prev_angs[0] ,legfix_Prev_angs[1], legfix_Prev_angs[2],L_f)
                 trans1,hip1,knee1 = gait.inverse_kinematics_3d_v6(x_plane[i], y_plane[i], z_plane[i],legvar_Prev_angs[0] ,legvar_Prev_angs[1], legvar_Prev_angs[2],L_v )
                 if flaag == 1:
-                    trans4,hip4,knee4 = gait.generalbasemover_modifed(4, 'f',stride_mod ,steps)
-                    trans2,hip2,knee2 = gait.generalbasemover_modifed(2, 'f',stride_mod ,steps)
+                    trans4,hip4,knee4 = gait.generalbasemover_modifed(2, 'f',stride_mod ,steps) #4
+                    trans2,hip2,knee2 = gait.generalbasemover_modifed(4, 'f',stride_mod ,steps) #2
                     flaag = 2
                 #Publish Fixed leg point               
                 set_angle(0,trans1)
@@ -1151,8 +1150,8 @@ def Gate_Publisher_3D(pair_no):
                 trans2,hip2,knee2 = gait.inverse_kinematics_3d_v6(x_plane_f[i], y_plane_f[i], z_plane_f[i],legfix_Prev_angs[0] ,legfix_Prev_angs[1], legfix_Prev_angs[2],L_f)
                 trans4,hip4,knee4 = gait.inverse_kinematics_3d_v6(x_plane[i], y_plane[i], z_plane[i],legvar_Prev_angs[0] ,legvar_Prev_angs[1], legvar_Prev_angs[2],L_v )  
                 if flaag == 1:
-                    trans3,hip3,knee3 = gait.generalbasemover_modifed(3, 'f',stride_mod ,steps)
-                    trans1,hip1,knee1 = gait.generalbasemover_modifed(1, 'f',stride_mod ,steps)
+                    trans3,hip3,knee3 = gait.generalbasemover_modifed(1, 'f',stride_mod ,steps) #3
+                    trans1,hip1,knee1 = gait.generalbasemover_modifed(3, 'f',stride_mod ,steps) #1
                     flaag = 2
 
                 #Publish Fixed leg point               
@@ -1192,7 +1191,6 @@ def Gate_Publisher_3D(pair_no):
             #print("x target is "+ str(x_target))  
             trajectory_modification2(x_current, y_current,x_target_fix,x_target_var,cycletime_required,indx_fix,pair_no)
             z = 0 
-
 
 def trajectory_modification2(x_current, y_current, x_target_fix,x_target_var, cycle_time,indx_fix,pair_no):
 
@@ -1465,17 +1463,17 @@ if __name__ == '__main__':
             # time.sleep(0.5)
             # x,y,z = three_d_trajv3(4,-80,0)
             # move_leg(4,x,y,z)
-            xpoint_f=150
-            xpoint=150
+            xpoint_f=-100
+            xpoint=-100
             ypoint_f=0
             ypoint=0
-            Gate_Publisher_3D(1)
+            Gate_Publisher_3D(2)
             time.sleep(delay_seq)
-            xpoint_f=150
-            xpoint=150
-            ypoint_f=0
-            ypoint=0
-            Gate_Publisher_3D(2)                       
+            # xpoint_f=0
+            # xpoint=0
+            # ypoint_f=-100
+            # ypoint=-100
+            # Gate_Publisher_3D(2)                       
             first_step_flag=0    
     
         #rate.sleep()        

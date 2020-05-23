@@ -841,6 +841,15 @@ def generalbasemover_modifed(leg,direction,distance,numofsteps):  # moves base w
         sign = -1
         y = 0
         x = 1
+
+    if leg==1:
+        lr='r'
+    elif leg==2:
+        lr='l'
+    elif leg==3:
+        lr='l'
+    elif leg==4:
+        lr='r'
     transverses, hips, knees = getjointanglesfromvrep()
     legspos2cg, legspos2joint = GetEndEffectorPos(transverses, hips,
                                                   knees)  # effector pos with respect to cg got correct angles 
@@ -856,7 +865,7 @@ def generalbasemover_modifed(leg,direction,distance,numofsteps):  # moves base w
     for i in range(numofsteps):  # moves the base    
         trans[i], hip[i], knee[i] = inverse_kinematics_3d_v6(
                 (legspos2joint[leg-1,0] - sign*x*(i + 1)*ratio), (legspos2joint[leg-1, 1] - sign*y*(i + 1)*ratio), legspos2joint[leg-1, 2],
-                initial_transverse, initial_hip, initial_knee)
+                initial_transverse, initial_hip, initial_knee,lr)
         initial_transverse = trans[i]
         initial_hip = hip[i]
         initial_knee = knee[i]
