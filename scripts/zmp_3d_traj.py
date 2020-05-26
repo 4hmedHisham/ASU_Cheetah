@@ -1192,7 +1192,7 @@ def Gate_Publisher_3D(pair_no):
             trajectory_modification2(x_current, y_current,x_target_fix,x_target_var,cycletime_required,indx_fix,pair_no)
             z = 0 
 
-def trajectory_modification2(x_current, y_current, x_target_fix,x_target_var, cycle_time,indx_fix,pair_no):
+def trajectory_modification2(x_current, y_current, x_target_fix,x_target_var, y_target_var, cycle_time,indx_fix,pair_no):
 
     global l1
     global l2
@@ -1207,18 +1207,35 @@ def trajectory_modification2(x_current, y_current, x_target_fix,x_target_var, cy
     global leg3_ang
     global leg4_ang        
 
-    strideV = (x_target_var - x_current) * 2
+    #strideV = (x_target_var - x_current) * 2 # 
+    strideV = (np.sqrt((x_target_var-x_current)**2 + (y_target_var-y_current)**2)) *2
     h = y_current  # maximum height of the trajectory
-    initial_distanceV = x_target_var - strideV
+    #initial_distanceV_plane = x_target_var - strideV # = 0
+    x_target_var_plane= np.sqrt(x_target_var**2) + (y_target_var**2))
+    initial_distanceV= x_target_var_plane - strideV
     sample_time = cycle_time / steps  # sample time, steps should be even
 
     strideF = (x_target_fix - x_current) * 2
     h = y_current  # maximum height of the trajectory
     initial_distanceF = x_target_fix - strideF
     sample_time = cycle_time / steps  # sample time, steps should be even
+    
+    slope_plane = (y_target_var-y_current)/(x_target_var-x_current)
+    angle_plane = np.arctan(slope_plane)
 
-    xnew_V = np.zeros([steps/2, 1], dtype=float)
-    ynew_V = np.zeros([steps/2, 1], dtype=float)
+    xplane_V = np.zeros([steps/2, 1], dtype=float)
+    zplane_V = np.zeros([steps/2, 1], dtype=float)
+    array_of_slopes = np.zeros([steps/2, 1], dtype=float)
+    array_of_angles = np.zeros([steps/2, 1], dtype=float)
+    array_of_lengths = np.zeros([steps/2, 1], dtype=float)
+    array_of_projections = np.zeros([steps/2, 1], dtype=float)
+    x_var = np.zeros([steps/2, 1], dtype=float)
+    y_var = np.zeros([steps/2, 1], dtype=float)
+    z_var = np.zeros([steps/2, 1], dtype=float)
+
+
+
+
     xnew_F = np.zeros([steps/2, 1], dtype=float)
     ynew_F = np.zeros([steps/2, 1], dtype=float)   
     t = (cycle_time / 2)
@@ -1256,9 +1273,18 @@ def trajectory_modification2(x_current, y_current, x_target_fix,x_target_var, cy
 
         if ((current - last_var) > sample_time ) and i < steps/2 :               #Publish Variable leg point
             last_var = current
-            xnew_V[i] = (strideV * ((t / cycle_time) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time)))) - (strideV / 2) + strideV / 2) + initial_distanceV
-            ynew_V[i] = (-(h / (2 * np.pi)) * np.sin(4 * np.pi - (((4 * np.pi) / cycle_time) * t)) - ((2 * h * t) / cycle_time) + ((3 * h) / 2)) + (h / 2) - initial_leg_height            
-            trans,hip,knee = gait.inverse_kinematics_3d_v6(xnew_V[i], 112.75, ynew_V[i],0 ,legvar_Prev_angs[1], legvar_Prev_angs[2])    
+            xplane_V[i] = (strideV * ((t / cycle_time) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time)))) - (strideV / 2) + strideV / 2) + initial_distanceV
+            zplane_V[i] = (-(h / (2 * np.pi)) * np.sin(4 * np.pi - (((4 * np.pi) / cycle_time) * t)) - ((2 * h * t) / cycle_time) + ((3 * h) / 2)) + (h / 2) - initial_leg_height  
+
+            array_of_slopes[i] = zplane_V[i]/xplane_V[i]
+            array_of_angles[i]=np.arctan(array_of_slopes[i])
+            array_of_lengths[i]=np.sqrt(zplane_V[i]**2+ xplane_V[i]**2)
+            array_of_projections[i]=array_of_lengths[i]*np.cos(array_of_angles[i])
+            z_var[i]=zplane_V[i]
+            y_var[i]=((array_of_projections[i]*np.sin(angle_plane))*sign)+y_offset # check al y_offset
+            x_var[i]=array_of_projections[i]*np.cos(angle_plane)            
+
+            trans,hip,knee = gait.inverse_kinematics_3d_v6(xnew_V[i], 112.75, ynew_V[i],0 ,legvar_Prev_angs[1], legvar_Prev_angs[2])  # 3'yarha  
             set_angle((varV*3),trans )
             set_angle((varV*3)+1 , hip)
             set_angle(((varV*3)+2), knee)
