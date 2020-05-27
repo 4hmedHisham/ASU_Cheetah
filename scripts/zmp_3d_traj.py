@@ -64,8 +64,8 @@ initial_distance_f = None
 sample_time_f = None
 pub = 0
 indx_fix = 0
-linear_acc_threshold = 90000000000000000 
-angular_acc_threshold = 90000000000000000
+linear_acc_threshold = 4
+angular_acc_threshold = 4
 
 
 xpoint = 0
@@ -136,12 +136,12 @@ def imudata(data):
     leg1_ang = Array[6:9]
     leg2_ang = Array[9:12]    
   
-    for i in range (3):   ###### thresholding  between previous and new readings
+    for i in range (2):   ###### thresholding  between previous and new readings
         lin_acc_diff=np.absolute(lin_acc[i]-lin_acc_prev[i])
         ang_acc_diff=np.absolute(Ang_acc[i]-Ang_acc_prev[i])
         if (lin_acc_diff>linear_acc_threshold) or (ang_acc_diff> angular_acc_threshold):
-            z = 0 
-            #print("z value changed")
+            z = 1 
+            print("z value changed")
             break
         # else:
         #     z = 0
@@ -783,6 +783,7 @@ def Gate_Publisher_3D(pair_no):
     x_current = 0 
     y_current = 0
     x_current_f =0
+    z_current=0
     indx_fix=0
     sign = 1
 
@@ -821,8 +822,8 @@ def Gate_Publisher_3D(pair_no):
         legvar_Prev_angs = leg3_ang
         legfix_initial_cg = leg_pos1__cg
         legvar_initial_cg=  leg_pos3__cg
-        y_offset_f=112.75                          #leg1
-        y_offset=-112.75                           #leg3 
+        y_offset_f=leg_pos1_hip[1]                          #leg1
+        y_offset=leg_pos3_hip[1]                           #leg3 
         L_f='l'
         L_v='r'
         if ypoint_f != 0 and xpoint_f != 0:
@@ -978,12 +979,13 @@ def Gate_Publisher_3D(pair_no):
                 set_angle(9,trans4[i])
                 set_angle(10 , hip4[i])
                 set_angle(11, knee4[i])
-                # if(z == 1):
-                #     x_current = xnew[i]
-                #     y_current = ynew[i]
-                #     t_left = cycle_time_f - t
-                #     indx_fix = i+1
-                #     break                                 
+                if(z == 1):
+                    x_current = x_plane[i]
+                    y_current = y_plane[i]
+                    z_current = z_plane
+                    t_left = cycle_time_f - t
+                    indx_fix = i+1
+                    break                                 
                 i = i + 1
                 t = t + sample_time_f
             if (i == steps):
@@ -993,12 +995,12 @@ def Gate_Publisher_3D(pair_no):
         if z == 1:
             cycletime_required = t_left * 2          
             legfix_final_cg[0] = legfix_initial_cg[0] + stride_f_mod     # this is coord of the pt at end of traj for fixed leg
-            legvar_final_cg[0] = legvar_initial_cg[0] + stride_mod
+            #legvar_final_cg[0] = legvar_initial_cg[0] + stride_mod
             legfix_final_cg[1] = legfix_initial_cg[1]                    # Must be relative to cg
-            legvar_final_cg[1] = legvar_initial_cg[1]
-            x_target_fix,x_target_var  = Mod_contact2(1, legfix_final_cg ,legvar_final_cg)  
+            #legvar_final_cg[1] = legvar_initial_cg[1]
+            x_target_fix,x_target_var,y_target_var  = Mod_contact2(3, legfix_final_cg)  
             #print("x target is "+ str(x_target))  
-            trajectory_modification2(x_current, y_current, x_target_fix,x_target_var,cycletime_required,indx_fix,pair_no)
+            trajectory_modification2(x_current, y_current,z_current,x_target_fix,x_target_var,y_target_var,cycletime_required,indx_fix,pair_no)
             z=0
               
     else:              #even legs pair
@@ -1008,8 +1010,8 @@ def Gate_Publisher_3D(pair_no):
         legvar_Prev_angs = leg4_ang
         legfix_initial_cg = leg_pos2__cg
         legvar_initial_cg=  leg_pos4__cg
-        y_offset_f=-112.75                          #leg2
-        y_offset=112.75                             #leg4 
+        y_offset_f=leg_pos2_hip[1]                          #leg2
+        y_offset=leg_pos4_hip[1]                             #leg4 
         L_f='r'
         L_v='l'
         if ypoint_f != 0 and xpoint_f != 0:
@@ -1168,12 +1170,13 @@ def Gate_Publisher_3D(pair_no):
                 set_angle(6,trans3[i])
                 set_angle(7, hip3[i])
                 set_angle(8, knee3[i])
-                # if(z == 1):
-                #     x_current = xnew[i]
-                #     y_current = ynew[i]
-                #     t_left = cycle_time_f - t
-                #     indx_fix = i+1
-                #     break                  
+                if(z == 1):
+                    x_current = x_plane[i]
+                    y_current = y_plane[i]
+                    z_current = z_plane
+                    t_left = cycle_time_f - t
+                    indx_fix = i+1
+                    break                  
                 i = i + 1
                 t = t + sample_time_f
             if (i == steps):
@@ -1187,12 +1190,12 @@ def Gate_Publisher_3D(pair_no):
             legvar_final_cg[0] = legvar_initial_cg[0] + stride_mod
             legfix_final_cg[1] = legfix_initial_cg[1]                # Must be relative to cg
             legvar_final_cg[1] = legvar_initial_cg[1]
-            x_target_fix,x_target_var  = Mod_contact2(2, legfix_final_cg ,legvar_final_cg)  
+            x_target_fix,x_target_var,y_target_var  = Mod_contact2(3, legfix_final_cg)   
             #print("x target is "+ str(x_target))  
-            trajectory_modification2(x_current, y_current,x_target_fix,x_target_var,cycletime_required,indx_fix,pair_no)
-            z = 0 
-
-def trajectory_modification2(x_current, y_current, x_target_fix,x_target_var, y_target_var, cycle_time,indx_fix,pair_no):
+            trajectory_modification2(x_current, y_current,z_current,x_target_fix,x_target_var,y_target_var,cycletime_required,indx_fix,pair_no)
+            z=0
+  
+def trajectory_modification2(x_current, y_current,z_current, x_target_fix,x_target_var, y_target_var, cycle_time,indx_fix,pair_no):
 
     global l1
     global l2
@@ -1205,18 +1208,21 @@ def trajectory_modification2(x_current, y_current, x_target_fix,x_target_var, y_
     global leg1_ang
     global leg2_ang
     global leg3_ang
-    global leg4_ang        
+    global leg4_ang     
+    global leg_pos3_hip
+    global leg_pos4_hip
+    global leg_pos1_hip
+    global leg_pos2_hip   
 
     #strideV = (x_target_var - x_current) * 2 # 
     strideV = (np.sqrt((x_target_var-x_current)**2 + (y_target_var-y_current)**2)) *2
-    h = y_current  # maximum height of the trajectory
-    #initial_distanceV_plane = x_target_var - strideV # = 0
-    x_target_var_plane= np.sqrt(x_target_var**2) + (y_target_var**2))
+    h = z_current  # maximum height of the trajectory
+    x_target_var_plane= np.sqrt((x_target_var**2) + (y_target_var**2))
     initial_distanceV= x_target_var_plane - strideV
     sample_time = cycle_time / steps  # sample time, steps should be even
 
     strideF = (x_target_fix - x_current) * 2
-    h = y_current  # maximum height of the trajectory
+    h = z_current  # maximum height of the trajectory
     initial_distanceF = x_target_fix - strideF
     sample_time = cycle_time / steps  # sample time, steps should be even
     
@@ -1232,10 +1238,6 @@ def trajectory_modification2(x_current, y_current, x_target_fix,x_target_var, y_
     x_var = np.zeros([steps/2, 1], dtype=float)
     y_var = np.zeros([steps/2, 1], dtype=float)
     z_var = np.zeros([steps/2, 1], dtype=float)
-
-
-
-
     xnew_F = np.zeros([steps/2, 1], dtype=float)
     ynew_F = np.zeros([steps/2, 1], dtype=float)   
     t = (cycle_time / 2)
@@ -1246,15 +1248,23 @@ def trajectory_modification2(x_current, y_current, x_target_fix,x_target_var, y_
     last_var = 0
     
     if pair_no == 1 :    #odd number pair         
-        varF = 0
-        varV = 2
-        legfix_Prev_angs = leg3_ang
-        legvar_Prev_angs = leg1_ang
+        varF = 2
+        varV = 0
+        legfix_Prev_angs = leg1_ang
+        legvar_Prev_angs = leg3_ang
+        y_offset = leg_pos3_hip[1]
+        y_offset_f = leg_pos1_hip[1]
+        L_f = 'l'
+        L_v = 'r'
     else:
-        varF = 1
-        varV = 3
-        legfix_Prev_angs = leg4_ang
-        legvar_Prev_angs = leg2_ang            
+        varF = 3
+        varV = 1
+        legfix_Prev_angs = leg2_ang
+        legvar_Prev_angs = leg4_ang    
+        y_offset = leg_pos4_hip[1]
+        y_offset_f = leg_pos2_hip[1]
+        L_f = 'r'
+        L_v = 'l'            
 
 
     while(1):
@@ -1264,7 +1274,7 @@ def trajectory_modification2(x_current, y_current, x_target_fix,x_target_var, y_
             last_fix = current
             xnew_F[ii] = (strideF * ((t / cycle_time) - ((1 / (2 * np.pi)) * np.sin(2 * np.pi * (t / cycle_time)))) - (strideF / 2) + strideF / 2) + initial_distanceF
             ynew_F[ii] = (-(h / (2 * np.pi)) * np.sin(4 * np.pi - (((4 * np.pi) / cycle_time) * t)) - ((2 * h * t) / cycle_time) + ((3 * h) / 2)) + (h / 2) - initial_leg_height                        
-            trans,hip,knee = gait.inverse_kinematics_3d_v6(xnew_F[ii], 112.75, ynew_F[ii],0 ,legfix_Prev_angs[1], legfix_Prev_angs[2] )
+            trans,hip,knee = gait.inverse_kinematics_3d_v6(xnew_F[ii], y_offset_f, ynew_F[ii],0 ,legfix_Prev_angs[1], legfix_Prev_angs[2],L_f )
             set_angle((varF*3),trans )
             set_angle((varF*3)+1 , hip)
             set_angle(((varF*3)+2), knee)
@@ -1281,10 +1291,10 @@ def trajectory_modification2(x_current, y_current, x_target_fix,x_target_var, y_
             array_of_lengths[i]=np.sqrt(zplane_V[i]**2+ xplane_V[i]**2)
             array_of_projections[i]=array_of_lengths[i]*np.cos(array_of_angles[i])
             z_var[i]=zplane_V[i]
-            y_var[i]=((array_of_projections[i]*np.sin(angle_plane))*sign)+y_offset # check al y_offset
+            y_var[i]=((array_of_projections[i]*np.sin(angle_plane))*1)+y_offset # check al y_offset
             x_var[i]=array_of_projections[i]*np.cos(angle_plane)            
 
-            trans,hip,knee = gait.inverse_kinematics_3d_v6(xnew_V[i], 112.75, ynew_V[i],0 ,legvar_Prev_angs[1], legvar_Prev_angs[2])  # 3'yarha  
+            trans,hip,knee = gait.inverse_kinematics_3d_v6(x_var[i], y_var[i], z_var[i],legvar_Prev_angs[0] ,legvar_Prev_angs[1], legvar_Prev_angs[2],L_v)  # 3'yarha  
             set_angle((varV*3),trans )
             set_angle((varV*3)+1 , hip)
             set_angle(((varV*3)+2), knee)
@@ -1408,36 +1418,48 @@ def Mod_contact(leg_no, leg_pos1, leg_pos2_y):
     print(X_leg)
     return X_leg 
 
-def Mod_contact2(leg_no, legfix_final_cg ,legvar_final_cg):
+def Mod_contact2(leg_no, legfix_final_cg):
 
     global leg_pos3__cg
     global leg_pos4__cg
     global leg_pos1__cg
     global leg_pos2__cg
-    hipoffset = 253
-
-    if leg_no == 2:
-        legvar_Curr_cg = leg_pos2__cg
+    hipoffsetx = 253
+    hipoffsety = 253
+    flag_state = 1
+    if leg_no == 3:
+        legvar_Curr_cg = leg_pos3__cg
     else:
-        legvar_Curr_cg = leg_pos1__cg    
+        legvar_Curr_cg = leg_pos4__cg    
     #leg_pos1 is Position of one leg relative to origin(cg)
-    y1 = legvar_final_cg[1]
-    y2 = legfix_final_cg[1] 
     Pzmp=Get_ZMP()
-    x1_cgF = legvar_final_cg[0]
-    x1_cgC = legvar_Curr_cg[0]
-    x = np.abs(x1_cgF - x1_cgC)
-    x1 = (x/2) + x1_cgC
-    print(x1)
-    m=((Pzmp[1]-y1) / (Pzmp[0]-x1))       #Slope of needed line
-    print(m)
-    c = y1-m*x1
-    #Solve eq y=mx+c with y=cons from the other leg(leg_pos2)
-    x2 = (y2-c) / m
-    x_target_fix = x2 - hipoffset
-    x_target_var = x1 + hipoffset
+    x1 = legfix_final_cg[0] 
+    y1 = legfix_final_cg[1]    
+    xc = legvar_Curr_cg[0]
+    yc = legvar_Curr_cg[1]
+    while(flag_state):
+        m1=((Pzmp[1]-y1) / (Pzmp[0]-x1))       #Slope of needed line
+        c1 = y1-m1*x1
+        #Equation of the new line 
+        m2 = -1/m1
+        c2 = yc-m2*xc                          #yc=m2*xc + c
+        x2 = (c2-c1)/(m1-m2)
+        y2 = (m2*x2)+c2
+        if x2 > xc and x2 < xc+150 and y2 < yc+100 and y2 > yc-100:
+            flag_state = 0
+        if flag_state==1:
+            x1 = x1-10     
 
-    return x_target_fix, x_target_var
+    x_target_fix = x1 - hipoffsetx
+    x_target_var = x2 + hipoffsetx
+    if leg_no == 4:
+        y_target_var = y2-hipoffsety
+    else:
+        y_target_var = y2+hipoffsety
+
+    print("X2 ="+x_target_var+"Y2 ="+y_target_var)
+    print("X1 ="+x_target_fix)    
+    return x_target_fix,x_target_var,y_target_var
 
 def trueangle(two_angles,current_angle):
     diff = np.array((2,1),dtype=np.float)
