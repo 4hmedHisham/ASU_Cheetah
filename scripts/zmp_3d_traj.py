@@ -64,8 +64,8 @@ initial_distance_f = None
 sample_time_f = None
 pub = 0
 indx_fix = 0
-linear_acc_threshold = 4
-angular_acc_threshold = 4
+linear_acc_threshold = 100000
+angular_acc_threshold = 1000
 
 
 xpoint = 0
@@ -139,8 +139,8 @@ def imudata(data):
     for i in range (2):   ###### thresholding  between previous and new readings
         lin_acc_diff=np.absolute(lin_acc[i]-lin_acc_prev[i])
         ang_acc_diff=np.absolute(Ang_acc[i]-Ang_acc_prev[i])
-        if (lin_acc_diff>linear_acc_threshold) or (ang_acc_diff> angular_acc_threshold):
-            z = 1 
+        if (lin_acc_diff>linear_acc_threshold):
+            z = 0 
             print("z value changed")
             break
         # else:
@@ -829,7 +829,7 @@ def Gate_Publisher_3D(pair_no):
         if ypoint_f != 0 and xpoint_f != 0:
             slope_plane_f= float(ypoint_f) / xpoint_f
             angle_plane_f= np.arctan(slope_plane_f)
-        stride_f = np.sqrt(ypoint_f**2 + xpoint_f**2)
+            stride_f = np.sqrt(ypoint_f**2 + xpoint_f**2)
         if xpoint_f==0:
             angle_plane_f=((np.pi*90)/180)
             stride_f = ypoint_f
@@ -1215,9 +1215,9 @@ def trajectory_modification2(x_current, y_current,z_current, x_target_fix,x_targ
     global leg_pos2_hip   
 
     #strideV = (x_target_var - x_current) * 2 # 
-    strideV = (np.sqrt((x_target_var-x_current)**2 + (y_target_var-y_current)**2)) *2
+    strideV = (math.sqrt((x_target_var-x_current)**2 + (y_target_var-y_current)**2)) *2
     h = z_current  # maximum height of the trajectory
-    x_target_var_plane= np.sqrt((x_target_var**2) + (y_target_var**2))
+    x_target_var_plane= math.sqrt((x_target_var**2) + (y_target_var**2))
     initial_distanceV= x_target_var_plane - strideV
     sample_time = cycle_time / steps  # sample time, steps should be even
 
@@ -1457,8 +1457,8 @@ def Mod_contact2(leg_no, legfix_final_cg):
     else:
         y_target_var = y2+hipoffsety
 
-    print("X2 ="+x_target_var+"Y2 ="+y_target_var)
-    print("X1 ="+x_target_fix)    
+    #print("X2 ="+x_target_var+"Y2 ="+y_target_var)
+    #print("X1 ="+x_target_fix)    
     return x_target_fix,x_target_var,y_target_var
 
 def trueangle(two_angles,current_angle):
@@ -1498,30 +1498,34 @@ if __name__ == '__main__':
     rate = rospy.Rate(100)  # 10hz 
     
     while not rospy.is_shutdown():
-                
+        
         if first_step_flag == 1:
-            # x,y,z = three_d_trajv3(2,80,40)
-            # move_leg(2,x,y,z)
-            # time.sleep(0.5)
-            # x,y,z = three_d_trajv3(3,80,0)
-            # move_leg(3,x,y,z)
-            # time.sleep(0.5)
-            # x,y,z = three_d_trajv3(1,0,40)
-            # move_leg(1,x,y,z)
-            # time.sleep(0.5)
-            # x,y,z = three_d_trajv3(4,-80,0)
-            # move_leg(4,x,y,z)
-            xpoint_f=-100
-            xpoint=-100
-            ypoint_f=0
-            ypoint=0
-            Gate_Publisher_3D(2)
             time.sleep(delay_seq)
-            # xpoint_f=0
-            # xpoint=0
-            # ypoint_f=-100
-            # ypoint=-100
-            # Gate_Publisher_3D(2)                       
-            first_step_flag=0    
+            xpoint_f=150
+            xpoint=150
+            ypoint_f=0
+            ypoint=0        
+            Gate_Publisher_3D(2)
+            # time.sleep(delay_seq)
+            # xpoint_f=150
+            # xpoint=150
+            # ypoint_f=0
+            # ypoint=0         
+            # Gate_Publisher_3D(1) 
+            first_step_flag=0            
+        else:
+            time.sleep(delay_seq)
+            xpoint_f=150
+            xpoint=150
+            ypoint_f=0
+            ypoint=0        
+            Gate_Publisher_3D(1)
+            time.sleep(delay_seq)
+            xpoint_f=150
+            xpoint=150
+            ypoint_f=0
+            ypoint=0         
+            Gate_Publisher_3D(2)
+                 
     
         #rate.sleep()        
