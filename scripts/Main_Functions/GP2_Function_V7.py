@@ -80,7 +80,7 @@ def GetEndEffectorPos(transverseangles, hipangles, kneeangles):  # Gets End effe
             leg = 'l'    
         x,y,z = forward_kinematics_V3(transverseangles[i,0], hipangles[i,0], kneeangles[i,0],leg)
         pos2cg[i, 0] = (leg_pos_x[i] + x)  # forward/backward (x-axis)
-        pos2cg[i, 1] = leg_pos_y[i] - y  # tilting (y-axis)
+        pos2cg[i, 1] = leg_pos_y[i] + y  # tilting (y-axis)
         pos2cg[i, 2] = z  # Height  (z-axis)
         pos2joint[i, 0] = x  # forward/backward (x-axis)
         pos2joint[i, 1] = y  # tilting (y-axis)
