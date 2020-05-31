@@ -1494,26 +1494,27 @@ if __name__ == '__main__':
         if first_step_flag == 1:
             time.sleep(delay_seq)                 
             Gate_Publisher_3D(1,150,0,150,0)
-            time.sleep(10)           
+            time.sleep(1.0)           
             print("Final 3 position is: "+str(leg_pos3_hip[0]))
             print("Final 1 position is: "+str(leg_pos1_hip[0]))       
             print("Final 2 position is: "+str(leg_pos2_hip[0]))
             print("Final 4 position is: "+str(leg_pos4_hip[0]))
         else:    
             Gate_Publisher_3D(2,300,0,300,0)
-            time.sleep(10)
+            time.sleep(1.0)
             print("Final 2 position is: "+str(leg_pos2_hip[0]))
             print("Final 4 position is: "+str(leg_pos4_hip[0]))                         
             print("Final 3 position is: "+str(leg_pos3_hip[0]))
             print("Final 1 position is: "+str(leg_pos1_hip[0]))
             #break
-            Gate_Publisher_3D(1,300,0,300,0)
-            time.sleep(10)
-            print("Final 3 position is: "+str(leg_pos3_hip[0]))
-            print("Final 1 position is: "+str(leg_pos1_hip[0]))            
-            print("Final 2 position is: "+str(leg_pos2_hip[0]))
-            print("Final 4 position is: "+str(leg_pos4_hip[0]))                         
-            time.sleep(10)                           
+            if (leg_pos3_hip >-160) and (leg_pos3_hip <-140) and (leg_pos1_hip >-160) and (leg_pos1_hip <-140) and (leg_pos4_hip >140) and (leg_pos4_hip < 160): 
+                Gate_Publisher_3D(1,300,0,300,0)
+                time.sleep(1)
+                print("Final 3 position is: "+str(leg_pos3_hip[0]))
+                print("Final 1 position is: "+str(leg_pos1_hip[0]))            
+                print("Final 2 position is: "+str(leg_pos2_hip[0]))
+                print("Final 4 position is: "+str(leg_pos4_hip[0]))                         
+                time.sleep(1)                           
            
         # else:
         #     print("Final 2 position is: "+str(leg_pos2_hip[0]))
