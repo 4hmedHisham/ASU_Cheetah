@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
     <include file="$(find spawn_robot_tools_pkg)/launch/spawn_robot_urdf.launch">
-        <arg name="x" default="0.0" />
-        <arg name="y" default="0.0" />
+        <arg name="x" default="-0.19" />
+        <arg name="y" default="-0.28" />
         <arg name="z" default="1.0" />
         <arg name="roll" default="0"/>
         <arg name="pitch" default="0"/>

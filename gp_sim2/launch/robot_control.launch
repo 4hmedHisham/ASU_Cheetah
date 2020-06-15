@@ -15,7 +15,7 @@
         respawn="false" output="screen">
             <param name="publish_frequency" type="double" value="30.0" />
             <param name="ignore_timestamp" type="bool" value="true" />
-            <param name="tf_prefix" type="string" value="SimplifiedAssembly" />
+            <param name="tf_prefix" type="string" value="" />
             <remap from="/joint_states" to="/SimplifiedAssembly/joint_states" />
   </node>
 

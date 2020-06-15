@@ -1,0 +1,3 @@
+<launch>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find gp_sim2)/rviz/gp2_rviz.rviz"/>
+</launch>
