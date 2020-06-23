@@ -46,9 +46,9 @@ pcl_conversions::toPCL(*input, *cloud);
     ROS_INFO("SIZE IS  : [%d]",temp_cloud->points.size ());
   for (std::size_t i = 0; i < temp_cloud->points.size (); ++i)
   {
-    x=temp_cloud->points[i].x ;
-    y=temp_cloud->points[i].y ;
-    z=temp_cloud->points[i].z;
+    x=temp_cloud->points[289956].x ;
+    y=temp_cloud->points[28956].y ;
+    z=temp_cloud->points[289956].z;
     ros::Duration(0.5).sleep();
     msg.data = x;
     if(true)
