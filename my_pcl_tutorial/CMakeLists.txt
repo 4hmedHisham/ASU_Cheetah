@@ -135,11 +135,6 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/my_pcl_tutorial_node.cpp)
-add_executable(example src/example.cpp)
-target_link_libraries(example ${catkin_LIBRARIES})
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-
-
 
 project(resampling)
 
@@ -166,6 +161,14 @@ add_definitions(${PCL_DEFINITIONS})
 
 add_executable (planar_segmentation src/planar_segmentation.cpp)
 target_link_libraries (planar_segmentation ${PCL_LIBRARIES})
+add_executable(example src/example.cpp)
+target_link_libraries(example ${catkin_LIBRARIES})
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+
+add_executable(BuildingUp src/BuildingUp.cpp)
+target_link_libraries(example ${catkin_LIBRARIES})
+
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

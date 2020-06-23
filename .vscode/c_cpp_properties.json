@@ -6,13 +6,17 @@
                 "limitSymbolsToIncludedHeaders": true
             },
             "includePath": [
+                "/home/ahmed/catkin_ws/devel/include/**",
                 "/opt/ros/kinetic/include/**",
+                "/home/ahmed/catkin_ws/src/Trying_CPP/include/**",
+                "/home/ahmed/catkin_ws/src/isolation/my_pcl_tutorial/include/**",
+                "/home/ahmed/catkin_ws/src/isolation/my_pcl_tutorial2/include/**",
                 "/usr/include/**"
             ],
             "name": "ROS",
             "intelliSenseMode": "gcc-x64",
             "compilerPath": "/usr/bin/gcc",
-            "cStandard": "c11",
+            "cStandard": "gnu11",
             "cppStandard": "c++17"
         }
     ],
