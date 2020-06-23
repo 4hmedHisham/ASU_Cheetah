@@ -4,54 +4,92 @@
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
+//#include <boost/foreach.hpp>
 
+#include <ros/ros.h>
+#include <pcl_ros/point_cloud.h>
+#include <pcl/point_types.h>
+#include <boost/foreach.hpp>
 
 //for testing ros with string
- #include "std_msgs/String.h"
+#include "std_msgs/String.h"
+#include <pcl/filters/voxel_grid.h>
+
+#include <std_msgs/Float32.h>
+
+bool debugging=false;
 
 
+
+//for debug only
+void 
+cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
+{
+  ROS_INFO("I in: [%d]",2);
+  double x=99;
+  double y=94;
+  double z=98;
+  std_msgs::Float32 msg;
+  //init pointcloud2 pcl change from rosmsg pc2 to pcl pc2 , then from pcl pc2 to pcl
+  pcl::PCLPointCloud2 pcl_pc2;
+  pcl_conversions::toPCL(*input,pcl_pc2);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::fromPCLPointCloud2(pcl_pc2,*temp_cloud);
+//  sensor_msgs::Pointcloud out_pointcloud;
+//  sensor_msgs::convertPointCloud2ToPointCloud(input_pointcloud, out_cloud)
+pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
+pcl_conversions::toPCL(*input, *cloud);
+
+  //sensor_msgs::PointCloud2 output;
+  // Publish the data
+    // Access the data
+    ROS_INFO("SIZE IS  : [%d]",temp_cloud->points.size ());
+  for (std::size_t i = 0; i < temp_cloud->points.size (); ++i)
+  {
+    x=temp_cloud->points[i].x ;
+    y=temp_cloud->points[i].y ;
+    z=temp_cloud->points[i].z;
+    ros::Duration(0.5).sleep();
+    msg.data = x;
+    if(true)
+    {
+    ROS_INFO("I heard z : [%d]",z);
+    ROS_INFO("I heard x : [%d]",x);
+     ROS_INFO("I heard y : [%d]",y);
+    
+    }
+
+    //cloud->points[i].z = 1.0;
+  }
+
+}
 void chatterCallback(const std_msgs::String::ConstPtr& msg)
 {
   ROS_INFO("I heard: [%s]", msg->data.c_str());
 }
+void chatterCallback2(const std_msgs::String::ConstPtr& msg)
+{
+  ROS_INFO("I heard2: [%s]", msg->data.c_str());
+}
+
 
 int main(int argc, char **argv)
 {
-  /**
-   * The ros::init() function needs to see argc and argv so that it can perform
-   * any ROS arguments and name remapping that were provided at the command line.
-   * For programmatic remappings you can use a different version of init() which takes
-   * remappings directly, but for most command-line programs, passing argc and argv is
-   * the easiest way to do it.  The third argument to init() is the name of the node.
-   *
-   * You must call one of the versions of ros::init() before using any other
-   * part of the ROS system.
-   */
+
   ros::init(argc, argv, "listener");
 
-  /**
-   * NodeHandle is the main access point to communications with the ROS system.
-   * The first NodeHandle constructed will fully initialize this node, and the last
-   * NodeHandle destructed will close down the node.
-   */
+
   ros::NodeHandle n;
 
-  /**
-   * The subscribe() call is how you tell ROS that you want to receive messages
-   * on a given topic.  This invokes a call to the ROS
-   * master node, which keeps a registry of who is publishing and who
-   * is subscribing.  Messages are passed to a callback function, here
-   * called chatterCallback.  subscribe() returns a Subscriber object that you
-   * must hold on to until you want to unsubscribe.  When all copies of the Subscriber
-   * object go out of scope, this callback will automatically be unsubscribed from
-   * this topic.
-   *
-   * The second parameter to the subscribe() function is the size of the message
-   * queue.  If messages are arriving faster than they are being processed, this
-   * is the number of messages that will be buffered up before beginning to throw
-   * away the oldest ones.
-   */
+ //debuging
+if (debugging)
+{
   ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
+  ros::Subscriber sub2 = n.subscribe("chatter2", 1000, chatterCallback2);
+}
+
+
+  ros::Subscriber sub3 = n.subscribe("cloud_pcd", 1, cloud_cb);
   int x=0;
   ROS_INFO("%s\n", "STARTEDDDDD");
   x++;
