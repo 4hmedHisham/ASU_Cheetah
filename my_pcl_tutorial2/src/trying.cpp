@@ -1,105 +1,102 @@
-#include <ros/ros.h>
-// PCL specific includes
-#include <sensor_msgs/PointCloud2.h>
-#include <pcl_conversions/pcl_conversions.h>
+#include <iostream>
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_types.h>
+#include <string>
+#include<ros/ros.h>
+// STL
+
+
+// PCL
 #include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
-//#include <boost/foreach.hpp>
-
-#include <ros/ros.h>
-#include <pcl_ros/point_cloud.h>
-#include <pcl/point_types.h>
-#include <boost/foreach.hpp>
-
-//for testing ros with string
-#include "std_msgs/String.h"
-#include <pcl/filters/voxel_grid.h>
-
-#include <std_msgs/Float32.h>
-
-bool debugging=false;
+#include <pcl/filters/filter.h>
 
 
+#include "pcl/common/angles.h"
+#include "pcl/sample_consensus/method_types.h"
+#include "pcl/sample_consensus/model_types.h"
+#include "pcl/segmentation/sac_segmentation.h"
 
-//for debug only
-void 
-cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
+typedef pcl::PointXYZRGB PointC;
+typedef pcl::PointCloud<pcl::PointXYZRGB> PointCloudC;
+ void filter_nan(pcl::PointCloud<pcl::PointXYZRGB> ::Ptr cloud,pcl::PointCloud<pcl::PointXYZRGB> ::Ptr outputCloud)
 {
-  ROS_INFO("I in: [%d]",2);
-  double x=99;
-  double y=94;
-  double z=98;
-  std_msgs::Float32 msg;
-  //init pointcloud2 pcl change from rosmsg pc2 to pcl pc2 , then from pcl pc2 to pcl
-  pcl::PCLPointCloud2 pcl_pc2;
-  pcl_conversions::toPCL(*input,pcl_pc2);
-  pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-  pcl::fromPCLPointCloud2(pcl_pc2,*temp_cloud);
-//  sensor_msgs::Pointcloud out_pointcloud;
-//  sensor_msgs::convertPointCloud2ToPointCloud(input_pointcloud, out_cloud)
-pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
-pcl_conversions::toPCL(*input, *cloud);
+  //pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
+  //pcl::PointCloud<pcl::PointXYZRGB>::Ptr outputCloud (new pcl::PointCloud<pcl::PointXYZRGB>);
+cloud->is_dense = false;
+ std::vector<int> indices;
+ pcl::removeNaNFromPointCloud(*cloud, *outputCloud, indices);
+ std::cout << "size: " << outputCloud->points.size () << std::endl;
+  // for (size_t i = 0; i < outputCloud->points.size (); ++i)
+  //   std::cout << "" << i
+	//       << "    " << outputCloud->points[i].x
+  //             << " "    << outputCloud->points[i].y
+  //             << " "    << outputCloud->points[i].z << std::endl;
+  
+}
+void load_pcl(pcl::PointCloud<pcl::PointXYZRGB> ::Ptr input,std::string path)
+{
 
-  //sensor_msgs::PointCloud2 output;
-  // Publish the data
-    // Access the data
-    ROS_INFO("SIZE IS  : [%d]",temp_cloud->points.size ());
-  for (std::size_t i = 0; i < temp_cloud->points.size (); ++i)
+if (pcl::io::loadPCDFile<pcl::PointXYZRGB> (path, *input) == -1) //* load the file 592732000.pcd
   {
-    x=temp_cloud->points[289956].x ;
-    y=temp_cloud->points[28956].y ;
-    z=temp_cloud->points[289956].z;
-    ros::Duration(0.5).sleep();
-    msg.data = x;
-    if(true)
-    {
-    ROS_INFO("I heard z : [%d]",z);
-    ROS_INFO("I heard x : [%d]",x);
-     ROS_INFO("I heard y : [%d]",y);
+    PCL_ERROR ("Couldn't read file test_pcd.pcd \n");
     
-    }
-
-    //cloud->points[i].z = 1.0;
   }
+  std::cout << "Loaded "
+            << input->width * input->height
+            << " data points from test_pcd.pcd with the following fields: "
+            << std::endl;
+  
+  
+}
+void segmenter(pcl::PointCloud<pcl::PointXYZRGB> ::Ptr segmented)
+{
+pcl::PointIndices::Ptr indices;
+pcl::PointIndices indices_internal;
+pcl::SACSegmentation<PointC> seg;
+
+seg.setModelType(pcl::SACMODEL_PERPENDICULAR_PLANE);
+seg.setMethodType(pcl::SAC_RANSAC);
+
+seg.setDistanceThreshold(0.01);
+seg.setInputCloud(segmented);
+
+Eigen::Vector3f axis;
+axis << 0, -1, 0;
+seg.setAxis(axis);
+seg.setEpsAngle(pcl::deg2rad(10.0));
+
+pcl::ModelCoefficients coeff;
+seg.segment(indices_internal, coeff);
+
+
+*indices = indices_internal;
+ std::cout << *indices << std::endl ;
+
+int index=NULL;
+
+  for (size_t i = 0; i <indices->indices.size(); ++i)
+    {
+       segmented->points[indices->indices[i]].r=255;
+    }
+}
+void save_pcd(pcl::PointCloud<pcl::PointXYZRGB>::Ptr SAVEEEE)
+{
+pcl::io::savePCDFile<pcl::PointXYZRGB>("colored.pcd",*SAVEEEE,false);
 
 }
-void chatterCallback(const std_msgs::String::ConstPtr& msg)
+int
+main (int argc, char** argv)
 {
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
-}
-void chatterCallback2(const std_msgs::String::ConstPtr& msg)
-{
-  ROS_INFO("I heard2: [%s]", msg->data.c_str());
-}
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr outputCloud (new pcl::PointCloud<pcl::PointXYZRGB>);
+
+  load_pcl(cloud,"725215000.pcd");
+  filter_nan(cloud,outputCloud);
+  segmenter(outputCloud);
+  save_pcd(outputCloud);
 
 
-int main(int argc, char **argv)
-{
-
-  ros::init(argc, argv, "listener");
 
 
-  ros::NodeHandle n;
-
- //debuging
-if (debugging)
-{
-  ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
-  ros::Subscriber sub2 = n.subscribe("chatter2", 1000, chatterCallback2);
-}
-
-
-  ros::Subscriber sub3 = n.subscribe("cloud_pcd", 1, cloud_cb);
-  int x=0;
-  ROS_INFO("%s\n", "STARTEDDDDD");
-  x++;
-
-  /**
-   * ros::spin() will enter a loop, pumping callbacks.  With this version, all
-   * callbacks will be called from within this thread (the main one).  ros::spin()
-   * will exit when Ctrl-C is pressed, or the node is shutdown by the master.
-   */
-  ros::spin();
-
-  return 0;
+  return (0);
 }
