@@ -50,7 +50,7 @@ if (pcl::io::loadPCDFile<pcl::PointXYZRGB> (path, *input) == -1) //* load the fi
 }
 void segmenter(pcl::PointCloud<pcl::PointXYZRGB> ::Ptr segmented)
 {
-pcl::PointIndices::Ptr indices;
+pcl::PointIndices::Ptr indices (new pcl::PointIndices);
 pcl::PointIndices indices_internal;
 pcl::SACSegmentation<PointC> seg;
 
@@ -76,7 +76,7 @@ int index=NULL;
 
   for (size_t i = 0; i <indices->indices.size(); ++i)
     {
-       segmented->points[indices->indices[i]].r=255;
+       segmented->points[indices->indices[i]].b=255;
     }
 }
 void save_pcd(pcl::PointCloud<pcl::PointXYZRGB>::Ptr SAVEEEE)
