@@ -123,8 +123,8 @@ def imudata(data):
     global z        
 
     
-    linear_acc_threshold = 10
-    angular_acc_threshold = 10
+    # linear_acc_threshold = 10
+    # angular_acc_threshold = 10
     
     lin_acc_prev=lin_acc    ######save previous imu readings
     Ang_acc_prev=Ang_acc
@@ -230,6 +230,12 @@ def Gate_Publisher(pair_no,st):
         initial_distance = leg_pos3_hip[0]
         legfix_Prev_angs = leg1_ang
         legvar_Prev_angs = leg3_ang
+        y_offset_f=leg_pos1_hip[1]                          #leg1
+        y_offset=leg_pos3_hip[1]                           #leg3
+        y_plane_f=np.full((steps+1, 1), y_offset_f)
+        y_plane=np.full((steps+1, 1), y_offset)
+        L_f='l'
+        L_v='r'        
 
         if  first_step_flag==1  :
                 if initial_distance_f >=0:
@@ -314,8 +320,8 @@ def Gate_Publisher(pair_no,st):
 
             if ((current - last_fix) > sample_time_f ) and i < steps:        
                 last_fix = current
-                trans1,hip1,knee1 = gait.inverse_kinematics_3d_v6(x_fixed[i], 112.75, y_fixed[i],0 ,legfix_Prev_angs[1], legfix_Prev_angs[2] )
-                trans3,hip3,knee3 = gait.inverse_kinematics_3d_v6(xnew[i], 112.75, ynew[i],0 ,legvar_Prev_angs[1], legvar_Prev_angs[2] )
+                trans1,hip1,knee1 = gait.inverse_kinematics_3d_v6(x_fixed[i], y_plane_f[i], y_fixed[i],0 ,legfix_Prev_angs[1], legfix_Prev_angs[2] ,L_f)
+                trans3,hip3,knee3 = gait.inverse_kinematics_3d_v6(xnew[i], y_plane[i], ynew[i],0 ,legvar_Prev_angs[1], legvar_Prev_angs[2], L_v )
 
                 if flaag == 1:
                     trans4,hip4,knee4 = gait.generalbasemover_modifed(4, 'f',st ,steps)
@@ -348,6 +354,12 @@ def Gate_Publisher(pair_no,st):
         initial_distance = leg_pos4_hip[0]
         legfix_Prev_angs = leg2_ang
         legvar_Prev_angs = leg4_ang
+        y_offset_f=leg_pos2_hip[1]                          #leg2
+        y_offset=leg_pos4_hip[1]                             #leg4 
+        y_plane_f=np.full((steps+1, 1), y_offset_f)  
+        y_plane=np.full((steps+1, 1), y_offset)                      
+        L_f='r'
+        L_v='l'        
 
         if  first_step_flag==1  :
                 if initial_distance_f >=0:
@@ -432,8 +444,8 @@ def Gate_Publisher(pair_no,st):
 
             if ((current - last_fix) > sample_time_f ) and i < steps:        
                 last_fix = current
-                trans2,hip2,knee2 = gait.inverse_kinematics_3d_v6(x_fixed[i], 112.75, y_fixed[i],0 ,legfix_Prev_angs[1], legfix_Prev_angs[2] )
-                trans4,hip4,knee4 = gait.inverse_kinematics_3d_v6(xnew[i], 112.75, ynew[i],0 ,legvar_Prev_angs[1], legvar_Prev_angs[2] )
+                trans2,hip2,knee2 = gait.inverse_kinematics_3d_v6(x_fixed[i], y_plane_f[i], y_fixed[i],0 ,legfix_Prev_angs[1], legfix_Prev_angs[2],L_f )
+                trans4,hip4,knee4 = gait.inverse_kinematics_3d_v6(xnew[i], y_plane[i], ynew[i],0 ,legvar_Prev_angs[1], legvar_Prev_angs[2],L_v )
 
                 if flaag == 1:
                     trans3,hip3,knee3 = gait.generalbasemover_modifed(3, 'f',st ,steps)
