@@ -1,0 +1,14 @@
+Notes For Interacting with PCD
+
+
+
+rosrun pcl_ros pcd_to_pointcld 594085000.pcd 0.1 _frame_id:=/map
+
+for displaywith with rviz directly
+
+CONVERTER SENSORMSGPOINTCLOUD2 TO PCL
+https://answers.ros.org/question/136916/conversion-from-sensor_msgspointcloud2-to-pclpointcloudt/
+
+
+COLORING RVIZ :
+https://answers.ros.org/question/221915/coloring-of-pcd-pointcloud-in-rviz/
