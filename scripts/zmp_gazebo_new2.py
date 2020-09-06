@@ -138,7 +138,7 @@ def imudata(data):
         lin_acc_diff=np.absolute(lin_acc[i]-lin_acc_prev[i])
         ang_acc_diff=np.absolute(Ang_acc[i]-Ang_acc_prev[i])
         if (lin_acc_diff>linear_acc_threshold) or (ang_acc_diff> angular_acc_threshold):
-            z = 1 
+            z = 0  ################# 
             print("z value changed")
             break
         # else:
