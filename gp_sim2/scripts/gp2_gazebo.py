@@ -25,6 +25,8 @@ from sensor_msgs.msg import JointState
 
 
 
+
+
 hipinit=2.0589882059651674   #   was HIP           -2.27999663185
 kneeinit=1.0711307090938094  #KNEE WAS       1.57918160492
 ab1_pub = 0

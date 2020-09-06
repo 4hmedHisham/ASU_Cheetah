@@ -8,6 +8,7 @@ from std_msgs.msg import String
 from std_msgs.msg import Bool
 import GP2_Vrep_V3 as v
 import subprocess
+import os
 
 boolean = 1
 mode = 'p'
@@ -116,7 +117,12 @@ def start_vrep_node():
 					v.static_body(True)
 				elif state=='d':
 					v.static_body(False)
-		
+				openstuff=raw_input("please enter the file name you want to open or type 'd' for defualt file")
+				#path = os.path.abspath('scripts')
+				#print('path is '+path)
+				if openstuff=='d':
+					print('ENDTERD')
+					subprocess.call(['gnome-terminal', '-x', 'python', 'GP2_main_V3.py'])
 		
 		i=0
 		total = Float32MultiArray()

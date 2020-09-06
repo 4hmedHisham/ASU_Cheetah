@@ -8,6 +8,7 @@ from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
 testing=False
 params=0
+inits=0
 pub=0
 sub=0
 if __name__ == "__main__":
@@ -34,6 +35,7 @@ def ros_init(node=0):
 	global pub2
 	global sub
 	rospy.Subscriber('getter',Float32MultiArray,callback)
+	rospy.Subscriber("init",Float32MultiArray,get_inits_toR2A)
 	pub = rospy.Publisher('setter', String, queue_size=10)
 	pub2 = rospy.Publisher('ik_setter', Float32MultiArray, queue_size=10)
 	time.sleep(2)
@@ -41,7 +43,10 @@ def ros_init(node=0):
 		rospy.init_node('algorithm', anonymous=True)
 	time.sleep(2)
 	print('Started')
-
+def get_inits_toR2A(data):
+	inits=data.data
+def get_inits():
+	return inits
 def get_angles(pos):
 	global params
 	if pos=='ab3' or pos==0 :
