@@ -6,6 +6,6 @@ This Repository Contains the simulation environments,Code and the URDF of the  A
 
 # Steps To try the model
 
--Open V-rep simulation enviornment in linux and the URDF ending with "With Shoes" inside "Scenes Folder"
+-Open V-rep simulation enviornment in linux and the URDF ending with "With Shoes" inside "Scenes" Folder
  <br />
--Open V2T file in Scripts folder and follow the prompts
+-Open V2T file in "Scripts" folder and follow the prompts
