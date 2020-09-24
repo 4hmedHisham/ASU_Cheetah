@@ -1,4 +1,4 @@
 # ASU_Cheetah
 
-![GitHub Logo](img.png)
+![ASU_Cheetah](img.png)
 
